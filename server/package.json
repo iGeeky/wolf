@@ -1,0 +1,46 @@
+{
+  "name": "wolf-server",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "bcrypt": "^3.0.3",
+    "ejs": "^2.6.2",
+    "jsonwebtoken": "^8.5.1",
+    "koa": "^2.6.2",
+    "koa-bodyparser": "^4.2.1",
+    "koa-json": "^2.0.2",
+    "koa-logger": "^3.2.0",
+    "koa-router": "^7.4.0",
+    "koa-static": "^5.0.0",
+    "koa-views": "^6.2.0",
+    "koa2-cors": "^2.0.6",
+    "lodash": "^4.17.11",
+    "log4js": "^3.0.6",
+    "md5": "^2.2.1",
+    "minimist": "^1.2.0",
+    "moment": "^2.23.0",
+    "node-cache": "^4.2.1",
+    "pg": "^7.7.1",
+    "pg-escape": "^0.2.0",
+    "pg-native": "^3.0.0",
+    "sequelize": "^4.42.0",
+    "validator": "^10.9.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^10.0.3",
+    "babel-preset-env": "^1.7.0",
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "chai-json-schema": "^1.5.1",
+    "eslint": "^5.16.0",
+    "eslint-config-google": "^0.13.0",
+    "eslint-friendly-formatter": "^4.0.1",
+    "eslint-loader": "^2.1.2",
+    "eslint-plugin-html": "^5.0.5",
+    "mocha": "^6.2.1"
+  }
+}
