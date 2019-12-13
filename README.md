@@ -69,13 +69,13 @@ wolf是一个通用RBAC系统，适用于所有的HTTP应用．统一授权及�
     * `Name`, 指请求的HTTP URL. 如果是`精确匹配`和`前缀匹配`, 通常是以`/`开头. 如果是`后缀匹配`, 通常是资源共有的后缀, 如: `.jpg`, `.js`,  *不支持通配符或正则*.
     * `Action`, 指请求的`HTTP Method`.  方法`ALL`能匹配所有方法.
     * `Permission`, 指定访问该资源需要的权限. 两个内置权限: `Allow All`表示所有用户可访问, `Deny All`表示所有用户不可访问.
-  * `Audit Log`, 审计日志, 记录了所有经过本系统的访问情况(包含`Rbac-Console`及本系统管理的应用). 记录了以下主要信息:
+  * `Audit Log`, 审计日志, 记录了所有经过本系统的访问情况(包含`Wolf-Console`及本系统管理的应用). 记录了以下主要信息:
     * 用户ID, 用户名, 用户昵称
     * 访问日期, 时间及访问者的IP
     * HTTP方法,及URL,
     * 匹配上的资源.
     * 访问响应的状态码.
-    * 请求args参数或request body(只支持了`Rbac-Console`的记录).
+    * 请求args参数或request body(只支持了`Wolf-Console`的记录).
 * 资源匹配方式, 支持不同的优先级, 优先级规则如下:
   * `Match Type`优先级从高到低, 依次是: 精确匹配, 后缀匹配, 前缀匹配.
   * `Action` 即`HTTP Method`.  `ALL`优先级比较低, 其它方法(如`GET`, `POST`, `PUT`)优先级相同, 但都比`ALL`高.
@@ -100,6 +100,14 @@ wolf是一个通用RBAC系统，适用于所有的HTTP应用．统一授权及�
 * Console: VueJS, Element, Babel, NodeJS
 * Agent: OpenResty(ngx_lua)
 * Database: PostgreSQL.
+
+
+
+
+
+## Getting Started
+
+[快速起步](./quick-start-with-docker/README-CN.md)
 
 
 
@@ -154,27 +162,14 @@ wolf是一个通用RBAC系统，适用于所有的HTTP应用．统一授权及�
 
 
 
-
-## Getting Started
-
-[快速起步](./quick-start-with-docker/README-CN.md)
-
-
-
 ## Deployment
 
-#### Manual deployment
-
-*Coming soon*. 
-
+[部署文档](./docs/deploy.md)
 
 
 ## Manual Document
 
-#### Console
-
-*Coming soon*
-
+[使用指南](./docs/usage.md)
 
 
 ## Change Log

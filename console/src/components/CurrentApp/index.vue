@@ -25,7 +25,7 @@ export default {
     return {
       rbacConsoleItem: {
         id: 'rbac-console',
-        name: 'Rbac Console',
+        name: 'Wolf Console',
       },
     }
   },

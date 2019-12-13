@@ -4,7 +4,7 @@ const config = {
   tokenExpireTime: 3600 * 24 * 7,
   clientChangePassword: (process.env.CLIENT_CHANGE_PWD || 'yes') === 'yes',
   database: {
-    url: process.env.RBAC_SQL_URL || 'postgres://root:123456@127.0.0.1:5432/wolf',
+    url: process.env.RBAC_SQL_URL || 'postgres://wolfroot:123456@127.0.0.1:5432/wolf',
   },
 }
 

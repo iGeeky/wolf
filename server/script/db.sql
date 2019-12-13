@@ -1,10 +1,10 @@
 
 -- you can change the password on initial the database.
 /**
-CREATE USER root WITH PASSWORD '123456';
-CREATE DATABASE wolf with owner=root ENCODING='UTF8';
-GRANT ALL PRIVILEGES ON DATABASE wolf to root;
-\c wolf root;
+CREATE USER wolfroot WITH PASSWORD '123456';
+CREATE DATABASE wolf with owner=wolfroot ENCODING='UTF8';
+GRANT ALL PRIVILEGES ON DATABASE wolf to wolfroot;
+\c wolf wolfroot;
 */
 
 CREATE FUNCTION unix_timestamp() RETURNS integer AS $$ 
