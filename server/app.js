@@ -15,6 +15,7 @@ const app = new Koa()
 const views = require('koa-views')
 const path = require('path')
 
+let instance = null
 try {
   app.use(logger())
   app.use(accessLog())
@@ -40,7 +41,7 @@ try {
   app.use(router.routes())
   app.use(router.allowedMethods())
   const port = parseInt(process.env.PORT, 10) || 10080
-  app.listen(port)
+  instance = app.listen(port)
   log4js.info('listen at 0.0.0.0:%s success!', port)
 } catch (ex) {
   log4js.error('app global catch', ex)
@@ -54,3 +55,5 @@ process.on('unhandledRejection', (reason, p) => {
   log4js.error(reason)
   process.exit(0)
 })
+
+module.exports = instance

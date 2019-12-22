@@ -1,24 +1,19 @@
+const mocha = require('../util/mocha')
+const util = require('../util/util')
+const parseRbacData = require('./rbac-data-parser').parseRbacData
 
-const mocha = require('./util/mocha')
-const util = require('./util/util')
-const parseRbacData = require('./util/rbac-data-parser').parseRbacData
-const headers = util.adminHeaders()
-const argv = require('minimist')(process.argv.slice(2));
+function rbacDataRead(policyFileName) {
+  const fs = require('fs')
+  const buffer = fs.readFileSync(policyFileName)
+  const rbacData = buffer.toString()
+  const data = parseRbacData(rbacData)
+  return data
+}
 
-const policyFileName = argv.policyFile || './test/0-rbac-data-or.md'
-const fs = require('fs');
-const path = require('path');
-const buffer = fs.readFileSync(policyFileName);
-const rbacData = buffer.toString();
-const data = parseRbacData(rbacData)
-
-// console.log('>>> data::', JSON.stringify(data))
-// process.exit(5)
-
-let application = null;
-const categoryMap = {}
-
-describe('rbac', function() {
+function rbacInit(data, userPassword, opts={}) {
+  const headers = util.adminHeaders()
+  let application = null;
+  const categoryMap = {}
   it('check exist', async function() {
     if(data.applications && data.applications.length > 0) {
       application = data.applications[0];
@@ -90,19 +85,22 @@ describe('rbac', function() {
       this.skip();
     }
 
-
-    console.log('---------- rbac users for application [%s]-----------', application.id)
+    if(!opts.quiet){
+      console.log('---------- rbac users for application [%s]-----------', application.id)
+    }
     for (const user of data.users) {
       let url = '/api/v1/user/add';
       user.appIDs = [application.id];
-      if(argv.userPassword && typeof(argv.userPassword) !== 'boolean') {
-        user.password = '' + argv.userPassword
+      if(userPassword && typeof(userPassword) !== 'boolean') {
+        user.password = '' + userPassword
       }
       const res = await mocha.post({url, headers, body: user})
       if (res.body.data && res.body.data.userInfo) {
         const username = res.body.data.userInfo.username;
         const password = res.body.data.password;
-        console.log('%s  %s', username, password)
+        if(!opts.quiet){
+          console.log('%s  %s', username, password)
+        }
         const userId = res.body.data.userInfo.id;
         const {permIDs, roleIDs} = user;
         url = '/api/v1/user-role/set'
@@ -123,6 +121,76 @@ describe('rbac', function() {
       await mocha.post({url, headers, body: resource})
     }
   });
-});
+}
+
+function rbacDestroy(data) {
+  const headers = util.adminHeaders()
+  let application = null;
+  it('application', async function() {
+    if (!data.applications) {
+      this.skip();
+    }
+    application = data.applications[0];
+
+    for (const application of data.applications) {
+      const url = '/api/v1/application/delete';
+      await mocha.post({url, headers, body: {id: application.id}})
+    }
+  });
+
+  it('category', async function() {
+    if (!application) {
+      this.skip();
+    }
+
+    const url = '/api/v1/category/delete_by_appID';
+    await mocha.post({url, headers, body: {appID: application.id}})
+  });
+
+  it('permission', async function() {
+    if (!application) {
+      this.skip();
+    }
+    const url = '/api/v1/permission/delete_by_appID';
+    await mocha.post({url, headers, body: {appID: application.id}})
+  });
+
+  it('role', async function() {
+    if (!application) {
+      this.skip();
+    }
+
+    const url = '/api/v1/role/delete_by_appID';
+    await mocha.post({url, headers, body: {appID: application.id}})
+  });
 
 
+  it('user', async function() {
+    if (!application || !data.users) {
+      this.skip();
+    }
+
+    for (const user of data.users) {
+      let url = '/api/v1/user/delete';
+      user.appIDs = [application.id];
+      const res = await mocha.post({url, headers, body: {username: user.username}})
+      if (res.body.data && res.body.data.userInfo) {
+        const userId = res.body.data.userInfo.id;
+        url = '/api/v1/user-role/delete'
+        await mocha.post({url, headers, body: {userID: userId, appID: application.id}})
+      }
+    }
+  });
+
+  it('resource', async function() {
+    if (!application) {
+      this.skip();
+    }
+    const url = '/api/v1/resource/delete_by_appID';
+    await mocha.post({url, headers, body: {appID: application.id}})
+  });
+}
+
+exports.rbacDataRead = rbacDataRead;
+exports.rbacInit = rbacInit;
+exports.rbacDestroy = rbacDestroy;

@@ -8,9 +8,9 @@ function getAddResponseSchema() {
   const schema = util.okSchema({
     type: 'object',
     properties: {
-      permission: {type: 'object'},
+      role: {type: 'object'},
     },
-    required: ['permission'],
+    required: ['role'],
   })
   return schema
 }
@@ -19,58 +19,58 @@ function getListResponseSchema() {
   const schema = util.okSchema({
     type: 'object',
     properties: {
-      permissions: {
+      roles: {
         type: 'array',
         items: {
           type: 'object',
         },
+        minItems: 1,
       },
       total: {type: 'integer'},
     },
-    required: ['permissions', 'total'],
+    required: ['roles', 'total'],
   })
   return schema
 }
 
-// const permission = null;
+// const role = null;
 
-describe('permission', function() {
+describe('role', function() {
+  const appID = 'role-test-app-id'
+  let name = 'test-role-name'
   it('add', async function() {
     const schema = getAddResponseSchema();
-    const id = 'test-permission-id'
-    const name = 'test-permission-name'
-    const description = 'The Test Permission'
-    const appId = 'test-application-id'
-    const body = {id, name, description, appID: appId, categoryID: 2}
+    const id = 'test-role-id'
+    const description = 'test-role-description'
+    const body = {id, name, description, appID, permIDs: ['PERM_OK', 'PERM_02']}
 
-    const url = '/api/v1/permission/add';
+    const url = '/api/v1/role/add';
     await mocha.post({url, headers, body, schema})
   });
 
   it('update', async function() {
     const schema = getAddResponseSchema();
-    const id = 'test-permission-id'
-    const name = 'test-permission-name:updated'
-    const categoryId = 3;
-    const description = 'The Test Permission:updated'
-    const body = {id, name, description, categoryID: categoryId}
+    const id = 'test-role-id'
+    name += ':updated'
+    const permIds = ['PERM_UPDATE', 'PERM_OK'];
+    const description = 'test-role-description:updated'
+    const body = {id, name, description, permIDs: permIds}
 
-    const url = '/api/v1/permission/update';
+    const url = '/api/v1/role/update';
     await mocha.post({url, headers, body, schema})
   });
 
   it('list', async function() {
     const schema = getListResponseSchema()
-    const url = '/api/v1/permission/list'
-    const appId = 'test-application-id'
-    const args = {appID: appId}
+    const url = '/api/v1/role/list'
+    const args = {appID, key: name}
     const res = await mocha.get({url, headers, args, schema})
   });
 
 
   after(async function() {
-    const url = '/api/v1/permission/delete';
-    const id = 'test-permission-id'
+    const url = '/api/v1/role/delete';
+    const id = 'test-role-id'
     const body = {id}
     await mocha.post({url, headers, body})
   });

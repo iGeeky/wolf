@@ -1,6 +1,6 @@
 
-const mocha = require('./util/mocha')
-const util = require('./util/util')
+const mocha = require('../util/mocha')
+const util = require('../util/util')
 
 const headers = {};
 

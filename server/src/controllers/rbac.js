@@ -11,6 +11,18 @@ const Op = require('sequelize').Op;
 
 const userFields = ['username', 'nickname', 'email', 'createTime'];
 
+const errors = {
+  ERR_USERNAME_MISSING: 'Username missing!',
+  ERR_PASSWORD_MISSING: 'Password missing!',
+  ERR_USER_NOT_FOUND: 'User not found!',
+  ERR_PASSWORD_ERROR: 'Password error!',
+
+  ERR_PASSWORD_CHANGE_NOT_ALLOWED: 'Password change is not allowed',
+  ERR_OLD_PASSWORD_REQUIRED: 'Old password is required',
+  ERR_NEW_PASSWORD_REQUIRED: 'New password is required',
+  ERR_REPEATED_PASSWORD_INCORRECT: 'The password you entered repeatedly is incorrect.',
+  ERR_OLD_PASSWORD_INCORRECT: 'Old password is incorrect.',
+}
 
 class Rbac extends BasicService {
   constructor(ctx) {
@@ -22,7 +34,6 @@ class Rbac extends BasicService {
     const username = this.getArg('username');
     const error = this.getArg('error');
     const password = this.getArg('password');
-    console.log('>>>> render login page: url: %s', url)
     await this.ctx.render('login', {
       url,
       username,
@@ -40,45 +51,61 @@ class Rbac extends BasicService {
     this.ctx.body = `index`
   }
 
-  async loginPost() {
+  async _loginPostInternal() {
     const username = this.getArg('username')
     const password = this.getArg('password')
     const url = this.getArg('url', '/')
     this.log4js.info('username %s login, redirect url: %s', username, url)
     if (!username) {
-      this.args.error = 'Username missing!'
-      await this.loginPageRender();
-      return
+      return {ok: false, reason: 'ERR_USERNAME_MISSING'}
     }
 
     if (!password) {
-      this.args.error = 'Password missing!'
-      await this.loginPageRender();
-      return
+      return {ok: false, reason: 'ERR_PASSWORD_MISSING'}
     }
 
-    const user = await UserModel.findOne({where: {username}})
-    if (!user) { // user not exist
+    const userInfo = await UserModel.findOne({where: {username}})
+    if (!userInfo) { // user not exist
       this.log4js.warn('rbac user [%s] login failed! user not exist', username)
-      this.args.error = 'User not found!'
-      await this.loginPageRender();
-      return
+      return {ok: false, reason: 'ERR_USER_NOT_FOUND'}
     }
 
     // compare the password.
-    if (user.password && util.comparePassword(password, user.password)) {
+    if (userInfo.password && util.comparePassword(password, userInfo.password)) {
       // do nothing
     } else {
       this.log4js.warn('user [%s] login failed! password error', username)
-      this.args.error = 'Password error!'
+      return {ok: false, reason: 'ERR_PASSWORD_ERROR'}
+    }
+
+    const {token} = await this.tokenCreate(userInfo)
+    return {ok: true, token, userInfo}
+  }
+
+  async loginRest() {
+    const {ok, reason, token, userInfo} = await this._loginPostInternal();
+    if (!ok) {
+      this.fail(200, reason, {})
+      return
+    }
+    const {id, username, nickname} = userInfo;
+    const data = {userInfo: {id, username, nickname}, token}
+    this.success(data)
+  }
+
+  async loginPost() {
+    const res = await this._loginPostInternal();
+    if(!res.ok) {
+      const error = errors[res.reason] || 'Login failed!'
+      this.args.error = error
       await this.loginPageRender();
       return
     }
 
-    const {token} = await this.tokenCreate(user)
+    const url = this.getArg('url', '/')
+
     const maxAge = config.tokenExpireTime * 1000;
-    this.ctx.cookies.set(
-      'x-rbac-token', token,
+    this.ctx.cookies.set('x-rbac-token', res.token,
       {
         maxAge: maxAge,
         httpOnly: false,
@@ -233,35 +260,28 @@ class Rbac extends BasicService {
     await this.ctx.render('change_pwd.html', args)
   }
 
-  async changePwdPost() {
+  async _changePwdInternal() {
     const args = this.getArgs();
     const {id: userId, username} = this.ctx.userInfo;
     args.username = username;
-    args.success = null;
-
+    let success = null;
+    let error = null;
     if (!config.clientChangePassword) {
-      args['error'] = 'Password change is not allowed'
-      await this.ctx.render('change_pwd.html', args)
-      return;
+      return {ok: false, reason: 'ERR_PASSWORD_CHANGE_NOT_ALLOWED'}
     }
+
     const oldPassword = this.getArg('old_password')
     const newPassword = this.getArg('new_password')
     const reNewPassword = this.getArg('re_new_password')
     if (!oldPassword) {
-      args['error'] = 'Old password is required'
-      await this.ctx.render('change_pwd.html', args)
-      return;
+      return {ok: false, reason: 'ERR_OLD_PASSWORD_REQUIRED'}
     }
     if (!newPassword) {
-      args['error'] = 'New password is required'
-      await this.ctx.render('change_pwd.html', args)
-      return;
+      return {ok: false, reason: 'ERR_NEW_PASSWORD_REQUIRED'}
     }
 
     if (newPassword !== reNewPassword) {
-      args['error'] = 'The password you entered repeatedly is incorrect.'
-      await this.ctx.render('change_pwd.html', args)
-      return;
+      return {ok: false, reason: 'ERR_REPEATED_PASSWORD_INCORRECT'}
     }
 
     const userInfo = await UserModel.findByPk(userId);
@@ -271,14 +291,43 @@ class Rbac extends BasicService {
     }
 
     if (!util.comparePassword(oldPassword, userInfo.password)) {
-      args['error'] = 'Old password is incorrect.'
-      await this.ctx.render('change_pwd.html', args)
-      return;
+      return {ok: false, reason: 'ERR_OLD_PASSWORD_INCORRECT'}
     }
+
 
     const options = {where: {id: userId}}
     const values = {password: util.encodePassword(newPassword), updateTime: util.unixtime()}
     await UserModel.mustUpdate(values, options)
+
+    return {ok: true, userInfo}
+  }
+
+  async changePwdRest() {
+    const {ok, reason} = await this._changePwdInternal();
+    if (!ok) {
+      this.fail(200, reason, {})
+      return
+    }
+    const data = {}
+    this.success(data)
+  }
+
+  async changePwdPost() {
+    const args = this.getArgs();
+    const {id: userId, username} = this.ctx.userInfo;
+    args.username = username;
+    args.success = null;
+    args.old_password = args.old_password || '';
+    args.new_password = args.new_password || '';
+    args.re_new_password = args.re_new_password || '';
+
+    const res = await this._changePwdInternal();
+    if(!res.ok) {
+      const error = errors[res.reason] || 'Change password failed!'
+      args.error = error
+      await this.ctx.render('change_pwd.html', args)
+      return
+    }
 
     args.success = 'change password successfully'
     args.error = null;

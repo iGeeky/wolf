@@ -7,7 +7,7 @@ const _ = require('lodash')
 const IGNORE_URLS = {
   'GET:/api/v1/rbac/login': true,
   'POST:/api/v1/rbac/login.post': true,
-
+  'POST:/api/v1/rbac/login.rest': true,
   // 'POST:/v1/user/add': true,
 }
 

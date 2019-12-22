@@ -165,8 +165,8 @@ class ArgsHelper {
   }
 
   getStartEndTimeArgs() {
-    const startTime = this.getDatetimeAsUnixtime('start_time')
-    const endTime = this.getDatetimeAsUnixtime('end_time')
+    const startTime = this.getDatetimeAsUnixtime('startTime')
+    const endTime = this.getDatetimeAsUnixtime('endTime')
     if (startTime && endTime) {
       return { [Op.between]: [startTime, endTime] }
     } else if (startTime) {

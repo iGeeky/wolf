@@ -115,7 +115,8 @@ class Application extends BasicService {
   async listAll() {
     const options = {}
     const applications = await ApplicationModel.findAll(options)
-    const data = {applications}
+    const total = applications.length;
+    const data = {applications, total}
     this.success(data)
   }
 
