@@ -5,6 +5,30 @@ const util = require('./util')
 const Op = require('sequelize').Op
 const _ = require('lodash')
 
+function parseObject(field, value) {
+  try {
+    value = JSON.parse(value)
+  } catch (err) {
+    throw new ArgsError(`${field}'s type is invalid. need a object value.`)
+  }
+  return value
+}
+
+function parseArray(field, value) {
+  try {
+    if (value[0] === '[' && value[value.length - 1] === ']') {
+      value = JSON.parse(value)
+    } else if (typeof (value) === 'string') {
+      value = value.split(',')
+    } else {
+      throw new ArgsError(`${field}'s type is invalid. need a array value.`)
+    }
+  } catch (err) {
+    throw new ArgsError(`${field}'s type is invalid. need a array value.`)
+  }
+  return value
+}
+
 class ArgsHelper {
   constructor(args, url) {
     this.args = args
@@ -50,6 +74,15 @@ class ArgsHelper {
     return value
   }
 
+  getRequiredStringArg(field) {
+    const value = this.getRequiredArg(field)
+    if (typeof (value) !== 'string') {
+      log4js.error('request [%s] arg [%s] invalid', this.url, field)
+      throw new ArgsError(`${field}'s type is invalid. need a string value.`)
+    }
+    return value
+  }
+
   getRequiredIntArg(field) {
     let value = this.getRequiredArg(field)
     value = parseInt(value)
@@ -73,7 +106,11 @@ class ArgsHelper {
   getObjectArg(field) {
     let value = this.getArg(field)
     if (typeof (value) === 'string') {
-      value = JSON.parse(value)
+      value = parseObject(field, value)
+    }
+    if (value !== undefined && typeof (value) !== 'object') {
+      log4js.error('request [%s] arg [%s] invalid', this.url, field)
+      throw new ArgsError(`${field}'s type is invalid. need a object value.`)
     }
 
     return value
@@ -82,7 +119,7 @@ class ArgsHelper {
   getRequiredObjectArg(field) {
     let value = this.getRequiredArg(field)
     if (typeof (value) === 'string') {
-      value = JSON.parse(value)
+      value = parseObject(field, value)
     }
 
     if (typeof (value) !== 'object') {
@@ -93,30 +130,27 @@ class ArgsHelper {
   }
 
   getArrayArg(field, defaultValue = undefined) {
-    let value = this.args[field]
+    let value = this.getArg(field)
     if (typeof (value) === 'string') {
-      value = JSON.parse(value)
+      value = parseArray(field, value)
     }
-    if (!value || !Array.isArray(value)) {
+    if (!value) {
       value = defaultValue
     }
+
+    if (value && !Array.isArray(value)) {
+      log4js.error('request [%s] arg [%s] invalid', this.url, field)
+      throw new ArgsError(`${field}'s type is invalid. need a array value.`)
+    }
+
     return value
   }
 
   getRequiredArrayArg(field) {
-    let value = this.args[field]
-    if (typeof (value) === 'number') {
-      value = [value]
-    } else if (typeof (value) === 'string') {
-      if (value[0] === '[' && value[value.length - 1] === ']') {
-        value = JSON.parse(value)
-      } else {
-        value = value.split(',')
-      }
-    }
-    if (!value || !Array.isArray(value)) {
-      log4js.error('request [%s] arg [%s] invalid', this.url, field)
-      throw new ArgsError(`${field}'s type is invalid. need a array value.`)
+    const value = this.getArrayArg(field)
+    if (!value) {
+      log4js.error('request [%s] arg [%s] missing', this.url, field)
+      throw new ArgsError(`${field} missing, it's required.`)
     }
     return value
   }
@@ -140,6 +174,17 @@ class ArgsHelper {
     let value = this.args[field]
     if (!value) {
       value = defaultValue
+    }
+    return value
+  }
+
+  getStringArg(field, defaultValue = undefined) {
+    let value = this.args[field]
+    if (!value) {
+      value = defaultValue
+    }
+    if (typeof (value) !== 'string') {
+      value = `${value}`
     }
     return value
   }

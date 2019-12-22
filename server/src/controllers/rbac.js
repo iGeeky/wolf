@@ -141,7 +141,7 @@ class Rbac extends BasicService {
     return true;
   }
 
-  _write_access_log() {
+  _writeAccessLog() {
     let userID = -1;
     let username = 'none'
     let nickname = 'none';
@@ -160,10 +160,10 @@ class Rbac extends BasicService {
       }
     }
     if (this.isRecordAccessLog()) { // Record the access log if the user logs in
-      const appID = this.getArg('appID')
-      const action = this.getArg('action')
-      const resName = this.getArg('resName')
-      const ip = this.getArg('clientIP')
+      const appID = this.getStringArg('appID')
+      const action = this.getStringArg('action')
+      const resName = this.getStringArg('resName')
+      const ip = this.getStringArg('clientIP')
       const body = {}
       const contentType = null;
       const status = this.ctx.status
@@ -174,7 +174,7 @@ class Rbac extends BasicService {
     }
   }
 
-  async _access_check_internal(userInfo, appId, action, resName) {
+  async _accessCheckInternal(userInfo, appId, action, resName) {
     const query = {appID: appId, action, name: resName}
     const resource = await this.getResource(query)
     this.log4js.info('getResource(%s) res: %s', JSON.stringify(query), JSON.stringify(resource))
@@ -207,9 +207,9 @@ class Rbac extends BasicService {
   }
 
   async accessCheck() {
-    const appId = this.getRequiredArg('appID')
-    const action = this.getRequiredArg('action')
-    const resName = this.getRequiredArg('resName')
+    const appId = this.getRequiredStringArg('appID')
+    const action = this.getRequiredStringArg('action')
+    const resName = this.getRequiredStringArg('resName')
 
     const tokenUserInfo = this.ctx.userInfo
     const {userInfo, cached} = await userCache.getUserInfoById(tokenUserInfo.id, appId)
@@ -220,9 +220,13 @@ class Rbac extends BasicService {
     }
 
     try {
-      await this._access_check_internal(userInfo, appId, action, resName)
+      await this._accessCheckInternal(userInfo, appId, action, resName)
     } finally {
-      this._write_access_log();
+      try{
+        this._writeAccessLog();
+      }catch(err) {
+        this.log4js.error('write access log failed! %s', err)
+      }
     }
   }
 

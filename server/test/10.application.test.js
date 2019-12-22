@@ -49,6 +49,7 @@ function getListResponseSchema() {
 describe('application', function() {
   const id = 'test-application-id'
   const name = 'test-application-name'
+
   it('add', async function() {
     const schema = getAddResponseSchema();
     const description = 'application description'

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node app.js",
-    "coverage": "export PORT=12380 && ./node_modules/.bin/nyc --reporter=html mocha test/*.test.js --exit"
+    "coverage": "./node_modules/.bin/nyc --reporter=html mocha test/*.test.js --exit --timeout 10000"
   },
   "dependencies": {
     "bcrypt": "^3.0.3",

@@ -22,6 +22,7 @@ function itemToObj(item) {
   return obj
 }
 
+// Multi-level list indentation in markdown must be uniform, it is recommended to use tabs
 function parseRbacData(rbacData) {
   const result = {
     applications: [],
@@ -99,6 +100,7 @@ function parseRbacData(rbacData) {
         }
         break
       case 'resource':
+        // console.log('>>resources:', section.children)
         for (const child of section.children) {
           const matchType = child.item
           const resourceInfos = getChildren(child)

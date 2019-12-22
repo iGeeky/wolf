@@ -3,15 +3,46 @@ const util = require('./util/util')
 const rbacUtil = require('./init/0-rbac-util')
 const policyFileName = './test/init/0-rbac-data-unittest.md'
 const data = rbacUtil.rbacDataRead(policyFileName)
-const argv = require('minimist')(process.argv.slice(2));
+const argv = require('minimist')(process.argv.slice(2))
+
+function getLoginSuccessSchema() {
+  const dataSchema = {
+    type: 'object',
+    properties: {
+      userInfo: {
+        type: 'object',
+        properties: { 'id': { 'type': 'string' }, 'username': { 'type': 'string' }, 'nickname': { 'type': 'string' }},
+        required: ['id', 'username', 'nickname'],
+      },
+      token: { type: 'string' },
+    },
+    required: ['userInfo', 'token'],
+  }
+  const schema = util.okSchema(dataSchema)
+  return schema
+}
+
+function get302Status(matchOn200) {
+  const options = {}
+  if (argv.server) {
+    // for chai-http.
+    options.status = 200
+    options.match = matchOn200
+  } else {
+    // for supertest
+    options.status = 302
+  }
+  return options
+}
 
 describe('rbac', function() {
   const password = 'd22f6718ff24'
   const appID = data.applications[0].id
-  // describe('rbac-init', function() {
-  //   const opts = { quiet: true }
-  //   rbacUtil.rbacInit(data, password, opts)
-  // })
+
+  describe('rbac-init', function() {
+    const opts = { quiet: true }
+    rbacUtil.rbacInit(data, password, opts)
+  })
 
   describe('diagram', function() {
     const headers = util.adminHeaders()
@@ -36,14 +67,8 @@ describe('rbac', function() {
     it('change password failed, login required', async function() {
       const url = '/api/v1/rbac/change_pwd.rest'
       const body = {}
-      const options = {url, headers, body}
-      if (argv.server) {
-        options.status = 200;
-        options.match = 'Login Required'
-      } else {
-        options.status = 302;
-      }
-      await mocha.post(options) 
+      const options = Object.assign({url, headers, body}, get302Status('Login Required'))
+      await mocha.post(options)
     });
 
     it('login failed, username missing', async function() {
@@ -75,19 +100,7 @@ describe('rbac', function() {
     });
 
     it('login success', async function() {
-      const dataSchema = {
-        type: "object",
-        properties: {
-            userInfo: {
-                type: "object",
-                properties: {"id":{"type":"string"},"username":{"type":"string"},"nickname":{"type":"string"}},
-                required: ["id","username","nickname"]
-            },
-            token: {type: "string"}
-        },
-        required: ["userInfo", "token"]
-      }
-      const schema = util.okSchema(dataSchema)
+      const schema = getLoginSuccessSchema();
       const url = '/api/v1/rbac/login.rest'
       const body = {username: 'unit-user', password}
       const res = await mocha.post({url, headers, body, schema})
@@ -138,7 +151,7 @@ describe('rbac', function() {
     });
 
     it('new password login success', async function() {
-      const schema = util.okSchema()
+      const schema = getLoginSuccessSchema();
       const url = '/api/v1/rbac/login.rest'
       const body = {username: 'unit-user', password: newPassword}
       await mocha.post({url, headers, body, schema})
@@ -152,7 +165,7 @@ describe('rbac', function() {
     });
   });
 
-  describe('agent page login', function() {
+  describe('agent page', function() {
     const headers = {redirects: 0}
     const newPassword = '123456'
 
@@ -219,6 +232,12 @@ describe('rbac', function() {
       await mocha.get({url, headers, args, status: 200, match: 'Change Password'})
     });
 
+    it('no permission page', async function() {
+      const url = '/api/v1/rbac/no_permission.html'
+      const args = {username: 'test', reason: 'no permission to access this page.'}
+      await mocha.get({url, headers, args, status: 200, match: args.reason})
+    });
+
     it('change password failed, old password missing', async function() {
       const url = '/api/v1/rbac/change_pwd.post'
       const body = {}
@@ -236,7 +255,7 @@ describe('rbac', function() {
       const body = {oldPassword: '123456', newPassword: '123456', reNewPassword: 'abcdef'}
       await mocha.post({url, headers, body, match: 'The password you entered repeatedly is incorrect'})
     });
-    
+
     it('change password failed, Old password is incorrect', async function() {
       const url = '/api/v1/rbac/change_pwd.post'
       const body = {oldPassword: 'error-password', newPassword: newPassword, reNewPassword: newPassword}
@@ -262,7 +281,48 @@ describe('rbac', function() {
     });
   });
 
-  // describe('rbac-destroy', function() {
-  //   rbacUtil.rbacDestroy(data)
-  // });
+  describe('rbac policy test', function() {
+    this.timeout(1000*600)
+    for (const access of data.accesses) {
+      const username = access.username;
+      const accessCheckUrl = '/api/v1/rbac/access_check'
+      describe(`user ${username}`, function() {
+        const headers = {}
+        let token = null;
+        const actions = access.actions;
+        it(`login`, async function(){
+          const schema = getLoginSuccessSchema();
+          const url = '/api/v1/rbac/login.rest'
+          const body = {username, password}
+          const res = await mocha.post({url, headers, body, schema})
+          token = res.body.data.token;
+          headers['x-rbac-token'] = token;
+        })
+        if (actions && actions.length > 0) {
+          for (const actionInfo of actions) {
+            const {method, url: resName, status} = actionInfo;
+            it(`access [${method} ${resName}] expected status ${status}`, async function(){
+              if(!token) {
+                this.skip();
+              }
+              const action = method;
+              const ip = '192.168.168.168'
+              const args = {appID, action, resName, ip}
+              await mocha.get({url: accessCheckUrl, headers, args, status})
+            })
+          }
+        }
+        it(`logout`, async function(){
+          const url = '/api/v1/rbac/logout'
+          const body = {}
+          const options = Object.assign({url, headers, body}, get302Status('RBAC Login'))
+          await mocha.post(options)
+        })
+      });
+    }
+  });
+
+  describe('rbac-destroy', function() {
+    rbacUtil.rbacDestroy(data)
+  });
 })

@@ -44,14 +44,17 @@ try {
   instance = app.listen(port)
   log4js.info('listen at 0.0.0.0:%s success!', port)
 } catch (ex) {
+  /* istanbul ignore next */
   log4js.error('app global catch', ex)
 }
 
 process.on('uncaughtException', (err) => {
+  /* istanbul ignore next */
   log4js.error('uncaughtException>>', err)
   process.exit(0)
 })
 process.on('unhandledRejection', (reason, p) => {
+  /* istanbul ignore next */
   log4js.error(reason)
   process.exit(0)
 })

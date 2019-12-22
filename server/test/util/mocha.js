@@ -16,6 +16,9 @@ if (argv.server) { // remote mode. access by chai-http
   server = argv.server
 } else { // local mode, access by supertest.
   request = require('supertest')
+  if (!process.env.PORT) {
+    process.env.PORT = 12386;
+  }
   server = require('../../app.js')
 }
 
@@ -40,20 +43,25 @@ function setHeaders(req, headers) {
   return req
 }
 
-async function httpPost(url, headers, body) {
+async function httpRequest(method, url, headers, args, body) {
   const data = JSON.stringify(body)
-  const req = request(server).post(url)
+  const req = request(server)[method](url)
   setHeaders(req, headers)
-  const res = await req.send(data)
-
+  let res = {}
+  if (method === 'get' && args) {
+    res = await req.query(args)
+  } else {
+    res = await req.send(data)
+  }
   return res
 }
 
+async function httpPost(url, headers, body) {
+  return await httpRequest('post', url, headers, undefined, body)
+}
+
 async function httpGet(url, headers, args) {
-  const req = request(server).get(url)
-  setHeaders(req, headers)
-  const res = await req.query(args)
-  return res
+  return await httpRequest('get', url, headers, args, undefined)
 }
 
 async function checkResponse(res, status, schema, match, notMatch) {
@@ -117,24 +125,32 @@ async function checkResponse(res, status, schema, match, notMatch) {
   }
 }
 
-async function get(options) {
-  const {url, headers, args, status, schema, match, notMatch} = options;
-  const res = await httpGet(url, headers, args)
-  if (argv.log) {
-    console.log('>>> request [%s %s] headers: %o, args: %o', 'GET', url, headers, args)
-    console.log('>>> response status: %d, body: %o', res.status, res.body)
-  }
-
-  await checkResponse(res, status, schema, match, notMatch)
-  return res;
+const methods = {
+  get: true, put: true, post: true, delete: true,
 }
 
-async function post(options) {
-  const {url, headers, body, status, schema, match, notMatch} = options;
+/**
+   * http request by chai-http or supertest
+   * @param {!options} options request options
+   *        method: http method, supported: get,put,post,delete.
+   *        url: request url
+   *        headers: request headers
+   *        args: request args for get request
+   *        body: request body for post,put,delete request.
+   *        status: expect response status, default is 200.
+   *        schema: expect response body schema for restful response
+   *        match: regex pattern for matching response body.
+   *        notMatch: regex pattern for not matching response body.
+   * @return {res} http response object.
+   */
+async function http(options) {
+  const {method, url, headers, args, body, status, schema, match, notMatch} = options;
+  assert(methods[method], `not support http method ${method}`)
+
   if (headers && typeof(headers) === 'object' && typeof(body) === 'object') {
     headers['Content-type'] = 'application/json; charset=utf-8'
   }
-  const res = await httpPost(url, headers, body)
+  const res = await httpRequest(method, url, headers, args, body)
   if (argv.log) {
     console.log('>>> request [%s %s] headers: %o, body: %o', 'POST', url, headers, body)
     console.log('>>> response status: %d, body: %o', res.status, res.body)
@@ -143,9 +159,44 @@ async function post(options) {
   return res;
 }
 
+/**
+   * http get request
+   * @param {!options} options request options
+   *        url: request url
+   *        headers: request headers
+   *        args: request args for get request
+   *        status: expect response status, default is 200.
+   *        schema: expect response body schema for restful response
+   *        match: regex pattern for matching response body.
+   *        notMatch: regex pattern for not matching response body.
+   * @return {res} http response object.
+   */
+async function get(options) {
+  options.method = 'get'
+  return await http(options)
+}
+
+/**
+   * http post request
+   * @param {!options} options request options
+   *        url: request url
+   *        headers: request headers
+   *        body: request body for post,put,delete request.
+   *        status: expect response status, default is 200.
+   *        schema: expect response body schema for restful response
+   *        match: regex pattern for matching response body.
+   *        notMatch: regex pattern for not matching response body.
+   * @return {res} http response object.
+   */
+async function post(options) {
+  options.method = 'post'
+  return await http(options)
+}
+
+
 function onFailed(callback, args) {
   afterEach(function(){
-    const {title, state, duration, timedOut, err} = this.currentTest
+    const {title, state, duration, err} = this.currentTest
     if (state !== 'passed') {
       const errmsg = `Test [${title}] ${state}, duration: ${duration}, err: ${err.message}`
       if(callback) {
@@ -161,5 +212,6 @@ exports.onFailed = onFailed;
 exports.setHeaders = setHeaders;
 exports.httpPost = httpPost;
 exports.httpGet = httpGet;
+exports.http = http;
 exports.get = get;
 exports.post = post;

@@ -52,7 +52,7 @@ local function check_url_permission(appID, action, resName, clientIP)
     local userInfo = nil
 	local res = nil
     for i = 1, retry_max do
-        local args = { appID = appID, resName = resName, action = action, agent_name=config.agent_name, clientIP=clientIP}
+        local args = { appID = appID, resName = resName, action = action, agentName=config.agentName, clientIP=clientIP}
         local url = access_check_url .. "?" .. ngx.encode_args(args)
         res = ngx.location.capture(url)
         if res then

@@ -22,6 +22,7 @@ class Service extends ArgsUtil {
   /**
    * begin a transaction
    */
+  /* istanbul ignore next */
   async begin() {
     if (this.transaction === null) {
       this.transaction = await Sequelize.transaction();
@@ -31,6 +32,7 @@ class Service extends ArgsUtil {
     return this.transaction;
   }
 
+  /* istanbul ignore next */
   async tryCommit() {
     if (this.transaction) {
       await this.transaction.commit();
@@ -41,6 +43,7 @@ class Service extends ArgsUtil {
   /**
    * commit a transaction
    */
+  /* istanbul ignore next */
   async commit() {
     if (this.transaction) {
       await this.transaction.commit();
@@ -50,6 +53,7 @@ class Service extends ArgsUtil {
     }
   }
 
+  /* istanbul ignore next */
   async tryRollback() {
     if (this.transaction) {
       await this.transaction.rollback();
@@ -60,6 +64,7 @@ class Service extends ArgsUtil {
   /**
    * rollback a transaction.
    */
+  /* istanbul ignore next */
   async rollback() {
     if (this.transaction) {
       await this.transaction.rollback();
