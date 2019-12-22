@@ -7,9 +7,9 @@ function getAddResponseSchema() {
   const schema = util.okSchema({
     type: 'object',
     properties: {
-      user_role: {type: 'object'},
+      userRole: {type: 'object'},
     },
-    required: ['user_role'],
+    required: ['userRole'],
   })
   return schema
 }
@@ -18,7 +18,7 @@ function getEmptyUserRoleSchema() {
   const dataSchema = {
     type: "object",
     properties: {
-        user_role: {
+        userRole: {
             type: "object",
             properties: {
                 userID: {"type":"integer"},
@@ -36,7 +36,7 @@ function getEmptyUserRoleSchema() {
             required: ["userID","appID","permIDs","roleIDs","createTime"]
         }
     },
-    required: ["user_role"]
+    required: ["userRole"]
   }
   return util.okSchema(dataSchema)
 }

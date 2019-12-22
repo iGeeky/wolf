@@ -105,28 +105,28 @@ describe('rbac', function() {
     it('change password failed, new password missing', async function() {
       const schema = util.failSchema('ERR_NEW_PASSWORD_REQUIRED')
       const url = '/api/v1/rbac/change_pwd.rest'
-      const body = {old_password: '123456'}
+      const body = {oldPassword: '123456'}
       await mocha.post({url, headers, body, schema})
     });
 
     it('change password failed, repeat password incorrect', async function() {
       const schema = util.failSchema('ERR_REPEATED_PASSWORD_INCORRECT')
       const url = '/api/v1/rbac/change_pwd.rest'
-      const body = {old_password: '123456', new_password: '123456', re_new_password: 'abcdef'}
+      const body = {oldPassword: '123456', newPassword: '123456', reNewPassword: 'abcdef'}
       await mocha.post({url, headers, body, schema})
     });
 
     it('change password failed, old password incorrect', async function() {
       const schema = util.failSchema('ERR_OLD_PASSWORD_INCORRECT')
       const url = '/api/v1/rbac/change_pwd.rest'
-      const body = {old_password: '123456', new_password: '123456', re_new_password: '123456'}
+      const body = {oldPassword: '123456', newPassword: '123456', reNewPassword: '123456'}
       await mocha.post({url, headers, body, schema})
     });
 
     it('change password success', async function() {
       const schema = util.okSchema()
       const url = '/api/v1/rbac/change_pwd.rest'
-      const body = {old_password: password, new_password: newPassword, re_new_password: newPassword}
+      const body = {oldPassword: password, newPassword: newPassword, reNewPassword: newPassword}
       await mocha.post({url, headers, body, schema})
     });
 
@@ -147,7 +147,7 @@ describe('rbac', function() {
     it('change password to original', async function() {
       const schema = util.okSchema()
       const url = '/api/v1/rbac/change_pwd.rest'
-      const body = {old_password: newPassword, new_password: password, re_new_password: password}
+      const body = {oldPassword: newPassword, newPassword: password, reNewPassword: password}
       await mocha.post({url, headers, body, schema})
     });
   });
@@ -227,31 +227,31 @@ describe('rbac', function() {
 
     it('change password failed, new password missing', async function() {
       const url = '/api/v1/rbac/change_pwd.post'
-      const body = {old_password: '123456'}
+      const body = {oldPassword: '123456'}
       await mocha.post({url, headers, body, match: 'New password is required'})
     });
 
     it('change password failed, repeat password incorrent', async function() {
       const url = '/api/v1/rbac/change_pwd.post'
-      const body = {old_password: '123456', new_password: '123456', re_new_password: 'abcdef'}
+      const body = {oldPassword: '123456', newPassword: '123456', reNewPassword: 'abcdef'}
       await mocha.post({url, headers, body, match: 'The password you entered repeatedly is incorrect'})
     });
     
     it('change password failed, Old password is incorrect', async function() {
       const url = '/api/v1/rbac/change_pwd.post'
-      const body = {old_password: 'error-password', new_password: newPassword, re_new_password: newPassword}
+      const body = {oldPassword: 'error-password', newPassword: newPassword, reNewPassword: newPassword}
       await mocha.post({url, headers, body, match: 'Old password is incorrect'})
     });
 
     it('change password success', async function() {
       const url = '/api/v1/rbac/change_pwd.post'
-      const body = {old_password: password, new_password: newPassword, re_new_password: newPassword}
+      const body = {oldPassword: password, newPassword: newPassword, reNewPassword: newPassword}
       await mocha.post({url, headers, body, match: 'change password successfully'})
     });
 
     it('change password to original success', async function() {
       const url = '/api/v1/rbac/change_pwd.post'
-      const body = {old_password: newPassword, new_password: password, re_new_password: password}
+      const body = {oldPassword: newPassword, newPassword: password, reNewPassword: password}
       await mocha.post({url, headers, body, match: 'change password successfully'})
     });
 

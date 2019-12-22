@@ -163,7 +163,7 @@ class Rbac extends BasicService {
       const appID = this.getArg('appID')
       const action = this.getArg('action')
       const resName = this.getArg('resName')
-      const ip = this.getArg('client_ip')
+      const ip = this.getArg('clientIP')
       const body = {}
       const contentType = null;
       const status = this.ctx.status
@@ -256,7 +256,7 @@ class Rbac extends BasicService {
     const {username} = this.ctx.userInfo;
     const error = null
     const success = null;
-    const args = {username, error, success, old_password: undefined, new_password: undefined, re_new_password: undefined}
+    const args = {username, error, success, oldPassword: undefined, newPassword: undefined, reNewPassword: undefined}
     await this.ctx.render('change_pwd.html', args)
   }
 
@@ -270,9 +270,9 @@ class Rbac extends BasicService {
       return {ok: false, reason: 'ERR_PASSWORD_CHANGE_NOT_ALLOWED'}
     }
 
-    const oldPassword = this.getArg('old_password')
-    const newPassword = this.getArg('new_password')
-    const reNewPassword = this.getArg('re_new_password')
+    const oldPassword = this.getArg('oldPassword')
+    const newPassword = this.getArg('newPassword')
+    const reNewPassword = this.getArg('reNewPassword')
     if (!oldPassword) {
       return {ok: false, reason: 'ERR_OLD_PASSWORD_REQUIRED'}
     }
@@ -317,9 +317,9 @@ class Rbac extends BasicService {
     const {id: userId, username} = this.ctx.userInfo;
     args.username = username;
     args.success = null;
-    args.old_password = args.old_password || '';
-    args.new_password = args.new_password || '';
-    args.re_new_password = args.re_new_password || '';
+    args.oldPassword = args.oldPassword || '';
+    args.newPassword = args.newPassword || '';
+    args.reNewPassword = args.reNewPassword || '';
 
     const res = await this._changePwdInternal();
     if(!res.ok) {

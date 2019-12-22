@@ -46,13 +46,13 @@ local function url_args_as_args(ext_args)
 	return ngx.encode_args(args)
 end
 
-local function check_url_permission(appID, action, resName, client_ip)
+local function check_url_permission(appID, action, resName, clientIP)
     local retry_max = 3
     local reason = nil;
     local userInfo = nil
 	local res = nil
     for i = 1, retry_max do
-        local args = { appID = appID, resName = resName, action = action, agent_name=config.agent_name, client_ip=client_ip}
+        local args = { appID = appID, resName = resName, action = action, agent_name=config.agent_name, clientIP=clientIP}
         local url = access_check_url .. "?" .. ngx.encode_args(args)
         res = ngx.location.capture(url)
         if res then
@@ -112,8 +112,8 @@ local function access_check()
 		return
 	end
 	local appID = ngx.var.appID or "appIDUnset"
-    local client_ip = util.client_ip()
-    local permItem = "{appID: " .. appID .. ", action: " .. action .. ", url: " .. url .. ", client_ip: " .. client_ip .. "}"
+    local clientIP = util.clientIP()
+    local permItem = "{appID: " .. appID .. ", action: " .. action .. ", url: " .. url .. ", clientIP: " .. clientIP .. "}"
 	ngx.log(ngx.INFO, "Cookie: ", ngx.var.http_cookie, ", permItem=", permItem)
 
 	local token = get_token()
@@ -126,7 +126,7 @@ local function access_check()
 	end
 
     ngx.ctx.token = token
-    local ok, status, reason, userInfo, headers = check_url_permission(appID, action, url, client_ip)
+    local ok, status, reason, userInfo, headers = check_url_permission(appID, action, url, clientIP)
 	ngx.log(ngx.INFO, " check_url_permission(", permItem, ",token=", tostring(token), ")=",
         ok, ", status:", tostring(status), ", userInfo:", tostring(json.dumps(userInfo)))
 

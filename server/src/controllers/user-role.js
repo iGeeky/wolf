@@ -29,11 +29,11 @@ class UserRole extends BasicService {
     const options = {where}
     const userRole = await this.ObjectModel.findOne(options)
     if (!userRole) {
-      const data = {user_role: getDefaultUserRole(userId, appId)}
+      const data = {userRole: getDefaultUserRole(userId, appId)}
       this.success(data);
       return
     }
-    const data = {user_role: util.filterFieldWhite(userRole.toJSON(), userRoleFields)}
+    const data = {userRole: util.filterFieldWhite(userRole.toJSON(), userRoleFields)}
     this.success(data)
   }
 
@@ -60,7 +60,7 @@ class UserRole extends BasicService {
 
     const options = {where: {userID: values.userID, appID: values.appID}}
     const {newValues: userRole} = await this.ObjectModel.upsert(values, options)
-    const data = {'user_role': util.filterFieldWhite(userRole.toJSON(), userRoleFields)}
+    const data = {'userRole': util.filterFieldWhite(userRole.toJSON(), userRoleFields)}
     this.success(data);
   }
 
