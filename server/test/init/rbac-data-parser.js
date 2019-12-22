@@ -22,6 +22,7 @@ function itemToObj(item) {
   return obj
 }
 
+// Multi-level list indentation in markdown must be uniform, it is recommended to use tabs
 function parseRbacData(rbacData) {
   const result = {
     applications: [],
@@ -30,6 +31,7 @@ function parseRbacData(rbacData) {
     permissions: [],
     roles: [],
     resources: [],
+    accesses: [],
   }
   const sections = md2json.markdown2json(rbacData)
   // console.log('JSON:', JSON.stringify(json));
@@ -52,16 +54,17 @@ function parseRbacData(rbacData) {
               username: arr[0],
               nickname: arr[1],
             }
-
-            for (const permissionChild of child.children) {
-              if (permissionChild.item === 'permission') {
-                const permIds = getChildren(permissionChild)
-                user.permIDs = permIds
-              } else if (permissionChild.item === 'role') {
-                const roleIds = getChildren(permissionChild)
-                user.roleIDs = roleIds
-              } else {
-                console.log('unknown permission type: [%s]', permissionChild.item)
+            if (child.children) {
+              for (const permissionChild of child.children) {
+                if (permissionChild.item === 'permission') {
+                  const permIds = getChildren(permissionChild)
+                  user.permIDs = permIds
+                } else if (permissionChild.item === 'role') {
+                  const roleIds = getChildren(permissionChild)
+                  user.roleIDs = roleIds
+                } else {
+                  console.log('unknown permission type: [%s]', permissionChild.item)
+                }
               }
             }
             result.users.push(user)
@@ -97,6 +100,7 @@ function parseRbacData(rbacData) {
         }
         break
       case 'resource':
+        // console.log('>>resources:', section.children)
         for (const child of section.children) {
           const matchType = child.item
           const resourceInfos = getChildren(child)
@@ -110,6 +114,29 @@ function parseRbacData(rbacData) {
             }
             result.resources.push(resource)
           }
+        }
+        break
+      case 'access':
+        for (const child of section.children) {
+          const username = child.item
+          const access = { username, actions: [] }
+          if (child.children) {
+            for (const actionChild of child.children) {
+              const arr = actionChild.item.split(/[ \t]+/, 2)
+              const action = {
+                method: arr[0],
+                url: arr[1],
+                status: 200,
+              }
+
+              const returnChild = getChildren(actionChild)
+              if (returnChild.length === 1) {
+                action.status = parseInt(returnChild[0], 10)
+                access.actions.push(action)
+              }
+            }
+          }
+          result.accesses.push(access)
         }
         break
     }

@@ -67,11 +67,13 @@ module.exports = function() {
       }
       const userId = user.id;
       let userInfo = await UserModel.findByPk(userId);
+      /* istanbul ignore if */
       if (!userInfo) {
         log4js.error('request [%s %s] invalid! userId:%d (from token) not found in database', ctx.method, ctx.path, userId)
         throw new TokenError('TOKEN_USER_NOT_FOUND')
       }
       // only super and admin user can be use the admin backend system.
+      /* istanbul ignore if */
       if (!(userInfo.manager === 'super' || userInfo.manager === 'admin')) {
         log4js.error('request [%s %s] failed! userId:%d have no permission to do this operation', ctx.method, ctx.path, userId)
         throw new AccessDenyError('need super or admin user to do this operation.')

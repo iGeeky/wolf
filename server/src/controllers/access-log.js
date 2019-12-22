@@ -18,6 +18,7 @@ class AccessLog extends BasicService {
     const ip = this.getArg('ip')
     const status = this.getIntArg('status')
     const accessTime = this.getStartEndTimeArgs();
+    console.log('>>> accessTime:', accessTime)
 
     const order = this.getOrderByArgs('-id')
     const where = {appID: appId}

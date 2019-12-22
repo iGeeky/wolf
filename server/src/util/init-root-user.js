@@ -2,6 +2,7 @@ const config = require('../../conf/config')
 const UserModel = require('../model/user')
 const util = require('./util')
 
+/* istanbul ignore next */
 async function createUser(username, nickname, manager) {
   const user = await UserModel.findOne({where: {username}})
   if (user) {

@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "coverage": "./node_modules/.bin/nyc --reporter=html mocha test/*.test.js --exit --timeout 10000"
   },
   "dependencies": {
     "bcrypt": "^3.0.3",
@@ -41,6 +42,8 @@
     "eslint-friendly-formatter": "^4.0.1",
     "eslint-loader": "^2.1.2",
     "eslint-plugin-html": "^5.0.5",
-    "mocha": "^6.2.1"
+    "mocha": "^6.2.1",
+    "nyc": "^14.1.1",
+    "supertest": "^4.0.2"
   }
 }

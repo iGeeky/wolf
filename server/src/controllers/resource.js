@@ -77,15 +77,12 @@ class Resource extends BasicService {
     const fieldsMap = {
       matchType: {type: 'string', required: true, enums: ['equal', 'suffix', 'prefix']},
       name: {type: 'string', required: true},
-      nameLen: {type: 'integer', required: true},
       action: {type: 'string', required: true, enums: ['GET', 'HEAD', 'POST', 'OPTIONS', 'DELETE', 'PUT', 'PATCH', 'ALL']},
       permID: {type: 'string', required: true},
     }
     const id = this.getRequiredArg('id')
     const values = this.getCheckedValues(fieldsMap)
-    if (values.name) {
-      values.nameLen = values.name.length
-    }
+    values.nameLen = values.name.length
     values.priority = getPriority(values)
     values.updateTime = util.unixtime();
     const options = {where: {id}}

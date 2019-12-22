@@ -109,8 +109,8 @@ export default {
         resName: undefined,
         ip: undefined,
         status: undefined,
-        start_time: undefined,
-        end_time: undefined,
+        startTime: undefined,
+        endTime: undefined,
         sort: '-id',
       },
       datetimeRange: [],
@@ -134,8 +134,8 @@ export default {
       this.listQuery.resName
       this.listQuery.status
       this.listQuery.ip
-      this.listQuery.start_time
-      this.listQuery.end_time
+      this.listQuery.startTime
+      this.listQuery.endTime
       return Date.now()
     },
   },
@@ -148,11 +148,11 @@ export default {
     },
     datetimeRange: function(val) {
       if (val && val.length === 2) {
-        this.listQuery.start_time = moment(val[0]).format()
-        this.listQuery.end_time = moment(val[1]).format()
+        this.listQuery.startTime = moment(val[0]).format()
+        this.listQuery.endTime = moment(val[1]).format()
       } else {
-        this.listQuery.start_time = undefined
-        this.listQuery.end_time = undefined
+        this.listQuery.startTime = undefined
+        this.listQuery.endTime = undefined
       }
     },
   },

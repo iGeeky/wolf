@@ -2,6 +2,7 @@
 local _M = {}
 
 _M.sysname = 'WOLF-RBAC'
+_M.agentName = 'wolf-agent'
 
 --[[ ignore list
 format：

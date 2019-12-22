@@ -99,7 +99,7 @@ function _M.localtime(seconds, format)
     return os.date(format, seconds)
 end
 
-function _M.client_ip()
+function _M.clientIP()
     local headers = ngx.req.get_headers()
     local ip = headers["x-forwarded-for"]
     if ip == nil then

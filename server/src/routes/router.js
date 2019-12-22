@@ -22,34 +22,34 @@ router.all('/api/v1/ping', async (ctx, next) => {
   ctx.body = json.ok({server: 'rbac', now: util.currentDate()})
 })
 
-router.all(('/api/v1/:action/:method'), async (ctx, next) => {
-  const action = ctx.params.action; // get the action from uri.
+router.all(('/api/v1/:service/:method'), async (ctx, next) => {
+  const service = ctx.params.service; // get the service from uri.
   let method = ctx.params.method; // get the method from uri.
   method = _.camelCase(method.replace('\.', '_'))
-  log4js.info('action: %s call method [%s]', action, method)
-  const requestClass = routers.get(action);
+  log4js.info('service: %s call method [%s]', service, method)
+  const requestClass = routers.get(service);
   if (!requestClass) {
     ctx.status = 404;
     ctx.body = json.fail('ERR_REQUEST_NOT_FOUND')
     return;
   }
-  const service = new requestClass(ctx)
-  await service.do(method)
+  const serviceInstance = new requestClass(ctx)
+  await serviceInstance.do(method)
 })
 
-router.all(('/api/v1/:action'), async (ctx, next) => {
-  const action = ctx.params.action.toLowerCase(); // get the action from uri
+router.all(('/api/v1/:service'), async (ctx, next) => {
+  const service = ctx.params.service.toLowerCase(); // get the service from uri
   let method = ctx.request.method
   method = _.camelCase(method.replace('\.', '_'))
-  log4js.info('action: %s call method [%s]', action, method)
-  const requestClass = routers.get(action);
+  log4js.info('service: %s call method [%s]', service, method)
+  const requestClass = routers.get(service);
   if (!requestClass) {
     ctx.status = 404;
     ctx.body = json.fail('ERR_REQUEST_NOT_FOUND')
     return;
   }
-  const service = new requestClass(ctx)
-  await service.do(method)
+  const serviceInstance = new requestClass(ctx)
+  await serviceInstance.do(method)
 })
 
 module.exports = router

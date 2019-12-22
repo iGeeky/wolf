@@ -229,11 +229,6 @@ class User extends BasicService {
       this.fail(200, errors.ERR_PERMISSION_DENY, `Can't delete 'super' user`)
       return
     }
-    if (userInfo.manager === 'admin') {
-      this.log4js.error('delete admin user {id:%s, username:%s} failed!', userInfo.id, userInfo.username)
-      this.fail(200, errors.ERR_PERMISSION_DENY, `Can't delete 'admin' user`)
-      return
-    }
 
     await UserRoleModel.destroy({where: {userID: userInfo.id}})
 

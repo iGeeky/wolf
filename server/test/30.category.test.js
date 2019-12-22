@@ -8,9 +8,9 @@ function getAddResponseSchema() {
   const schema = util.okSchema({
     type: 'object',
     properties: {
-      resource: {type: 'object'},
+      category: {type: 'object'},
     },
-    required: ['resource'],
+    required: ['category'],
   })
   return schema
 }
@@ -19,70 +19,70 @@ function getListResponseSchema() {
   const schema = util.okSchema({
     type: 'object',
     properties: {
-      resources: {
+      categorys: {
         type: 'array',
         items: {
           type: 'object',
         },
+        minItems: 1,
       },
       total: {type: 'integer'},
     },
-    required: ['resources', 'total'],
+    required: ['categorys', 'total'],
   })
   return schema
 }
 
-let resource = null;
+let category = null;
 
+describe('category', function() {
+  const name = 'test-category-name'
 
-describe('resource', function() {
+  it('check exist', async function() {
+    const schema = util.okSchema()
+    const body = {value: {name: 'not-exist'}, exclude: {id: 100}}
+
+    const url = '/api/v1/category/checkExist';
+    await mocha.post({url, headers, body, schema})
+  });
+
   it('add', async function() {
     const schema = getAddResponseSchema();
     const appID = 'test-application-id'
-    const matchType = 'prefix'
-    const test_name = '/name/permission'
-    const nameLen = test_name.length;
-    const action = 'ALL';
-    const permID = 'PERM_URL_PERMISSION'
-    const body = {appID, matchType, name: test_name, nameLen, action, permID}
+    const body = {appID, name}
 
-    const url = '/api/v1/resource/add';
+    const url = '/api/v1/category/add';
     const res = await mocha.post({url, headers, body, schema})
-    resource = res.body.data.resource;
+    category = res.body.data.category;
   });
 
   it('update', async function() {
-    if (!resource) {
+    if (!category) {
       this.skip();
     }
     const schema = getAddResponseSchema();
-    const id = resource.id;
-    const matchType = 'equal'
-    const test_name = '/name/permission'
-    const nameLen = test_name.length;
-    const action = 'POST';
-    const permID = 'PERM_URL_PERMISSION'
-    const body = {id, matchType, name: test_name, nameLen, action, permID}
+    const id = category.id;
+    const name = 'test-category-name:updated'
+    const body = {id, name}
 
-    const url = '/api/v1/resource/update';
+    const url = '/api/v1/category/update';
     await mocha.post({url, headers, body, schema})
   });
 
   it('list', async function() {
     const schema = getListResponseSchema()
-    const url = '/api/v1/resource/list'
+    const url = '/api/v1/category/list'
     const appID = 'test-application-id'
-    const args = {appID}
+    const args = {appID, key: name}
     const res = await mocha.get({url, headers, args, schema})
   });
 
-
   after(async function() {
-    if (!resource) {
+    if (!category) {
       this.skip();
     }
-    const url = '/api/v1/resource/delete';
-    const id = resource.id
+    const url = '/api/v1/category/delete';
+    const id = category.id
     const body = {id}
     await mocha.post({url, headers, body})
   });

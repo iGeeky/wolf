@@ -84,7 +84,7 @@ export default {
     async getUserRole() {
       const res = await getUserRole(this.user.id, this.currentApp)
       if (res.ok) {
-        this.userRole = Object.assign(Object.assign({}, defaultUserRole), (res.data.user_role || defaultUserRole))
+        this.userRole = Object.assign(Object.assign({}, defaultUserRole), (res.data.userRole || defaultUserRole))
       }
       return res
     },
