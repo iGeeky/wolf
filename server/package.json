@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "start": "node app.js",
-    "coverage": "./node_modules/.bin/nyc --reporter=html mocha test/*.test.js --exit --timeout 10000"
+    "test": "./node_modules/.bin/nyc --reporter=html mocha test/*.test.js --exit --timeout 10000"
   },
   "dependencies": {
-    "bcrypt": "^3.0.3",
+    "bcrypt-node": "^0.1.0",
     "ejs": "^2.6.2",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.6.2",

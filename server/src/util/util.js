@@ -1,6 +1,6 @@
 
 const _ = require('lodash')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt-node')
 const moment = require('moment')
 
 function randomString(length) {
