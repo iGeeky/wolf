@@ -73,7 +73,7 @@ describe('resource', function() {
   }
 
   it('add', async function() {
-    this.timeout(1000 * 20);
+    this.timeout(1000 * 40);
 
     const schema = getAddResponseSchema();
     const matchType = 'prefix'

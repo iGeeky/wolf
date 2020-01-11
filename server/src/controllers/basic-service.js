@@ -145,8 +145,8 @@ class BasicService extends Service {
     return newUserInfo.toJSON().lastLogin;
   }
 
-  async tokenCreate(userInfo) {
-    const token = tokenUtil.tokenEncrypt(userInfo);
+  async tokenCreate(userInfo, appid) {
+    const { token, expiresIn } = tokenUtil.tokenEncrypt(userInfo, appid);
 
     const lastLogin = util.unixtime()
     try {
@@ -156,7 +156,7 @@ class BasicService extends Service {
       this.log4js.error('updateLastLoginTime failed! err:', ex)
     }
 
-    return {token}
+    return { token, expiresIn }
   }
 }
 

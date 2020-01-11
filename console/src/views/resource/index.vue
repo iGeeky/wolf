@@ -27,7 +27,7 @@
       </el-table-column>
       <el-table-column align="center" label="Match Type" min-width="20" show-overflow-tooltip>
         <template slot-scope="scope">
-          {{ scope.row.matchType }}
+          {{ scope.row.matchTypeName }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="Name" min-width="60" show-overflow-tooltip>
@@ -212,9 +212,8 @@ export default {
             this.permissions = res.data.permissions
           }
           resources.forEach((resource) => {
-            const matchType = this.getMatchName(resource.matchType)
-            resource.matchType = matchType
-
+            const matchTypeName = this.getMatchName(resource.matchType)
+            resource.matchTypeName = matchTypeName
             const permissionName = this.getPermissionName(resource.permID)
             resource.permission_name = permissionName
           })

@@ -43,7 +43,7 @@ local function url_args_as_args(ext_args)
 			args[k] = v
 		end
 	end
-	return ngx.encode_args(args)
+	return args
 end
 
 local function check_url_permission(appID, action, resName, clientIP)
@@ -101,6 +101,9 @@ end
 
 
 local function url_redirect(url, args)
+    local appID = ngx.var.appID or "appIDUnset"
+    args.appid = appID
+    args = ngx.encode_args(args)
     util.redirect(url, args)
 end
 
@@ -111,7 +114,8 @@ local function access_check()
 		ngx.log(ngx.INFO, "check permission, ignore current request!")
 		return
 	end
-	local appID = ngx.var.appID or "appIDUnset"
+
+    local appID = ngx.var.appID or "appIDUnset"
     local clientIP = util.clientIP()
     local permItem = "{appID: " .. appID .. ", action: " .. action .. ", url: " .. url .. ", clientIP: " .. clientIP .. "}"
 	ngx.log(ngx.INFO, "Cookie: ", ngx.var.http_cookie, ", permItem=", permItem)
@@ -160,7 +164,7 @@ local function access_check()
                 if url == '/' then
                     redirect_url = no_permission_html
                 end
-                url_redirect(redirect_url, ngx.encode_args({ username = username, reason=reason, appID = appID }))
+                url_redirect(redirect_url, { username = username, reason=reason })
             end
         elseif status == ngx.HTTP_BAD_REQUEST then
             ngx.status = ngx.HTTP_INTERNAL_SERVER_ERROR

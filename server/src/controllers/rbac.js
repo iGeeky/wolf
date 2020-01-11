@@ -34,11 +34,13 @@ class Rbac extends BasicService {
     const username = this.getArg('username');
     const error = this.getArg('error');
     const password = this.getArg('password');
+    const appid = this.getArg('appid')
     await this.ctx.render('login', {
       url,
       username,
       password,
       error,
+      appid,
     })
   }
 
@@ -55,7 +57,9 @@ class Rbac extends BasicService {
     const username = this.getArg('username')
     const password = this.getArg('password')
     const url = this.getArg('url', '/')
-    this.log4js.info('username %s login, redirect url: %s', username, url)
+    const appid = this.getArg('appid')
+
+    this.log4js.info('appid: %s, username %s login, redirect url: %s', appid, username, url)
     if (!username) {
       return {ok: false, reason: 'ERR_USERNAME_MISSING'}
     }
@@ -78,8 +82,8 @@ class Rbac extends BasicService {
       return {ok: false, reason: 'ERR_PASSWORD_ERROR'}
     }
 
-    const {token} = await this.tokenCreate(userInfo)
-    return {ok: true, token, userInfo}
+    const { token, expiresIn } = await this.tokenCreate(userInfo, appid)
+    return {ok: true, token, expiresIn, userInfo}
   }
 
   async loginRest() {
@@ -160,7 +164,7 @@ class Rbac extends BasicService {
       }
     }
     if (this.isRecordAccessLog()) { // Record the access log if the user logs in
-      const appID = this.getStringArg('appID')
+      const appID = this.ctx.appid || this.getStringArg('appID');
       const action = this.getStringArg('action')
       const resName = this.getStringArg('resName')
       const ip = this.getStringArg('clientIP')
@@ -174,8 +178,8 @@ class Rbac extends BasicService {
     }
   }
 
-  async _accessCheckInternal(userInfo, appId, action, resName) {
-    const query = {appID: appId, action, name: resName}
+  async _accessCheckInternal(userInfo, appID, action, resName) {
+    const query = {appID, action, name: resName}
     const resource = await this.getResource(query)
     this.log4js.info('getResource(%s) res: %s', JSON.stringify(query), JSON.stringify(resource))
     const data = {userInfo: util.filterFieldWhite(userInfo, userFields)}
@@ -207,20 +211,21 @@ class Rbac extends BasicService {
   }
 
   async accessCheck() {
-    const appId = this.getRequiredStringArg('appID')
+    //got from the token or args.
+    const appID = this.ctx.appid || this.getRequiredStringArg('appID');
     const action = this.getRequiredStringArg('action')
     const resName = this.getRequiredStringArg('resName')
 
     const tokenUserInfo = this.ctx.userInfo
-    const {userInfo, cached} = await userCache.getUserInfoById(tokenUserInfo.id, appId)
-    this.log4js.info('getUserInfoById(userId:%d, appId:%s) cached: %s', tokenUserInfo.id, appId, cached)
+    const {userInfo, cached} = await userCache.getUserInfoById(tokenUserInfo.id, appID)
+    this.log4js.info('getUserInfoById(userId:%d, appID:%s) cached: %s', tokenUserInfo.id, appID, cached)
     if (!userInfo) {
       this.log4js.error('accessCheck(args: %s) failed! token user %s not found in database', JSON.stringify(this.args), JSON.stringify(tokenUserInfo))
       throw new TokenError('TOKEN USER NOT FOUND IN DATABASE')
     }
 
     try {
-      await this._accessCheckInternal(userInfo, appId, action, resName)
+      await this._accessCheckInternal(userInfo, appID, action, resName)
     } finally {
       try{
         this._writeAccessLog();

@@ -62,6 +62,7 @@ module.exports = function() {
       // userInfo.id = parseInt(userInfo.id)
 
       ctx.userInfo = userInfo
+      ctx.appid = userInfo.appid
       ctx.token = token
 
       try {

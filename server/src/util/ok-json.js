@@ -1,13 +1,13 @@
 
 function json(ok, reason, data) {
-  const jso = {ok}
+  const jso = { ok }
   if (reason) {
     jso.reason = reason
   } else {
     jso.reason = ''
   }
   if (data) {
-    jso.data = data;
+    jso.data = data
   }
   return jso
 }
@@ -20,6 +20,6 @@ function fail(reason, data) {
   return json(false, reason, data)
 }
 
-exports.json = json;
-exports.ok = ok;
-exports.fail = fail;
+exports.json = json
+exports.ok = ok
+exports.fail = fail
