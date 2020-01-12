@@ -83,7 +83,7 @@ class Service extends ArgsUtil {
   }
 
   async do(method) {
-    console.log(' url : %s, method: %s', this.url, method)
+    log4js.info('url: %s, method: %s', this.url, method)
     try {
       await this.access(method);
       if (this[method] && typeof(this[method]) === 'function') {

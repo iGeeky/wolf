@@ -64,7 +64,7 @@ const sequelize = new Sequelize(pgConfig.url, {
     min: 0,
     idle: pgConfig.idle || 10000,
   },
-  // logging: null,
+  logging: (sql) => log4js.info(sql),
   define: {
     timestamps: false, // default is true
   },

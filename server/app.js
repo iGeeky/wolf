@@ -17,7 +17,9 @@ const path = require('path')
 
 let instance = null
 try {
-  app.use(logger())
+  app.use(logger((str, args) => {
+    log4js.info(str, args)
+  }))
   app.use(accessLog())
   app.use(views(path.join(__dirname, './tmpl'), {
     map: { html: 'ejs' },

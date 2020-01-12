@@ -1,5 +1,6 @@
 const BasicService = require('./basic-service')
 const ResourceModel = require('../model/resource')
+const resourceCache = require('../util/resource-cache')
 const util = require('../util/util')
 const Op = require('sequelize').Op;
 const _ = require('lodash')
@@ -26,6 +27,12 @@ function getPriority(values) {
 class Resource extends BasicService {
   constructor(ctx) {
     super(ctx, ResourceModel)
+  }
+  async log(bizMethod) {
+    if (bizMethod === 'update' || bizMethod === 'delete') {
+      this.log4js.info('---- url: %s, method: %s, flush resource cache ----', this.url, bizMethod)
+      resourceCache.flushResourceCache();
+    }
   }
 
   async list() {

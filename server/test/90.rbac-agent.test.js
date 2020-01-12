@@ -39,6 +39,17 @@ describe('rbac', function() {
   const password = 'd22f6718ff24'
   const appID = data.applications[0].id
 
+  if (argv.rbacInit) {
+    const opts = { quiet: true }
+    rbacUtil.rbacInit(data, password, opts)
+    process.exit(0)
+  }
+
+  if (argv.rbacDestroy) {
+    rbacUtil.rbacDestroy(data)
+    // process.exit(0)
+  }
+
   describe('rbac-init', function() {
     const opts = { quiet: true }
     rbacUtil.rbacInit(data, password, opts)
@@ -282,6 +293,7 @@ describe('rbac', function() {
   });
 
   describe('rbac policy test', function() {
+    const repeat = argv.repeat || 1
     this.timeout(1000*600)
     for (const access of data.accesses) {
       const username = access.username;
@@ -308,7 +320,9 @@ describe('rbac', function() {
               const action = method;
               const ip = '192.168.168.168'
               const args = {appID, action, resName, ip}
-              await mocha.get({url: accessCheckUrl, headers, args, status})
+              for(let i=0; i< repeat; i++) {
+                await mocha.get({url: accessCheckUrl, headers, args, status})
+              }
             })
           }
         }
@@ -326,3 +340,4 @@ describe('rbac', function() {
     rbacUtil.rbacDestroy(data)
   });
 })
+

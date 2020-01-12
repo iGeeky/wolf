@@ -4,10 +4,9 @@ const UserModel = require('../model/user')
 const ResourceModel = require('../model/resource')
 const RbacTokenError = require('../errors/rbac-token-error')
 const AccessLogModel = require('../model/access-log')
+const resourceCache = require('../util/resource-cache')
 const util = require('../util/util')
 const userCache = require('../util/user-cache')
-const Sequelize = require('sequelize')
-const Op = require('sequelize').Op;
 
 const userFields = ['username', 'nickname', 'email', 'createTime'];
 
@@ -120,23 +119,6 @@ class Rbac extends BasicService {
     this.ctx.redirect(url);
   }
 
-  async getResource(query) {
-    const {appID, action, name} = query;
-    const where = {appID: appID}
-    where.action = {[Op.in]: [action, 'ALL']}
-    where[Op.or] = [
-      {matchType: 'equal', name: name},
-      {matchType: 'suffix', name: Sequelize.literal(`right('${name}', length(name)) = name`)},
-      {matchType: 'prefix', name: Sequelize.literal(`substr('${name}', 1, length(name)) = name`)},
-    ]
-
-    const order = [['priority', 'ASC']]
-    const options = {where, order}
-
-    const resource = await ResourceModel.findOne(options)
-    return resource
-  }
-
   isRecordAccessLog() {
     if (this.ctx.action === 'OPTIONS') {
       return false;
@@ -146,6 +128,11 @@ class Rbac extends BasicService {
   }
 
   _writeAccessLog() {
+    if (!this.isRecordAccessLog()) {
+      return
+    }
+
+    // Record the access log if the user logs in
     let userID = -1;
     let username = 'none'
     let nickname = 'none';
@@ -163,48 +150,50 @@ class Rbac extends BasicService {
         return
       }
     }
-    if (this.isRecordAccessLog()) { // Record the access log if the user logs in
-      const appID = this.ctx.appid || this.getStringArg('appID');
-      const action = this.getStringArg('action')
-      const resName = this.getStringArg('resName')
-      const ip = this.getStringArg('clientIP')
-      const body = {}
-      const contentType = null;
-      const status = this.ctx.status
-      const date = util.currentDate('YYYY-MM-DD')
-      const accessTime = util.unixtime();
-      const values = {appID, userID, username, nickname, action, resName, matchedResource, status, body, contentType, date, accessTime, ip}
-      AccessLogModel.create(values);
-    }
+    const appID = this.ctx.appid || this.getStringArg('appID');
+    const action = this.getStringArg('action')
+    const resName = this.getStringArg('resName')
+    const ip = this.getStringArg('clientIP')
+    const body = {}
+    const contentType = null;
+    const status = this.ctx.status
+    const date = util.currentDate('YYYY-MM-DD')
+    const accessTime = util.unixtime();
+    const values = {appID, userID, username, nickname, action, resName, matchedResource, status, body, contentType, date, accessTime, ip}
+    AccessLogModel.create(values);
   }
 
   async _accessCheckInternal(userInfo, appID, action, resName) {
-    const query = {appID, action, name: resName}
-    const resource = await this.getResource(query)
-    this.log4js.info('getResource(%s) res: %s', JSON.stringify(query), JSON.stringify(resource))
+    const {resource, cached} = await resourceCache.getResource(appID, action, resName)
+    if(resource) {
+      resource.toString = function toString() {
+        return JSON.stringify(this)
+      }
+    }
+    this.log4js.info('getResource({appID: %s, action: %s, resName: %s}) res: %s, cached: %s', appID, action, resName, resource, cached)
     const data = {userInfo: util.filterFieldWhite(userInfo, userFields)}
     if (resource) {
       this.ctx.resource = resource;
       const permID = resource.permID;
       if (permID === 'ALLOW_ALL') { // allow all user access
-        this.log4js.info('resource %s permission is [%s], allow all user to access!', JSON.stringify(query), permID)
+        this.log4js.info('resource {appID: %s, action: %s, resName: %s} permission is [%s], allow all user to access!', appID, action, resName, permID)
         this.success(data)
       } else if (permID === 'DENY_ALL') { // deny all user access
-        this.log4js.info('resource %s permission is [%s], not allow any user to access!', JSON.stringify(query), permID)
+        this.log4js.info('resource {appID: %s, action: %s, resName: %s} permission is [%s], not allow any user to access!', appID, action, resName, permID)
         const reason = `Access failure. resource '${resName}' is deny all user`
         this.fail(401, reason, data)
       } else if (userInfo.permissions[permID]) { // have permission
-        this.log4js.info('user [%s] have permission [%s] to access %s', userInfo.username, permID, JSON.stringify(query))
+        this.log4js.info('user [%s] have permission [%s] to access {appID: %s, action: %s, resName: %s}', userInfo.username, permID, appID, action, resName)
         this.success(data)
       } else { // have no permission
-        this.log4js.info('user [%s] have no permission [%s] to access %s', userInfo.username, permID, JSON.stringify(query))
+        this.log4js.info('user [%s] have no permission [%s] to access {appID: %s, action: %s, resName: %s}', userInfo.username, permID, appID, action, resName)
         // TODO: get perm name.
         const reason = `Access failure. resource '${resName}' is required permission [${permID}]`
         this.fail(401, reason, data)
       }
       return
     } else {
-      this.log4js.info('user [%s] check permission for resource %s failed, resource not exist!', userInfo.username, JSON.stringify(query))
+      this.log4js.info('user [%s] check permission for resource {appID: %s, action: %s, resName: %s} failed, resource not exist!', userInfo.username, appID, action, resName)
       const reason = `Access failure. resource '${resName}' not exist`
       this.fail(401, reason, data)
     }

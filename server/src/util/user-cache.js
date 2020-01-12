@@ -20,8 +20,6 @@ async function getUserInfoFromDbById(userId, appId) {
   const options = {where}
   const userRole = await UserRoleModel.findOne(options)
   if (userRole) {
-    // permIDs: {type: Seq.ARRAY(Seq.STRING)},
-    // roleIDs: {type: Seq.ARRAY(Seq.STRING)},
     if (userRole.permIDs) {
       userRole.permIDs.forEach((permId) => {
         permissions[permId] = true;
