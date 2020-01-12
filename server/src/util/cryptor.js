@@ -80,7 +80,7 @@ function aesEncrypt(data, key) {
 }
 
 function getEncryptKey(url) {
-  if (url === '/api/v1/device/reg' || url === '/api/v1/config') {
+  if (url === '/wolf/device/reg' || url === '/wolf/config') {
     return FirstEncryptKey
   } else {
     if (!exports.EncryptKey) {
@@ -91,7 +91,7 @@ function getEncryptKey(url) {
 }
 
 function encryptBody(data, url) {
-  if (url.startsWith('/api/v1/man/')) {
+  if (url.startsWith('/wolf/man/')) {
     return undefined
   }
 
@@ -101,7 +101,7 @@ function encryptBody(data, url) {
 }
 
 function decryptBody(data, url) {
-  if (url.startsWith('/api/v1/man/')) {
+  if (url.startsWith('/wolf/man/')) {
     return undefined
   }
   const encryptKey = getEncryptKey(url)

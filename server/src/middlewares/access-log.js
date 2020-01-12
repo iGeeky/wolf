@@ -8,8 +8,8 @@ const _ = require('lodash')
 
 
 const ignoreUrls = {
-  ['/api/v1/user/info']: true,
-  ['/api/v1/access-log/list']: true,
+  ['/wolf/user/info']: true,
+  ['/wolf/access-log/list']: true,
 }
 
 function isRecordAccessLog(ctx) {
@@ -21,7 +21,7 @@ function isRecordAccessLog(ctx) {
     return false;
   }
 
-  if (_.startsWith(ctx.path, '/api/v1/rbac/')) {
+  if (_.startsWith(ctx.path, '/wolf/rbac/')) {
     return false;
   }
   if (_.endsWith(ctx.path, 'checkExist')) {

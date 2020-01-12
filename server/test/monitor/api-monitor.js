@@ -38,7 +38,7 @@ describe('monitor', function() {
       }
       const schema = util.okSchema(dataSchema);
       const args = {}
-      const url = '/api/v1/ping';
+      const url = '/wolf/ping';
       await mocha.get({url, headers, args, status: 200, schema})
     });
 
@@ -66,7 +66,7 @@ describe('monitor', function() {
       }
       const schema = util.okSchema(dataSchema)
       const body = { username, password}
-      const url = `/api/v1/user/login`;
+      const url = `/wolf/user/login`;
       const res = await mocha.post({url, headers, body, status: 200, schema})
       headers['x-rbac-token'] = res.body.data.token
     });

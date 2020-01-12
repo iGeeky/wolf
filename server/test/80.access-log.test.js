@@ -28,7 +28,7 @@ describe('access-log', function() {
   const format='YYYY-MM-DD HH:mm:ss';
   const startTime = moment.unix(now).format(format)
   const endTime = moment.unix(now + 600).format(format)
-  const testUrl = '/api/v1/permission/list'
+  const testUrl = '/wolf/permission/list'
 
   it('test permission list', async function() {
     const schema = util.okSchema();
@@ -38,7 +38,7 @@ describe('access-log', function() {
   });
   it('list all', async function() {
     const schema = getListResponseSchema()
-    const url = '/api/v1/access-log/list'
+    const url = '/wolf/access-log/list'
     const appID = 'rbac-console'
     const args = {appID}
     const res = await mocha.get({url, headers, args, schema})
@@ -46,7 +46,7 @@ describe('access-log', function() {
 
   it('list one item', async function() {
     const schema = getListResponseSchema()
-    const url = '/api/v1/access-log/list'
+    const url = '/wolf/access-log/list'
     const appID = 'rbac-console'
     const username = 'root'
     const action = 'GET'

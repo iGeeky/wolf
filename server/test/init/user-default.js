@@ -21,7 +21,7 @@ describe('user', function() {
     const tel = '13410002000'
     const appIds = ['test']
     const body = {username, nickname, password, email, tel, appIDs: appIds}
-    const url = '/api/v1/user/add';
+    const url = '/wolf/user/add';
 
     await mocha.post({url, headers, body, schema})
   });

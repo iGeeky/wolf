@@ -8,9 +8,9 @@ const _ = require('lodash')
 
 const IGNORE_URLS = {
   'GET:/favicon.ico': true,
-  'GET:/api/v1/ping': true,
-  'POST:/api/v1/user/login': true,
-  'POST:/api/v1/user/logout': true,
+  'GET:/wolf/ping': true,
+  'POST:/wolf/user/login': true,
+  'POST:/wolf/user/logout': true,
 
   // 'POST:/v1/user/add': true,
 }
@@ -19,11 +19,11 @@ function needCheckToken(ctx) {
   if (ctx.method === 'OPTIONS') {
     return false;
   }
-  if (!_.startsWith(ctx.path, '/api/')) {
+  if (!_.startsWith(ctx.path, '/wolf/')) {
     return false;
   }
 
-  if (_.startsWith(ctx.path, '/api/v1/rbac/')) {
+  if (_.startsWith(ctx.path, '/wolf/rbac/')) {
     return false;
   }
 

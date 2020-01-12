@@ -1,14 +1,14 @@
 
 local _M = {}
 
-local login_url = "/api/v1/rbac/login"
-local login_post_url = "/api/v1/rbac/login.post"
-local logout_url = "/api/v1/rbac/logout"
-local no_permission = "/api/v1/rbac/no_permission"
-local no_permission_html = "/api/v1/rbac/no_permission.html"
-local access_check_url = "/api/v1/rbac/access_check"
-local change_pwd_url = "/api/v1/rbac/change_pwd"
-local change_pwd_post_url = "/api/v1/rbac/change_pwd.post"
+local login_url = "/wolf/rbac/login"
+local login_post_url = "/wolf/rbac/login.post"
+local logout_url = "/wolf/rbac/logout"
+local no_permission = "/wolf/rbac/no_permission"
+local no_permission_html = "/wolf/rbac/no_permission.html"
+local access_check_url = "/wolf/rbac/access_check"
+local change_pwd_url = "/wolf/rbac/change_pwd"
+local change_pwd_post_url = "/wolf/rbac/change_pwd.post"
 
 
 local ignore_list = {login_url, login_post_url,logout_url,no_permission,no_permission_html,access_check_url, change_pwd_url, change_pwd_post_url}

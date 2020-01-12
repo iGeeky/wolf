@@ -82,7 +82,7 @@ describe('resource', function() {
     const permID = 'PERM_DEFAULT'
     const body = {appID, matchType, name, action, permID}
 
-    const url = '/api/v1/resource/add';
+    const url = '/wolf/resource/add';
     const res = await mocha.post({url, headers, body, schema})
     resource = res.body.data.resource;
 
@@ -114,13 +114,13 @@ describe('resource', function() {
     const action = 'ALL';
     const permID = 'PERM_DEFAULT'
     const body = {id, matchType, name, action, permID}
-    const url = '/api/v1/resource/update';
+    const url = '/wolf/resource/update';
     await mocha.post({url, headers, body, schema})
   });
 
   it('list', async function() {
     const schema = getListResponseSchema()
-    const url = '/api/v1/resource/list'
+    const url = '/wolf/resource/list'
     const limit = 128;
     const sort = '+priority';
     const args = {appID, sort, limit}
@@ -129,7 +129,7 @@ describe('resource', function() {
 
   it('list search empty', async function() {
     const schema = getEmptyListResponseSchema()
-    const url = '/api/v1/resource/list'
+    const url = '/wolf/resource/list'
     const args = {appID, key: 'not-exist'}
     const res = await mocha.get({url, headers, args, schema})
   });
@@ -138,7 +138,7 @@ describe('resource', function() {
     if (!appID) {
       this.skip();
     }
-    const url = '/api/v1/resource/delete_by_app_id';
+    const url = '/wolf/resource/delete_by_app_id';
     const body = {appID}
     await mocha.post({url, headers, body})
   });

@@ -5,9 +5,9 @@ const _ = require('lodash')
 
 
 const IGNORE_URLS = {
-  'GET:/api/v1/rbac/login': true,
-  'POST:/api/v1/rbac/login.post': true,
-  'POST:/api/v1/rbac/login.rest': true,
+  'GET:/wolf/rbac/login': true,
+  'POST:/wolf/rbac/login.post': true,
+  'POST:/wolf/rbac/login.rest': true,
   // 'POST:/v1/user/add': true,
 }
 
@@ -16,7 +16,7 @@ function needCheckToken(ctx) {
     return false;
   }
 
-  if (!_.startsWith(ctx.path, '/api/v1/rbac/')) {
+  if (!_.startsWith(ctx.path, '/wolf/rbac/')) {
     return false;
   }
 

@@ -68,7 +68,7 @@ describe('user', function() {
     const username = 'user-not-found'
     const password = 'password'
     const body = {username, password}
-    const url = '/api/v1/user/login';
+    const url = '/wolf/user/login';
 
     await mocha.post({url, headers, body, schema})
   });
@@ -78,7 +78,7 @@ describe('user', function() {
     const username = 'root'
     const password = 'error-password'
     const body = {username, password}
-    const url = '/api/v1/user/login';
+    const url = '/wolf/user/login';
 
     await mocha.post({url, headers, body, schema})
   });
@@ -90,7 +90,7 @@ describe('user', function() {
     const tel = '13012341234'
     const appIds = ['ROOT', 'TEST']
     const body = {username, nickname, email, tel, appIDs: appIds, password: util.defPassword()}
-    const url = '/api/v1/user/add';
+    const url = '/wolf/user/add';
     const res = await mocha.post({url, headers, body, schema})
     id = res.body.data.userInfo.id
   });
@@ -105,7 +105,7 @@ describe('user', function() {
     const tel = '13012341234'
     const appIds = ['ROOT', 'TEST']
     const body = {id, username, nickname, email, tel, appIDs: appIds, password: util.defPassword()}
-    const url = '/api/v1/user/update';
+    const url = '/wolf/user/update';
     const res = await mocha.post({url, headers, body, schema})
   });
 
@@ -113,7 +113,7 @@ describe('user', function() {
     const schema = util.failSchema('ERR_USER_NOT_FOUND');
     const username = 'not-exist-username'
     const body = {username}
-    const url = '/api/v1/user/delete';
+    const url = '/wolf/user/delete';
     const res = await mocha.post({url, headers, body, schema})
   });
 
@@ -121,7 +121,7 @@ describe('user', function() {
     const schema = util.failSchema('ERR_USER_NOT_FOUND');
     const id = 99999999999
     const body = {id}
-    const url = '/api/v1/user/delete';
+    const url = '/wolf/user/delete';
     const res = await mocha.post({url, headers, body, schema})
   });
 
@@ -129,13 +129,13 @@ describe('user', function() {
     const schema = util.failSchema('ERR_PERMISSION_DENY');
     const username = 'root'
     const body = {username}
-    const url = '/api/v1/user/delete';
+    const url = '/wolf/user/delete';
     const res = await mocha.post({url, headers, body, schema})
   });
 
   it('list', async function() {
     const schema = getListResponseSchema()
-    const url = '/api/v1/user/list'
+    const url = '/wolf/user/list'
     const args = {key: username}
     await mocha.get({url, headers, args, schema})
   });
@@ -155,14 +155,14 @@ describe('user', function() {
       const appIDs = ['test-app-id']
       const manager = 'admin'
       const body = {username, nickname, email, tel, appIDs, manager, password}
-      const url = '/api/v1/user/add';
+      const url = '/wolf/user/add';
       const res = await mocha.post({url, headers: util.adminHeaders(), body, status: 200, schema})
       userID = res.body.data.userInfo.id
     });
     it('admin login success', async function() {
       const schema = util.okSchema()
       const body = { username, password}
-      const url = `/api/v1/user/login`;
+      const url = `/wolf/user/login`;
       const res = await mocha.post({url, headers, body, status: 200, schema})
       headers['x-rbac-token'] = res.body.data.token
     });
@@ -170,7 +170,7 @@ describe('user', function() {
     it('delete admin user failed, access deny', async function() {
       const schema = util.failSchema('ERR_ACCESS_DENIED');
       const body = { id: 'id-not-exist' }
-      const url = `/api/v1/user/delete`;
+      const url = `/wolf/user/delete`;
       await mocha.post({url, headers, body, status: 401, schema})
     });
 
@@ -181,14 +181,14 @@ describe('user', function() {
       const appID = 'not-exist-app-id'
       const body = {userID, appID, permIDs, roleIDs}
 
-      const url = '/api/v1/user-role/set';
+      const url = '/wolf/user-role/set';
       await mocha.post({url, headers, body, status: 401, schema})
     });
 
     it('reset admin password', async function() {
       const schema = util.okSchema()
       const body = { id: userID }
-      const url = '/api/v1/user/reset_pwd';
+      const url = '/wolf/user/reset_pwd';
       const res = await mocha.post({url, headers: util.adminHeaders(), body, schema})
       newPassword = res.body.data.password
     });
@@ -199,7 +199,7 @@ describe('user', function() {
       }
       const schema = util.okSchema()
       const body = { username, password: newPassword}
-      const url = `/api/v1/user/login`;
+      const url = `/wolf/user/login`;
       await mocha.post({url, headers, body, status: 200, schema})
     });
 
@@ -209,14 +209,14 @@ describe('user', function() {
       }
       const schema = util.failSchema('ERR_PASSWORD_ERROR')
       const body = { username, password}
-      const url = `/api/v1/user/login`;
+      const url = `/wolf/user/login`;
       await mocha.post({url, headers, body, status: 200, schema})
     });
 
     after(async function() {
       const schema = util.okSchema({type: 'object'});
       const body = {username}
-      const url = '/api/v1/user/delete';
+      const url = '/wolf/user/delete';
       await mocha.post({url, headers: util.adminHeaders(), body, schema})
     });
   });
@@ -225,7 +225,7 @@ describe('user', function() {
     const username = 'test-user-username'
     const schema = util.okSchema({type: 'object'});
     const body = {username}
-    const url = '/api/v1/user/delete';
+    const url = '/wolf/user/delete';
     await mocha.post({url, headers, body, schema})
   });
 });

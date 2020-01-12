@@ -44,7 +44,7 @@ describe('role', function() {
     const description = 'test-role-description'
     const body = {id, name, description, appID, permIDs: ['PERM_OK', 'PERM_02']}
 
-    const url = '/api/v1/role/add';
+    const url = '/wolf/role/add';
     await mocha.post({url, headers, body, schema})
   });
 
@@ -56,20 +56,20 @@ describe('role', function() {
     const description = 'test-role-description:updated'
     const body = {id, name, description, permIDs: permIds}
 
-    const url = '/api/v1/role/update';
+    const url = '/wolf/role/update';
     await mocha.post({url, headers, body, schema})
   });
 
   it('list', async function() {
     const schema = getListResponseSchema()
-    const url = '/api/v1/role/list'
+    const url = '/wolf/role/list'
     const args = {appID, key: name}
     const res = await mocha.get({url, headers, args, schema})
   });
 
 
   after(async function() {
-    const url = '/api/v1/role/delete';
+    const url = '/wolf/role/delete';
     const id = 'test-role-id'
     const body = {id}
     await mocha.post({url, headers, body})

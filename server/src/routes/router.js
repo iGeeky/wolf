@@ -18,11 +18,11 @@ require('fs').readdirSync(controllerPath).forEach(function(filename) {
 
 const router = new Router();
 
-router.all('/api/v1/ping', async (ctx, next) => {
+router.all('/wolf/ping', async (ctx, next) => {
   ctx.body = json.ok({server: 'rbac', now: util.currentDate()})
 })
 
-router.all(('/api/v1/:service/:method'), async (ctx, next) => {
+router.all(('/wolf/:service/:method'), async (ctx, next) => {
   const service = ctx.params.service; // get the service from uri.
   let method = ctx.params.method; // get the method from uri.
   method = _.camelCase(method.replace('\.', '_'))
@@ -37,7 +37,7 @@ router.all(('/api/v1/:service/:method'), async (ctx, next) => {
   await serviceInstance.do(method)
 })
 
-router.all(('/api/v1/:service'), async (ctx, next) => {
+router.all(('/wolf/:service'), async (ctx, next) => {
   const service = ctx.params.service.toLowerCase(); // get the service from uri
   let method = ctx.request.method
   method = _.camelCase(method.replace('\.', '_'))

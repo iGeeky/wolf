@@ -43,7 +43,7 @@ describe('permission', function() {
     const appID = 'test-application-id'
     const body = {id, name, description, appID, categoryID: 2}
 
-    const url = '/api/v1/permission/add';
+    const url = '/wolf/permission/add';
     await mocha.post({url, headers, body, schema})
   });
 
@@ -55,13 +55,13 @@ describe('permission', function() {
     const description = 'test-permission-description:updated'
     const body = {id, name, description, categoryID: categoryId}
 
-    const url = '/api/v1/permission/update';
+    const url = '/wolf/permission/update';
     await mocha.post({url, headers, body, schema})
   });
 
   it('list', async function() {
     const schema = getListResponseSchema()
-    const url = '/api/v1/permission/list'
+    const url = '/wolf/permission/list'
     const appID = 'test-application-id'
     const args = {appID, key: name}
     const res = await mocha.get({url, headers, args, schema})
@@ -69,7 +69,7 @@ describe('permission', function() {
 
 
   after(async function() {
-    const url = '/api/v1/permission/delete';
+    const url = '/wolf/permission/delete';
     const id = 'test-permission-id'
     const body = {id}
     await mocha.post({url, headers, body})

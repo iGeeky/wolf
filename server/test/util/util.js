@@ -71,7 +71,7 @@ function getAdminLoginResponseSchema() {
 async function adminLoginInternal(headers, username, password) {
   const schema = getAdminLoginResponseSchema();
   const body = {'username': username, 'password': password}
-  const url = `/api/v1/user/login`;
+  const url = `/wolf/user/login`;
   const res = await mocha.post({url, headers, body, schema})
   const token = res.body.data.token;
   // console.log('>>> admin[%s] token:::', username, token)

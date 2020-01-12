@@ -55,7 +55,7 @@ describe('application', function() {
     const description = 'application description'
     const body = {id, name, description}
 
-    const url = '/api/v1/application/add';
+    const url = '/wolf/application/add';
     await mocha.post({url, headers, body, schema})
   });
 
@@ -65,41 +65,41 @@ describe('application', function() {
     const description = 'application description updated'
     const body = {id, name, description}
 
-    const url = '/api/v1/application/update';
+    const url = '/wolf/application/update';
     await mocha.post({url, headers, body, schema})
   });
 
   it('get ok', async function() {
     const schema = getAddResponseSchema();
     const args = {id}
-    const url = '/api/v1/application/get';
+    const url = '/wolf/application/get';
     await mocha.get({url, headers, args, schema})
   });
 
   it('get failed, not found', async function() {
     const schema = util.failSchema('ERR_OBJECT_NOT_FOUND')
     const args = {id: 'not-found-app-id'}
-    const url = '/api/v1/application/get';
+    const url = '/wolf/application/get';
     await mocha.get({url, headers, args, schema})
   });
 
   it('list', async function() {
     const schema = getListResponseSchema()
-    const url = '/api/v1/application/list'
+    const url = '/wolf/application/list'
     const args = {key: name}
     await mocha.get({url, headers, args, schema})
   });
 
   it('list all', async function() {
     const schema = getListResponseSchema()
-    const url = '/api/v1/application/list_all'
+    const url = '/wolf/application/list_all'
     const args = {}
     await mocha.get({url, headers, args, schema})
   });
 
   it('diagram', async function() {
     const schema = util.okSchema()
-    const url = '/api/v1/application/diagram'
+    const url = '/wolf/application/diagram'
     const args = {id}
     await mocha.get({url, headers, args, schema})
   });
@@ -118,13 +118,13 @@ describe('application', function() {
       const appIDs = [id]
       const manager = 'admin'
       const body = {username, nickname, email, tel, appIDs, manager, password}
-      const url = '/api/v1/user/add';
+      const url = '/wolf/user/add';
       await mocha.post({url, headers: util.adminHeaders(), body, status: 200, schema})
     });
     it('admin login success', async function() {
       const schema = util.okSchema()
       const body = { username, password}
-      const url = `/api/v1/user/login`;
+      const url = `/wolf/user/login`;
       const res = await mocha.post({url, headers, body, status: 200, schema})
       headers['x-rbac-token'] = res.body.data.token
     });
@@ -132,13 +132,13 @@ describe('application', function() {
     it('delete application failed, access deny', async function() {
       const schema = util.failSchema('ERR_ACCESS_DENIED');
       const body = { id: 'id-not-exist' }
-      const url = `/api/v1/application/delete`;
+      const url = `/wolf/application/delete`;
       await mocha.post({url, headers, body, status: 401, schema})
     });
 
     it('list', async function() {
       const schema = getListResponseSchema()
-      const url = '/api/v1/application/list'
+      const url = '/wolf/application/list'
       const args = {key: name}
       await mocha.get({url, headers, args, schema})
     });
@@ -146,13 +146,13 @@ describe('application', function() {
     after(async function() {
       const schema = util.okSchema({type: 'object'});
       const body = {username}
-      const url = '/api/v1/user/delete';
+      const url = '/wolf/user/delete';
       await mocha.post({url, headers: util.adminHeaders(), body, schema})
     });
   });
 
   after(async function() {
-    const url = '/api/v1/application/delete';
+    const url = '/wolf/application/delete';
     const body = {id}
     await mocha.post({url, headers, body})
   });

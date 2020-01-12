@@ -258,7 +258,7 @@ class Rbac extends BasicService {
       }
     )
     this.ctx.status = 302;
-    this.ctx.redirect('/api/v1/rbac/login');
+    this.ctx.redirect('/wolf/rbac/login');
   }
 
   async changePwd() {

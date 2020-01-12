@@ -4,10 +4,10 @@ local json = require("json")
 local agent_pub = require("agent_pub")
 local config = require("config")
 
-local login_url = "/api/v1/rbac/login"
-local no_permission = "/api/v1/rbac/no_permission"
-local no_permission_html = "/api/v1/rbac/no_permission.html"
-local access_check_url = "/api/v1/rbac/access_check"
+local login_url = "/wolf/rbac/login"
+local no_permission = "/wolf/rbac/no_permission"
+local no_permission_html = "/wolf/rbac/no_permission.html"
+local access_check_url = "/wolf/rbac/access_check"
 
 
 function get_token()

@@ -51,7 +51,7 @@ describe('user-role', function() {
     const roleIDs = ['ROLE_01', 'ROLE_02']
     const body = {userID, appID, permIDs, roleIDs}
 
-    const url = '/api/v1/user-role/set';
+    const url = '/wolf/user-role/set';
     await mocha.post({url, headers, body, schema})
   });
 
@@ -61,28 +61,28 @@ describe('user-role', function() {
     const roleIDs = ['ROLE_01', 'ROLE_02', 'ROLE_UPDATE']
     const body = {userID, appID, permIDs, roleIDs}
 
-    const url = '/api/v1/user-role/set';
+    const url = '/wolf/user-role/set';
     await mocha.post({url, headers, body, schema})
   });
 
 
   it('get', async function() {
     const schema = getAddResponseSchema();
-    const url = '/api/v1/user-role/get'
+    const url = '/wolf/user-role/get'
     const args = {userID, appID}
     const res = await mocha.get({url, headers, args, schema})
   });
 
   it('get empty', async function() {
     const schema = getEmptyUserRoleSchema();
-    const url = '/api/v1/user-role/get'
+    const url = '/wolf/user-role/get'
     const args = {userID, appID: 'not-exist-app'}
     const res = await mocha.get({url, headers, args, schema})
   });
 
 
   after(async function() {
-    const url = '/api/v1/user-role/delete';
+    const url = '/wolf/user-role/delete';
     const body = {userID, appID}
     await mocha.post({url, headers, body})
   });

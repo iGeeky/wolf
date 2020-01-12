@@ -20,7 +20,7 @@ module.exports = function() {
         ctx.body = json.fail('ERR_TOKEN_INVALID', err.message)
       } else if (err instanceof RbacTokenError) {
         // ctx.status = 302
-        // ctx.redirect('/api/v1/rbac/login?error=Login%20Required')
+        // ctx.redirect('/wolf/rbac/login?error=Login%20Required')
         ctx.status = 401
         ctx.body = json.fail('ERR_TOKEN_INVALID', err.message)
       } else if (err instanceof AccessDenyError) {

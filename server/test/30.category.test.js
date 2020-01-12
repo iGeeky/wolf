@@ -42,7 +42,7 @@ describe('category', function() {
     const schema = util.okSchema()
     const body = {value: {name: 'not-exist'}, exclude: {id: 100}}
 
-    const url = '/api/v1/category/checkExist';
+    const url = '/wolf/category/checkExist';
     await mocha.post({url, headers, body, schema})
   });
 
@@ -51,7 +51,7 @@ describe('category', function() {
     const appID = 'test-application-id'
     const body = {appID, name}
 
-    const url = '/api/v1/category/add';
+    const url = '/wolf/category/add';
     const res = await mocha.post({url, headers, body, schema})
     category = res.body.data.category;
   });
@@ -65,13 +65,13 @@ describe('category', function() {
     const name = 'test-category-name:updated'
     const body = {id, name}
 
-    const url = '/api/v1/category/update';
+    const url = '/wolf/category/update';
     await mocha.post({url, headers, body, schema})
   });
 
   it('list', async function() {
     const schema = getListResponseSchema()
-    const url = '/api/v1/category/list'
+    const url = '/wolf/category/list'
     const appID = 'test-application-id'
     const args = {appID, key: name}
     const res = await mocha.get({url, headers, args, schema})
@@ -81,7 +81,7 @@ describe('category', function() {
     if (!category) {
       this.skip();
     }
-    const url = '/api/v1/category/delete';
+    const url = '/wolf/category/delete';
     const id = category.id
     const body = {id}
     await mocha.post({url, headers, body})

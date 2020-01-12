@@ -185,7 +185,7 @@ server {
     server_name localhost;
 
   	# 如果是restful接口, 需要定制配置没有权限时, 返回的json格式. 这里需要跟前端协调好.
-    location = /api/v1/rbac/no_permission {
+    location = /wolf/rbac/no_permission {
         content_by_lua_block {
             ngx.status = 200;
             ngx.header["Content-Type"] = "application/json; charset=utf-8";
@@ -195,7 +195,7 @@ server {
         }
     }
 
-    location /api/v1/rbac {
+    location /wolf/rbac {
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header REMOTE-HOST $remote_addr;
