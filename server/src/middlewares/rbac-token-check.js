@@ -8,6 +8,8 @@ const IGNORE_URLS = {
   'GET:/wolf/rbac/login': true,
   'POST:/wolf/rbac/login.post': true,
   'POST:/wolf/rbac/login.rest': true,
+  'POST:/wolf/rbac/login/post': true,
+  'POST:/wolf/rbac/login/rest': true,
   // 'POST:/v1/user/add': true,
 }
 

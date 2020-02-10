@@ -46,6 +46,7 @@
     "nprogress": "0.2.0",
     "screenfull": "4.2.0",
     "vue": "2.6.10",
+    "vue-json-viewer": "^2.2.8",
     "vue-router": "3.0.2",
     "vuex": "3.1.0"
   },
@@ -55,7 +56,6 @@
     "@vue/cli-plugin-babel": "3.5.3",
     "@vue/cli-plugin-eslint": "^3.9.1",
     "@vue/cli-service": "3.5.3",
-
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.0.1",
     "eslint": "5.15.3",

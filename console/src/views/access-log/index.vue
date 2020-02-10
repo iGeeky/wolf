@@ -71,15 +71,34 @@
       </el-table-column>
       <el-table-column align="center" label="Access Time" min-width="20" show-overflow-tooltip prop="accessTime" :formatter="unixtimeFormat" />
       <el-table-column align="center" label="Client IP" min-width="15" show-overflow-tooltip prop="ip" />
-      <el-table-column align="center" label="Operations" min-width="10" show-overflow-tooltip />
+      <el-table-column align="center" label="Operations" min-width="10" show-overflow-tooltip>
+        <template slot-scope="scope">
+          <el-button v-if="!jsonIsEmpty(scope.row.body)" type="primary" size="small" @click="handleJsonView(scope)">View Body</el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <div class="pagination pagination-center">
       <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="listAccessLogs" />
     </div>
+
+    <el-dialog
+      id="jsonViewer"
+      title="Json Viewer"
+      :visible.sync="jsonViewerVisible"
+      center
+    >
+      <json-viewer
+        :value="accessLog.body"
+        :expand-depth="5"
+        copyable
+      />
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import { deepClone } from '@/utils'
+import JsonViewer from 'vue-json-viewer'
 import CurrentApp from '@/components/CurrentApp'
 import DatetimePicker from '@/components/DatetimePicker'
 import { listAccessLogs } from '@/api/access-log'
@@ -92,10 +111,11 @@ const defaultAccessLog = {
 
 export default {
   name: 'AccessLog',
-  components: { CurrentApp, Pagination, DatetimePicker },
+  components: { CurrentApp, Pagination, DatetimePicker, JsonViewer },
   props: {},
   data() {
     return {
+      jsonViewerVisible: false,
       accessLog: Object.assign({}, defaultAccessLog),
       routes: [],
       accessLogs: [],
@@ -179,6 +199,24 @@ export default {
     handleFilter() {
       this.listQuery.page = 1
       this.listAccessLogs()
+    },
+    handleJsonView(scope) {
+      this.accessLog = deepClone(scope.row)
+      this.jsonViewerVisible = true
+    },
+
+    handleEdit(scope) {
+      this.dialogType = 'edit'
+      this.dialogVisible = true
+      this.checkStrictly = true
+      this.application = deepClone(scope.row)
+    },
+
+    jsonIsEmpty(jso) {
+      if (!jso || Object.keys(jso).length === 0) {
+        return true
+      }
+      return false
     },
   },
 }
