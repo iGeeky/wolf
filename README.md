@@ -48,7 +48,7 @@ wolf是一个通用RBAC系统，适用于所有的HTTP应用．统一授权及�
 * 自带管理后台(`console模块`)，可对`应用`，`用户`，`角色`, `权限`及`资源`进行管理
 * 支持`Restful`接口, 也支持后端渲染的`纯html`应用
 * 支持访问日志记录与查询, 以进行审计及问题追溯.
-* 支持APISIX插件[apisix-plugin-rbac](https://github.com/iGeeky/apisix-plugin-rbac)
+* 支持APISIX网关[apache-apisix:wolf-rbac](https://github.com/apache/incubator-apisix/blob/master/doc/plugins/wolf-rbac-cn.md)
 * 系统有三大模块:
   * Wolf-Server 服务实现,管理后台功能实现
   * Wolf-Console 管理后台前端代码实现
