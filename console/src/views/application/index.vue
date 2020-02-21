@@ -228,6 +228,7 @@ export default {
               type: 'success',
               message: 'Delete succed!',
             })
+            await this.$store.dispatch('user/getInfo')
           }
         })
         .catch(err => { console.error(err) })
@@ -254,6 +255,7 @@ export default {
         this.listApplications()
         const { name } = this.application
         this.dialogVisible = false
+        await this.$store.dispatch('user/getInfo')
         this.$notify({
           title: 'Success',
           dangerouslyUseHTMLString: true,
@@ -271,6 +273,7 @@ export default {
 
         const { name } = this.application
         this.dialogVisible = false
+        await this.$store.dispatch('user/getInfo')
         this.$notify({
           title: 'Success',
           dangerouslyUseHTMLString: true,
