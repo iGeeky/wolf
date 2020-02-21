@@ -23,5 +23,3 @@ docker run -ti --rm --name wolf-agent-or -p 10096:10096 \
 igeeky/wolf-agent
 
 ```
-
-wordlessly

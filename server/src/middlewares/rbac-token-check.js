@@ -1,6 +1,7 @@
 const log4js = require('../util/log4js')
 const RbacTokenError = require('../errors/rbac-token-error')
 const tokenUtil = require('../util/token-util')
+const userCache = require('../util/user-cache')
 const _ = require('lodash')
 
 
@@ -49,22 +50,22 @@ module.exports = function() {
         log4js.error('rbac request [%s %s] invalid! token missing', ctx.method, ctx.url)
         throw new RbacTokenError('TOKEN MISSING')
       }
-      const userInfo = tokenUtil.tokenDecrypt(token)
-      if (userInfo.error) { // failed
-        log4js.error('rbac request [%s %s] invalid! token decrypt failed!', ctx.method, ctx.path)
+      const tokenUserInfo = tokenUtil.tokenDecrypt(token)
+      if (tokenUserInfo.error) { // failed
+        log4js.error('rbac request [%s %s] invalid! token [%s] decrypt failed!', ctx.method, ctx.path, token)
         throw new RbacTokenError('TOKEN INVALID')
       }
-      // const userId = userInfo.id;
-      // userInfo = await UserModel.findByPk(userId);
-      // if (!userInfo) {
-      //   log4js.error('request [%s %s] invalid! userId:%d (from token) not found in database', ctx.method, ctx.path, userId)
-      //   throw new RbacTokenError('TOKEN_USER_NOT_FOUND')
-      // }
-      // userInfo = userInfo.toJSON()
-      // userInfo.id = parseInt(userInfo.id)
+      const userId = tokenUserInfo.id
+      const appid = tokenUserInfo.appid
+      const {userInfo, cached} = await userCache.getUserInfoById(tokenUserInfo.id, appid)
+      log4js.info('getUserInfoById(userId:%d, appID:%s) cached: %s', tokenUserInfo.id, appid, cached)
+      if (!userInfo) {
+        log4js.error('request [%s %s] invalid! userId:%d (from token) not found in database', ctx.method, ctx.path, userId)
+        throw new RbacTokenError('TOKEN_USER_NOT_FOUND')
+      }
 
       ctx.userInfo = userInfo
-      ctx.appid = userInfo.appid
+      ctx.appid = appid
       ctx.token = token
 
       try {

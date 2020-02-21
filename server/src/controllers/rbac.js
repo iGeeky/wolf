@@ -1,21 +1,22 @@
 const config = require('../../conf/config')
 const BasicService = require('./basic-service')
 const UserModel = require('../model/user')
-const ResourceModel = require('../model/resource')
 const RbacTokenError = require('../errors/rbac-token-error')
 const AccessLogModel = require('../model/access-log')
 const resourceCache = require('../util/resource-cache')
 const util = require('../util/util')
 const userCache = require('../util/user-cache')
 
-const userFields = ['username', 'nickname', 'email', 'createTime'];
+
+const userFields = ['id', 'username', 'nickname', 'email', 'appIDs',
+  'manager',  'lastLogin', 'profile', 'createTime', 'permissions', 'roles'];
 
 const errors = {
   ERR_USERNAME_MISSING: 'Username missing!',
   ERR_PASSWORD_MISSING: 'Password missing!',
   ERR_USER_NOT_FOUND: 'User not found!',
   ERR_PASSWORD_ERROR: 'Password error!',
-
+  ERR_APPID_MISSING: 'Appid missing!',
   ERR_PASSWORD_CHANGE_NOT_ALLOWED: 'Password change is not allowed',
   ERR_OLD_PASSWORD_REQUIRED: 'Old password is required',
   ERR_NEW_PASSWORD_REQUIRED: 'New password is required',
@@ -49,7 +50,7 @@ class Rbac extends BasicService {
 
   async index() {
     this.ctx.status = 200;
-    this.ctx.body = `index`
+    this.ctx.body = `wolf rbac index`
   }
 
   async _loginPostInternal() {
@@ -67,6 +68,10 @@ class Rbac extends BasicService {
       return {ok: false, reason: 'ERR_PASSWORD_MISSING'}
     }
 
+    if (!appid) {
+      return {ok: false, reason: 'ERR_APPID_MISSING'}
+    }
+
     const userInfo = await UserModel.findOne({where: {username}})
     if (!userInfo) { // user not exist
       this.log4js.warn('rbac user [%s] login failed! user not exist', username)
@@ -80,6 +85,7 @@ class Rbac extends BasicService {
       this.log4js.warn('user [%s] login failed! password error', username)
       return {ok: false, reason: 'ERR_PASSWORD_ERROR'}
     }
+    userCache.flushUserCacheByID(userInfo.id, appid)
 
     const { token, expiresIn } = await this.tokenCreate(userInfo, appid)
     return {ok: true, token, expiresIn, userInfo}
@@ -205,14 +211,7 @@ class Rbac extends BasicService {
     const action = this.getRequiredStringArg('action')
     const resName = this.getRequiredStringArg('resName')
 
-    const tokenUserInfo = this.ctx.userInfo
-    const {userInfo, cached} = await userCache.getUserInfoById(tokenUserInfo.id, appID)
-    this.log4js.info('getUserInfoById(userId:%d, appID:%s) cached: %s', tokenUserInfo.id, appID, cached)
-    if (!userInfo) {
-      this.log4js.error('accessCheck(args: %s) failed! token user %s not found in database', JSON.stringify(this.args), JSON.stringify(tokenUserInfo))
-      throw new TokenError('TOKEN USER NOT FOUND IN DATABASE')
-    }
-
+    const userInfo = this.ctx.userInfo
     try {
       await this._accessCheckInternal(userInfo, appID, action, resName)
     } finally {
@@ -247,7 +246,8 @@ class Rbac extends BasicService {
       }
     )
     this.ctx.status = 302;
-    this.ctx.redirect('/wolf/rbac/login');
+    const appid = userInfo.appid || 'unset'
+    this.ctx.redirect('/wolf/rbac/login?appid=' + appid);
   }
 
   async changePwd() {
@@ -262,8 +262,6 @@ class Rbac extends BasicService {
     const args = this.getArgs();
     const {id: userId, username} = this.ctx.userInfo;
     args.username = username;
-    let success = null;
-    let error = null;
     if (!config.clientChangePassword) {
       return {ok: false, reason: 'ERR_PASSWORD_CHANGE_NOT_ALLOWED'}
     }
@@ -330,6 +328,13 @@ class Rbac extends BasicService {
     args.success = 'change password successfully'
     args.error = null;
     await this.ctx.render('change_pwd.html', args)
+  }
+
+  async userInfo() {
+    const userInfo = this.ctx.userInfo
+    userInfo.appIDs = userInfo.appIDs || []
+    const data = {userInfo: util.filterFieldWhite(userInfo, userFields)}
+    this.success(data)
   }
 }
 

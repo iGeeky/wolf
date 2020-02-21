@@ -14,9 +14,28 @@
 2019-12-22 0.1.11
 
 * 完善单元测试
-* 添加istanbul/syc进行代码覆盖率测试. 
+* 添加 `istanbul/syc` 进行代码覆盖率测试. 
   * 93.95% Statements
   * 78.49% Branches
   * 93.91% Functions 185/197
   * 93.93% Lines 1455/1549
 * rbac策略单元测试.
+
+2020-01-08 0.1.12
+
+* `bcrypt` 模块修改为 `bcrypt-node`
+
+2020-01-13 0.2.1
+
+* 添加 `appid` 到 `token` 中.
+* url 前缀修改为 `/wolf/`
+* 性能优化.日志优化
+
+2020-02-10 0.2.2
+
+* 日志记录支持查看请求 `body` 或 `args`
+
+2020-02-21 0.2.3
+
+* `token` 添加版本
+* RBAC 接口添加用户信息获取接口 `/wolf/rbac/user_info`

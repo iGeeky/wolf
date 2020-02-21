@@ -47,7 +47,7 @@ describe('rbac', function() {
 
   if (argv.rbacDestroy) {
     rbacUtil.rbacDestroy(data)
-    // process.exit(0)
+    process.exit(0)
   }
 
   describe('rbac-init', function() {
@@ -96,27 +96,67 @@ describe('rbac', function() {
       await mocha.post({url, headers, body, schema})
     });
 
+    it('login failed, appid missing', async function() {
+      const schema = util.failSchema('ERR_APPID_MISSING')
+      const url = '/wolf/rbac/login.rest'
+      const body = {username: 'unit-user', password}
+      await mocha.post({url, headers, body, schema})
+    });
+
     it('login failed, user not found', async function() {
       const schema = util.failSchema('ERR_USER_NOT_FOUND')
       const url = '/wolf/rbac/login.rest'
-      const body = {username: 'not-exist-user', password}
+      const body = {username: 'not-exist-user', password, appid: appID}
       await mocha.post({url, headers, body, schema})
     });
 
     it('login failed, password error', async function() {
       const schema = util.failSchema('ERR_PASSWORD_ERROR')
       const url = '/wolf/rbac/login.rest'
-      const body = {username: 'unit-user', password: 'password error'}
+      const body = {username: 'unit-user', password: 'password error', appid: appID}
       await mocha.post({url, headers, body, schema})
     });
 
     it('login success', async function() {
       const schema = getLoginSuccessSchema();
       const url = '/wolf/rbac/login.rest'
-      const body = {username: 'unit-user', password}
+      const body = {username: 'unit-user', password, appid: appID}
       const res = await mocha.post({url, headers, body, schema})
       const token = res.body.data.token;
       headers['x-rbac-token'] = token;
+    });
+
+
+    it('userInfo', async function() {
+      const dataSchema = {
+        type: 'object',
+        properties: {
+          userInfo: {
+            type: 'object',
+            properties: {
+              id: { 'type': 'string' },
+              username: { 'type': 'string' },
+              nickname: { 'type': 'string' },
+              email: { 'type': ['string', 'null'] },
+              appIDs: { 'type': 'array', minItems: 1 },
+              manager: { 'type': ['string', 'null'] },
+              lastLogin: { 'type': 'number' },
+              profile: { 'type': ['object', 'null'] },
+              createTime: { 'type': 'number' },
+              permissions: { 'type': 'object' },
+              roles: { 'type': 'object' },
+            },
+            required: ['id', 'username', 'nickname'],
+          },
+          token: { type: 'string' },
+        },
+        required: ['userInfo'],
+      }
+      const schema = util.okSchema(dataSchema)
+
+      const url = '/wolf/rbac/user_info'
+      const args = {}
+      await mocha.get({url, headers, args, schema})
     });
 
     it('change password failed, old password missing', async function() {
@@ -157,14 +197,14 @@ describe('rbac', function() {
     it('old password login failed', async function() {
       const schema = util.failSchema('ERR_PASSWORD_ERROR')
       const url = '/wolf/rbac/login.rest'
-      const body = {username: 'unit-user', password: password}
+      const body = {username: 'unit-user', password: password, appid: appID}
       await mocha.post({url, headers, body, schema})
     });
 
     it('new password login success', async function() {
       const schema = getLoginSuccessSchema();
       const url = '/wolf/rbac/login.rest'
-      const body = {username: 'unit-user', password: newPassword}
+      const body = {username: 'unit-user', password: newPassword, appid: appID}
       await mocha.post({url, headers, body, schema})
     });
 
@@ -194,7 +234,7 @@ describe('rbac', function() {
     }
     it('login render', async function() {
       const url = '/wolf/rbac/login'
-      const args = {username: 'root', password: '123456'}
+      const args = {username: 'root', password: '123456', appid: appID}
       const res = await mocha.get({url, headers, args, status: 200, match: 'form.*/wolf/rbac/login'})
       // console.log(res.text)
     });
@@ -213,19 +253,19 @@ describe('rbac', function() {
 
     it('login failed, user not found', async function() {
       const url = '/wolf/rbac/login.post'
-      const body = {username: 'not-exist-user', password}
+      const body = {username: 'not-exist-user', password, appid: appID}
       await mocha.post({url, headers, body, match: 'User not found'})
     });
 
     it('login failed, password error', async function() {
       const url = '/wolf/rbac/login.post'
-      const body = {username: 'unit-user', password: 'password error'}
+      const body = {username: 'unit-user', password: 'password error', appid: appID}
       await mocha.post({url, headers, body, match: 'Password error'})
     });
 
     it('login success', async function() {
       const url = '/wolf/rbac/login.post'
-      const body = {username: 'unit-user', password}
+      const body = {username: 'unit-user', password, appid: appID}
       const res = await mocha.post({url, headers, body, status: 302})
       const cookie = getCookie(res.headers['set-cookie'])
       headers['Cookie'] = cookie;
@@ -305,7 +345,7 @@ describe('rbac', function() {
         it(`login`, async function(){
           const schema = getLoginSuccessSchema();
           const url = '/wolf/rbac/login.rest'
-          const body = {username, password}
+          const body = {username, password, appid: appID}
           const res = await mocha.post({url, headers, body, schema})
           token = res.body.data.token;
           headers['x-rbac-token'] = token;

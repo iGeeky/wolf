@@ -5,6 +5,10 @@
 # user
 
 * unit-user for-agent-test
+	* permission
+		* PERM_INDEX
+	* role
+		* ROLE_INDEX
 * u-none no-any-permission-user
 * u-index match-type-equal-index
 	* permission

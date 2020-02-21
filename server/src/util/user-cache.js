@@ -15,6 +15,7 @@ async function getUserInfoFromDbById(userId, appId) {
   userInfo = userInfo.toJSON()
   const permissions = {}
   userInfo.permissions = permissions;
+  userInfo.roles = {}
 
   const where = {appID: appId, userID: userId}
   const options = {where}
@@ -29,6 +30,7 @@ async function getUserInfoFromDbById(userId, appId) {
     if (userRole.roleIDs) {
       for (let i=0; i < userRole.roleIDs.length; i++) {
         const roleId = userRole.roleIDs[i];
+        userInfo.roles[roleId] = true;
         const where = {id: roleId}
         const role = await RoleModel.findOne({where})
         if (role) {
@@ -64,5 +66,11 @@ function flushUserCache() {
   userCache.flushAll();
 }
 
-exports.getUserInfoById = getUserInfoById
+function flushUserCacheByID(userId, appId){
+  const key = `user:${userId}-${appId}`
+  userCache.del(key)
+}
+
+exports.getUserInfoById = getUserInfoById;
 exports.flushUserCache = flushUserCache;
+exports.flushUserCacheByID = flushUserCacheByID;

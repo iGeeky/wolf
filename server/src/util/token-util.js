@@ -5,10 +5,12 @@ const log4js = require('./log4js')
 
 const ERR_TOKEN_INVALID = 'ERR_TOKEN_INVALID'
 
+const tokenVersion = 2
+
 function tokenEncrypt(userInfo, appid) {
   const tokenKey = config.tokenKey
   const expiresIn = config.tokenExpireTime
-  const payload = { id: parseInt(userInfo.id), username: userInfo.username, manager: userInfo.manager }
+  const payload = { id: parseInt(userInfo.id), username: userInfo.username, manager: userInfo.manager, version: tokenVersion }
   if (appid) {
     payload.appid = appid
   }
@@ -25,6 +27,11 @@ function tokenDecrypt(token) {
       return { error: ERR_TOKEN_INVALID }
     }
     log4js.info('token [%s], decode userInfo: %s', token, JSON.stringify(userInfo))
+    // token version is not matched
+    if (!userInfo.version || userInfo.version < tokenVersion) {
+      log4js.error('token version: ', userInfo.version, ' is not match current version:', tokenVersion)
+      return { error: ERR_TOKEN_INVALID }
+    }
     return userInfo
   } catch (err) {
     log4js.warn('jwt.verify(%s) failed! err: %s', token, err)

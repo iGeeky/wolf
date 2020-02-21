@@ -47,12 +47,10 @@ const upsert = async function(values, options) {
     delete(values.createTime);
     const newValues = await obj.update(values);
     operation = 'update'
-    console.log('>>>> upsert update: ', JSON.stringify(newValues))
     return {operation, newValues}
   } else {
     const newValues = await this.create(values)
     operation = 'insert'
-    console.log('>>>> insert update: ', JSON.stringify(newValues))
     return {operation, newValues}
   }
 }
