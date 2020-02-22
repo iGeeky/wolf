@@ -76,8 +76,13 @@ module.exports = function() {
       // only super and admin user can be use the admin backend system.
       /* istanbul ignore if */
       if (!(userInfo.manager === constant.Manager.super || userInfo.manager === constant.Manager.admin)) {
-        log4js.error('request [%s %s] failed! userId:%d have no permission to do this operation', ctx.method, ctx.path, userId)
+        log4js.error('request [%s %s] failed! user [%s] have no permission to do this operation', ctx.method, ctx.path, userInfo.username)
         throw new AccessDenyError('need super or admin user to do this operation.')
+      }
+
+      if (userInfo.status === constant.UserStatus.Disabled) {
+        log4js.error('request [%s %s] failed! user [%s] is disabled', ctx.method, ctx.path, userInfo.username)
+        throw new AccessDenyError('user is disabled.')
       }
 
       userInfo = userInfo.toJSON()

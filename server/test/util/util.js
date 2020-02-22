@@ -56,12 +56,29 @@ function adminHeaders() {
   return headers;
 }
 
+function getSimpleUserInfoSchema() {
+  const userInfoSchema = {
+    type: "object",
+    properties: {
+        id: {"type":"integer"},
+        username: {"type":"string"},
+        nickname: {"type":"string"},
+        email: {"type": ["string", "null"]},
+        appIDs: {"type":"array","items":{"type":"string"}},
+        manager: {"type": ["string", "null"]},
+        createTime: {"type":"integer"}
+    },
+    required: ["id","username","nickname","email","appIDs","manager","createTime"]
+  }
+  return userInfoSchema;
+}
+
 function getAdminLoginResponseSchema() {
   const schema = okSchema({
     type: 'object',
     properties: {
       token: {type: 'string'},
-      userInfo: {type: 'object'},
+      userInfo: getSimpleUserInfoSchema(),
     },
     required: ['token', 'userInfo'],
   })
@@ -76,6 +93,19 @@ async function adminLoginInternal(headers, username, password) {
   const token = res.body.data.token;
   // console.log('>>> admin[%s] token:::', username, token)
   return {token}
+}
+
+async function updateUserStatus(userID, status) {
+  const schema = okSchema({
+    type: "object",
+    properties: {
+        userInfo: getSimpleUserInfoSchema()
+    },
+    required: ["userInfo"]
+  })
+  const body = {id: userID, status}
+  const url = '/wolf/user/update';
+  await mocha.post({url, headers: adminHeaders(), body, status: 200, schema})
 }
 
 
@@ -95,3 +125,5 @@ exports.okSchema2 = okSchema2;
 exports.failSchema = failSchema;
 exports.defPassword = defPassword;
 exports.adminHeaders = adminHeaders;
+exports.updateUserStatus = updateUserStatus;
+exports.getSimpleUserInfoSchema = getSimpleUserInfoSchema

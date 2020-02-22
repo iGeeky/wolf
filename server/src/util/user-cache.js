@@ -13,6 +13,8 @@ async function getUserInfoFromDbById(userId, appId) {
     return null;
   }
   userInfo = userInfo.toJSON()
+  userInfo.id = parseInt(userInfo.id)
+
   const permissions = {}
   userInfo.permissions = permissions;
   userInfo.roles = {}

@@ -151,7 +151,7 @@ async function http(options) {
     headers['Content-type'] = 'application/json; charset=utf-8'
   }
   const res = await httpRequest(method, url, headers, args, body)
-  if (argv.log) {
+  if (argv.log || options.log) {
     console.log('>>> request [%s %s] headers: %o, body: %o', 'POST', url, headers, body)
     console.log('>>> response status: %d, body: %o', res.status, res.body)
   }

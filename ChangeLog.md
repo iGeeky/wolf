@@ -39,3 +39,4 @@
 
 * `token` 添加版本
 * RBAC 接口添加用户信息获取接口 `/wolf/rbac/user_info`
+* 禁用用户

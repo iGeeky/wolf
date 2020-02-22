@@ -5,13 +5,46 @@ const policyFileName = './test/init/0-rbac-data-unittest.md'
 const data = rbacUtil.rbacDataRead(policyFileName)
 const argv = require('minimist')(process.argv.slice(2))
 
+function userInfoSchema() {
+  const schema = {
+    type: 'object',
+    properties: {
+      id: { 'type': 'integer' },
+      username: { 'type': 'string' },
+      nickname: { 'type': 'string' },
+      email: { 'type': ['string', 'null'] },
+      appIDs: { 'type': 'array', minItems: 1 },
+      manager: { 'type': ['string', 'null'] },
+      lastLogin: { 'type': 'number' },
+      profile: { 'type': ['object', 'null'] },
+      createTime: { 'type': 'number' },
+      permissions: { 'type': 'object' },
+      roles: { 'type': 'object' },
+    },
+    required: ['id', 'username', 'nickname'],
+  }
+  return schema;
+}
+
+function getUserInfoSchema() {
+  const dataSchema = {
+    type: 'object',
+    properties: {
+      userInfo: userInfoSchema()
+    },
+    required: ['userInfo'],
+  }
+  const schema = util.okSchema(dataSchema)
+  return schema;
+}
+
 function getLoginSuccessSchema() {
   const dataSchema = {
     type: 'object',
     properties: {
       userInfo: {
         type: 'object',
-        properties: { 'id': { 'type': 'string' }, 'username': { 'type': 'string' }, 'nickname': { 'type': 'string' }},
+        properties: { 'id': { 'type': 'integer' }, 'username': { 'type': 'string' }, 'nickname': { 'type': 'string' }},
         required: ['id', 'username', 'nickname'],
       },
       token: { type: 'string' },
@@ -47,7 +80,6 @@ describe('rbac', function() {
 
   if (argv.rbacDestroy) {
     rbacUtil.rbacDestroy(data)
-    process.exit(0)
   }
 
   describe('rbac-init', function() {
@@ -74,6 +106,7 @@ describe('rbac', function() {
 
   describe('agent restful api', function() {
     const headers = {}
+    let userID = null;
     const newPassword = '123456'
     it('change password failed, login required', async function() {
       const url = '/wolf/rbac/change_pwd.rest'
@@ -121,42 +154,39 @@ describe('rbac', function() {
       const schema = getLoginSuccessSchema();
       const url = '/wolf/rbac/login.rest'
       const body = {username: 'unit-user', password, appid: appID}
-      const res = await mocha.post({url, headers, body, schema})
+      const res = await mocha.post({url, headers, body, status: 200, schema})
       const token = res.body.data.token;
+      userID = res.body.data.userInfo.id
       headers['x-rbac-token'] = token;
     });
 
 
-    it('userInfo', async function() {
-      const dataSchema = {
-        type: 'object',
-        properties: {
-          userInfo: {
-            type: 'object',
-            properties: {
-              id: { 'type': 'string' },
-              username: { 'type': 'string' },
-              nickname: { 'type': 'string' },
-              email: { 'type': ['string', 'null'] },
-              appIDs: { 'type': 'array', minItems: 1 },
-              manager: { 'type': ['string', 'null'] },
-              lastLogin: { 'type': 'number' },
-              profile: { 'type': ['object', 'null'] },
-              createTime: { 'type': 'number' },
-              permissions: { 'type': 'object' },
-              roles: { 'type': 'object' },
-            },
-            required: ['id', 'username', 'nickname'],
-          },
-          token: { type: 'string' },
-        },
-        required: ['userInfo'],
-      }
-      const schema = util.okSchema(dataSchema)
-
+    it('get userInfo success', async function() {
+      const schema = getUserInfoSchema()
       const url = '/wolf/rbac/user_info'
       const args = {}
       await mocha.get({url, headers, args, schema})
+    });
+
+    it('disable unittest', async function() {
+      if(!userID) {
+        this.skip();
+      }
+      await util.updateUserStatus(userID, -1)
+    });
+
+    it('get userInfo failed, user is disabled', async function() {
+      const schema = util.failSchema('ERR_TOKEN_INVALID')
+      const url = '/wolf/rbac/user_info'
+      const args = {}
+      await mocha.get({url, headers, args, status: 401, schema})
+    });
+
+    it('enable unittest', async function() {
+      if(!userID) {
+        this.skip();
+      }
+      await util.updateUserStatus(userID, 0)
     });
 
     it('change password failed, old password missing', async function() {
@@ -214,6 +244,29 @@ describe('rbac', function() {
       const body = {oldPassword: newPassword, newPassword: password, reNewPassword: password}
       await mocha.post({url, headers, body, schema})
     });
+
+
+    it('disable unittest', async function() {
+      if(!userID) {
+        this.skip();
+      }
+      await util.updateUserStatus(userID, -1)
+    });
+
+    it('login failed, user is disabled', async function() {
+      const schema = util.failSchema('ERR_USER_DISABLED')
+      const url = '/wolf/rbac/login.rest'
+      const body = {username: 'unit-user', password, appid: appID}
+      await mocha.post({url, headers, body,  schema})
+    });
+
+    it('enable unittest', async function() {
+      if(!userID) {
+        this.skip();
+      }
+      await util.updateUserStatus(userID, 0)
+    });
+
   });
 
   describe('agent page', function() {

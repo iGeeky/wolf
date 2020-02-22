@@ -36,25 +36,26 @@ class User extends BasicService {
   }
 
   async userLogin(username, password) {
-    const user = await UserModel.findOne({where: {username}})
-    if (!user) { // user not exist
+    let userInfo = await UserModel.findOne({where: {username}})
+    if (!userInfo) { // user not exist
       this.log4js.warn('user [%s] login failed! user not exist', username)
       return {err: errors.ERR_USER_NOT_FOUND}
     }
 
     // compare the password.
     this.log4js.info('password: %s', util.encodePassword(password))
-    if (user.password && util.comparePassword(password, user.password)) {
-      // do nothing
-    } else {
+    if (!userInfo.password || !util.comparePassword(password, userInfo.password)) {
       this.log4js.warn('user [%s] login failed! password error', username)
       return {err: errors.ERR_PASSWORD_ERROR}
     }
 
-    if (user.status === constant.UserStatus.Disabled) {
-
+    if (userInfo.status === constant.UserStatus.Disabled) {
+      this.log4js.warn('user [%s] login failed! disabled', username)
+      return {err: errors.ERR_USER_DISABLED}
     }
-    return {userInfo: user.toJSON()};
+    userInfo = userInfo.toJSON()
+    userInfo.id = parseInt(userInfo.id)
+    return { userInfo };
   }
 
   async userApplications(userInfo) {
@@ -143,6 +144,7 @@ class User extends BasicService {
     const userInfos = await UserModel.findAll(options)
     userInfos.forEach((userInfo, i) => {
       userInfo = userInfo.toJSON()
+      userInfo.id = parseInt(userInfo.id)
       userInfo.appIDs = userInfo.appIDs || []
       userInfos[i] = userInfo;
     });
@@ -168,8 +170,10 @@ class User extends BasicService {
     values.lastLogin = 0;
     values.createTime = util.unixtime();
     values.updateTime = util.unixtime();
-    const userInfo = await UserModel.create(values);
-    const data = {password, 'userInfo': util.filterFieldWhite(userInfo.toJSON(), userFields)}
+    let userInfo = await UserModel.create(values);
+    userInfo = userInfo.toJSON()
+    userInfo.id = parseInt(userInfo.id)
+    const data = {password, 'userInfo': util.filterFieldWhite(userInfo, userFields)}
     this.success(data);
   }
 
@@ -181,18 +185,18 @@ class User extends BasicService {
       tel: {type: 'string'},
       appIDs: {type: 'array'},
       manager: {type: 'string'},
-      status: {type: 'integer', default: constant.UserStatus.Normal}
+      status: {type: 'integer'}
     }
     const id = this.getRequiredIntArg('id')
     const values = this.getCheckedValues(fieldsMap)
+    const user = await UserModel.findOne({where: {id}})
+    if (!user) { // user not exist
+      this.log4js.warn('update user [id:%s] failed! user not exist', id, values.username)
+      this.fail(400, errors.ERR_USER_NOT_FOUND)
+      return
+    }
 
     if (values.status === constant.UserStatus.Disabled) { // disabled.
-      const user = await UserModel.findOne({where: {id}})
-      if (!user) { // user not exist
-        this.log4js.warn('update user [id:%s] failed! user not exist', id, values.username)
-        this.fail(400, errors.ERR_USER_NOT_FOUND)
-        return
-      }
       if (user.manager === constant.Manager.super) {
         this.log4js.error('update failed! cannot disabled a super user(%d:%s)', id, values.username)
         throw new AccessDenyError('update failed! cannot disabled a super user.')
@@ -201,8 +205,10 @@ class User extends BasicService {
 
     values.updateTime = util.unixtime();
     const options = {where: {id}}
-    const {effects, newValues: userInfo} = await UserModel.mustUpdate(values, options)
-    const data = {effects, 'userInfo': util.filterFieldWhite(userInfo.toJSON(), userFields)}
+    let {effects, newValues: userInfo} = await UserModel.mustUpdate(values, options)
+    userInfo = userInfo.toJSON()
+    userInfo.id = parseInt(userInfo.id)
+    const data = {effects, 'userInfo': util.filterFieldWhite(userInfo, userFields)}
     this.success(data);
   }
 
@@ -243,6 +249,8 @@ class User extends BasicService {
         return
       }
     }
+    userInfo = userInfo.toJSON()
+    userInfo.id = parseInt(userInfo.id)
 
     if (userInfo.manager === constant.Manager.super) {
       this.log4js.error('delete super user {id:%s, username:%s} failed!', userInfo.id, userInfo.username)
@@ -254,7 +262,7 @@ class User extends BasicService {
 
     const options = {where}
     const rowCount = await UserModel.destroy(options);
-    this.success({'count': rowCount, 'userInfo': util.filterFieldWhite(userInfo.toJSON(), userFields)})
+    this.success({'count': rowCount, 'userInfo': util.filterFieldWhite(userInfo, userFields)})
   }
 }
 

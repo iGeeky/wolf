@@ -23,6 +23,7 @@ const errors = {
   ERR_NEW_PASSWORD_REQUIRED: 'New password is required',
   ERR_REPEATED_PASSWORD_INCORRECT: 'The password you entered repeatedly is incorrect.',
   ERR_OLD_PASSWORD_INCORRECT: 'Old password is incorrect.',
+  ERR_USER_DISABLED: 'User is disabled.'
 }
 
 class Rbac extends BasicService {
@@ -73,21 +74,27 @@ class Rbac extends BasicService {
       return {ok: false, reason: 'ERR_APPID_MISSING'}
     }
 
-    const userInfo = await UserModel.findOne({where: {username}})
+    let userInfo = await UserModel.findOne({where: {username}})
     if (!userInfo) { // user not exist
       this.log4js.warn('rbac user [%s] login failed! user not exist', username)
       return {ok: false, reason: 'ERR_USER_NOT_FOUND'}
     }
-
+    this.log4js.info("userInfo.password: %s, request password: %s", userInfo.password, password)
     // compare the password.
-    if (userInfo.password && util.comparePassword(password, userInfo.password)) {
-      // do nothing
-    } else {
+    if (!userInfo.password || !util.comparePassword(password, userInfo.password)) {
       this.log4js.warn('user [%s] login failed! password error', username)
       return {ok: false, reason: 'ERR_PASSWORD_ERROR'}
     }
+
+    if (userInfo.status === constant.UserStatus.Disabled) {
+      this.log4js.warn('user [%s] login failed! disabled', username)
+      return {ok: false, reason: 'ERR_USER_DISABLED'}
+    }
+
     userCache.flushUserCacheByID(userInfo.id, appid)
 
+    userInfo = userInfo.toJSON()
+    userInfo.id = parseInt(userInfo.id)
     const { token, expiresIn } = await this.tokenCreate(userInfo, appid)
     return {ok: true, token, expiresIn, userInfo}
   }

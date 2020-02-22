@@ -13,6 +13,7 @@ function rbacDataRead(policyFileName) {
 function rbacInit(data, userPassword, opts={}) {
   const headers = util.adminHeaders()
   let application = null;
+  let ignore = false;
   const categoryMap = {}
   it('check exist', async function() {
     if(data.applications && data.applications.length > 0) {
@@ -22,13 +23,13 @@ function rbacInit(data, userPassword, opts={}) {
       const res = await mocha.httpGet(url, headers, args)
       if(res.body && res.body.ok && res.body.reason === '' && res.body.data && res.body.data.application) {
         console.log("########### application [%s] is exist. rbac init aborted.", application.id)
-        process.exit(100)
+        ignore = true
       }
     }
   });
 
   it('application', async function() {
-    if (!data.applications) {
+    if (ignore || !data.applications) {
       this.skip();
     }
 
@@ -39,7 +40,7 @@ function rbacInit(data, userPassword, opts={}) {
   });
 
   it('category', async function() {
-    if (!application || !data.categories) {
+    if (ignore || !application || !data.categories) {
       this.skip();
     }
 
@@ -54,7 +55,7 @@ function rbacInit(data, userPassword, opts={}) {
   });
 
   it('permission', async function() {
-    if (!application || !data.permissions) {
+    if (ignore || !application || !data.permissions) {
       this.skip();
     }
 
@@ -69,7 +70,7 @@ function rbacInit(data, userPassword, opts={}) {
   });
 
   it('role', async function() {
-    if (!application || !data.roles) {
+    if (ignore || !application || !data.roles) {
       this.skip();
     }
 
@@ -81,7 +82,7 @@ function rbacInit(data, userPassword, opts={}) {
   });
 
   it('user', async function() {
-    if (!application || !data.users) {
+    if (ignore || !application || !data.users) {
       this.skip();
     }
 
@@ -111,7 +112,7 @@ function rbacInit(data, userPassword, opts={}) {
 
 
   it('resource', async function() {
-    if (!application || !data.resources) {
+    if (ignore || !application || !data.resources) {
       this.skip();
     }
 

@@ -2,6 +2,7 @@ const log4js = require('../util/log4js')
 const RbacTokenError = require('../errors/rbac-token-error')
 const tokenUtil = require('../util/token-util')
 const userCache = require('../util/user-cache')
+const constant = require('../util/constant')
 const _ = require('lodash')
 
 
@@ -62,6 +63,10 @@ module.exports = function() {
       if (!userInfo) {
         log4js.error('request [%s %s] invalid! userId:%d (from token) not found in database', ctx.method, ctx.path, userId)
         throw new RbacTokenError('TOKEN_USER_NOT_FOUND')
+      }
+      if (userInfo.status === constant.UserStatus.Disabled) {
+        log4js.error('request [%s %s] failed! user [%s] is disabled', ctx.method, ctx.path, userInfo.username)
+        throw new RbacTokenError('USER_IS_DISABLED')
       }
 
       ctx.userInfo = userInfo

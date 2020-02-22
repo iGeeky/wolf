@@ -17,7 +17,8 @@
     </div>
     <el-table
       :data="users"
-      style="margin-top:30px; "
+      style="margin-top:30px;"
+      :row-class-name="tableRowClassName"
       border
       fit
       highlight-current-row
@@ -43,7 +44,8 @@
         </template>
       </el-table-column>
       <el-table-column align="center" label="App Ids" min-width="25" show-overflow-tooltip prop="appIDs" :formatter="appIdsFormat" />
-      <el-table-column align="center" label="Create Time" min-width="20" show-overflow-tooltip prop="createTime" :formatter="unixtimeFormat" />
+      <el-table-column align="center" label="Status" min-width="10" prop="status" :formatter="userStatusFormat" />
+      <el-table-column align="center" label="Create Time" min-width="18" show-overflow-tooltip prop="createTime" :formatter="unixtimeFormat" />
       <el-table-column align="center" label="Permissions" min-width="15">
         <template slot-scope="scope">
           <role-detail :user="scope.row" />
@@ -81,12 +83,17 @@
             <el-option v-for="application in applications" :key="application.id" :label="application.name" :value="application.id" />
           </el-select>
         </el-form-item>
-        <el-form-item label="manager" prop="manager">
-          <!-- <el-input v-model="user.manager" placeholder="manager" /> -->
+        <el-form-item label="Manager" prop="manager">
           <el-radio-group v-model="user.manager" size="small">
-            <el-radio-button label="super" enabled="false" />
+            <el-radio-button label="super" />
             <el-radio-button label="admin" />
             <el-radio-button label="none" />
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="Status" prop="status">
+          <el-radio-group v-model="user.status" size="small">
+            <el-radio-button label="0">normal</el-radio-button>
+            <el-radio-button label="-1">disabled</el-radio-button>
           </el-radio-group>
         </el-form-item>
       </el-form>
@@ -114,6 +121,7 @@ const defaultUser = {
   appIDs: [],
   manager: '',
   routes: [],
+  status: 0,
 }
 
 export default {
@@ -197,6 +205,13 @@ export default {
   },
   mounted() {},
   methods: {
+    tableRowClassName({ row, rowIndex }) {
+      console.log('>>> row:', row)
+      if (row.status === -1) {
+        return 'disabled-row'
+      }
+      return ''
+    },
     appIdsFormat(row, column, cellValue, index) {
       if (cellValue == null || cellValue === '') {
         return ''
@@ -291,7 +306,6 @@ export default {
 
     async submitUser() {
       const isEdit = this.dialogType === 'edit'
-
       if (isEdit) {
         await updateUser(this.user.id, this.user)
         this.listUsers()
@@ -329,6 +343,9 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-
+<style lang="scss">
+  .el-table .disabled-row {
+    background: #ededef;
+    color: #9e1433;
+  }
 </style>
