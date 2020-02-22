@@ -6,6 +6,7 @@ const UserRoleModel = require('../model/user-role')
 const Op = require('sequelize').Op;
 const errors = require('../errors/errors')
 const userCache = require('../util/user-cache')
+const constant = require('../util/constant')
 const util = require('../util/util')
 const _ = require('lodash')
 
@@ -20,7 +21,7 @@ class User extends BasicService {
   async access(bizMethod) {
     const method = this.ctx.method
     if (method !== 'GET' && this.ctx.userInfo && bizMethod !== 'checkExist') { // POST, PUT, DELETE
-      if (this.ctx.userInfo.manager !== 'super') {
+      if (this.ctx.userInfo.manager !== constant.Manager.super) {
         this.log4js.error('access [%s] failed! user:%s have no permission to do this operation', bizMethod, this.ctx.userInfo.username)
         throw new AccessDenyError('need super user to do this operation.')
       }
@@ -49,15 +50,19 @@ class User extends BasicService {
       this.log4js.warn('user [%s] login failed! password error', username)
       return {err: errors.ERR_PASSWORD_ERROR}
     }
+
+    if (user.status === constant.UserStatus.Disabled) {
+
+    }
     return {userInfo: user.toJSON()};
   }
 
   async userApplications(userInfo) {
     // console.log('>>> userInfo::', JSON.stringify(userInfo))
     let applications = [];
-    if (userInfo.manager === 'super') {
+    if (userInfo.manager === constant.Manager.super) {
       applications = await ApplicationModel.findAll({});
-    } else if (userInfo.manager === 'admin' && userInfo.appIDs) {
+    } else if (userInfo.manager === constant.Manager.admin && userInfo.appIDs) {
       if (!userInfo.appIDs || userInfo.appIDs.length === 0) {
         applications = []
       } else {
@@ -90,7 +95,7 @@ class User extends BasicService {
       return
     }
 
-    if (!(userInfo.manager === 'super' || userInfo.manager === 'admin')) {
+    if (!(userInfo.manager === constant.Manager.super || userInfo.manager === constant.Manager.admin)) {
       this.log4js.error('login failed! user:%s have no permission to login the rbac console', username)
       throw new AccessDenyError('need super or admin user to login the rbac console.')
     }
@@ -126,7 +131,7 @@ class User extends BasicService {
     }
 
     const userInfo = this.ctx.userInfo
-    if (userInfo.manager === 'admin') {
+    if (userInfo.manager === constant.Manager.admin) {
       const appIds = userInfo.appIDs || []
       where.appIDs = { [Op.overlap]:  appIds}
     }
@@ -155,16 +160,49 @@ class User extends BasicService {
       tel: {type: 'string'},
       appIDs: {type: 'array'},
       manager: {type: 'string'},
+      status: {type: 'integer', default: constant.UserStatus.Normal}
     }
     const values = this.getCheckedValues(fieldsMap)
     const password = values.password;
     values.password = util.encodePassword(password);
-    values.status = 0;
     values.lastLogin = 0;
     values.createTime = util.unixtime();
     values.updateTime = util.unixtime();
     const userInfo = await UserModel.create(values);
     const data = {password, 'userInfo': util.filterFieldWhite(userInfo.toJSON(), userFields)}
+    this.success(data);
+  }
+
+  async update() {
+    const fieldsMap = {
+      username: {type: 'string'},
+      nickname: {type: 'string'},
+      email: {type: 'string'},
+      tel: {type: 'string'},
+      appIDs: {type: 'array'},
+      manager: {type: 'string'},
+      status: {type: 'integer', default: constant.UserStatus.Normal}
+    }
+    const id = this.getRequiredIntArg('id')
+    const values = this.getCheckedValues(fieldsMap)
+
+    if (values.status === constant.UserStatus.Disabled) { // disabled.
+      const user = await UserModel.findOne({where: {id}})
+      if (!user) { // user not exist
+        this.log4js.warn('update user [id:%s] failed! user not exist', id, values.username)
+        this.fail(400, errors.ERR_USER_NOT_FOUND)
+        return
+      }
+      if (user.manager === constant.Manager.super) {
+        this.log4js.error('update failed! cannot disabled a super user(%d:%s)', id, values.username)
+        throw new AccessDenyError('update failed! cannot disabled a super user.')
+      }
+    }
+
+    values.updateTime = util.unixtime();
+    const options = {where: {id}}
+    const {effects, newValues: userInfo} = await UserModel.mustUpdate(values, options)
+    const data = {effects, 'userInfo': util.filterFieldWhite(userInfo.toJSON(), userFields)}
     this.success(data);
   }
 
@@ -181,24 +219,6 @@ class User extends BasicService {
       return;
     }
     const data = {password}
-    this.success(data);
-  }
-
-  async update() {
-    const fieldsMap = {
-      username: {type: 'string'},
-      nickname: {type: 'string'},
-      email: {type: 'string'},
-      tel: {type: 'string'},
-      appIDs: {type: 'array'},
-      manager: {type: 'string'},
-    }
-    const id = this.getRequiredIntArg('id')
-    const values = this.getCheckedValues(fieldsMap)
-    values.updateTime = util.unixtime();
-    const options = {where: {id}}
-    const {effects, newValues: userInfo} = await UserModel.mustUpdate(values, options)
-    const data = {effects, 'userInfo': util.filterFieldWhite(userInfo.toJSON(), userFields)}
     this.success(data);
   }
 
@@ -224,7 +244,7 @@ class User extends BasicService {
       }
     }
 
-    if (userInfo.manager === 'super') {
+    if (userInfo.manager === constant.Manager.super) {
       this.log4js.error('delete super user {id:%s, username:%s} failed!', userInfo.id, userInfo.username)
       this.fail(200, errors.ERR_PERMISSION_DENY, `Can't delete 'super' user`)
       return

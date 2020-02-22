@@ -3,6 +3,7 @@ const ApplicationModel = require('../model/application')
 const UserModel = require('../model/user')
 const errors = require('../errors/errors')
 const AccessDenyError = require('../errors/access-deny-error')
+const constant = require('../util/constant')
 const util = require('../util/util')
 const Op = require('sequelize').Op;
 const applicationFields = ['id', 'name', 'description', 'createTime'];
@@ -17,7 +18,7 @@ class Application extends BasicService {
   async access(bizMethod) {
     const method = this.ctx.method
     if (method !== 'GET' && bizMethod !== 'checkExist') { // POST, PUT, DELETE
-      if (this.ctx.userInfo.manager !== 'super') {
+      if (this.ctx.userInfo.manager !== constant.Manager.super) {
         this.log4js.error('access [%s] failed! user:%s have no permission to do this operation', bizMethod, this.ctx.userInfo.username)
         throw new AccessDenyError('need super user to do this operation.')
       }
@@ -93,7 +94,7 @@ class Application extends BasicService {
       where[Op.or] = [{id: {[Op.regexp]: key}}, {name: {[Op.regexp]: key}}]
     }
     const userInfo = this.ctx.userInfo
-    if (userInfo.manager === 'admin') {
+    if (userInfo.manager === constant.Manager.admin) {
       const appIds = userInfo.appIDs || []
       where.id = { [Op.in]:  appIds}
     }

@@ -4,6 +4,7 @@ const UserModel = require('../model/user')
 const RbacTokenError = require('../errors/rbac-token-error')
 const AccessLogModel = require('../model/access-log')
 const resourceCache = require('../util/resource-cache')
+const constant = require('../util/constant')
 const util = require('../util/util')
 const userCache = require('../util/user-cache')
 
@@ -152,7 +153,7 @@ class Rbac extends BasicService {
     if (this.ctx.resource) {
       matchedResource = util.filterFieldWhite(this.ctx.resource, ['id', 'appID', 'matchType', 'url', 'action', 'permID'])
       // ignore url when permID ===ALLOW_ALL
-      if (matchedResource.permID === 'ALLOW_ALL') {
+      if (matchedResource.permID === constant.SystemPerm.ALLOW_ALL) {
         return
       }
     }
@@ -181,10 +182,10 @@ class Rbac extends BasicService {
     if (resource) {
       this.ctx.resource = resource;
       const permID = resource.permID;
-      if (permID === 'ALLOW_ALL') { // allow all user access
+      if (permID === constant.SystemPerm.ALLOW_ALL) { // allow all user access
         this.log4js.info('resource {appID: %s, action: %s, resName: %s} permission is [%s], allow all user to access!', appID, action, resName, permID)
         this.success(data)
-      } else if (permID === 'DENY_ALL') { // deny all user access
+      } else if (permID === constant.SystemPerm.DENY_ALL) { // deny all user access
         this.log4js.info('resource {appID: %s, action: %s, resName: %s} permission is [%s], not allow any user to access!', appID, action, resName, permID)
         const reason = `Access failure. resource '${resName}' is deny all user`
         this.fail(401, reason, data)

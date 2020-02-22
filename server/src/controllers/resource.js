@@ -1,6 +1,7 @@
 const BasicService = require('./basic-service')
 const ResourceModel = require('../model/resource')
 const resourceCache = require('../util/resource-cache')
+const constant = require('../util/constant')
 const util = require('../util/util')
 const Op = require('sequelize').Op;
 const _ = require('lodash')
@@ -14,11 +15,11 @@ function getPriority(values) {
   if (action === 'ALL') {
     priority += 1000;
   }
-  if (matchType === 'equal') {
+  if (matchType === constant.MatchType.equal) {
     priority += 10000;
-  } else if (matchType === 'suffix') {
+  } else if (matchType === constant.MatchType.suffix) {
     priority += 100000;
-  } else if (matchType === 'prefix') {
+  } else if (matchType === constant.MatchType.prefix) {
     priority += 1000000;
   }
   return priority;
@@ -64,7 +65,7 @@ class Resource extends BasicService {
   async add() {
     const fieldsMap = {
       appID: {type: 'string', required: true},
-      matchType: {type: 'string', required: true, enums: ['equal', 'suffix', 'prefix']},
+      matchType: {type: 'string', required: true, enums: [constant.MatchType.equal, constant.MatchType.suffix, constant.MatchType.prefix]},
       name: {type: 'string', required: true},
       action: {type: 'string', required: true, enums: ['ALL', 'GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'OPTIONS', 'PATCH']},
       permID: {type: 'string', required: true},
@@ -82,7 +83,7 @@ class Resource extends BasicService {
 
   async update() {
     const fieldsMap = {
-      matchType: {type: 'string', required: true, enums: ['equal', 'suffix', 'prefix']},
+      matchType: {type: 'string', required: true, enums: [constant.MatchType.equal, constant.MatchType.suffix, constant.MatchType.prefix]},
       name: {type: 'string', required: true},
       action: {type: 'string', required: true, enums: ['GET', 'HEAD', 'POST', 'OPTIONS', 'DELETE', 'PUT', 'PATCH', 'ALL']},
       permID: {type: 'string', required: true},

@@ -3,6 +3,7 @@ const TokenError = require('../errors/token-error')
 const tokenUtil = require('../util/token-util')
 const AccessDenyError = require('../errors/access-deny-error')
 const UserModel = require('../model/user')
+const constant = require('../util/constant')
 const _ = require('lodash')
 
 
@@ -74,7 +75,7 @@ module.exports = function() {
       }
       // only super and admin user can be use the admin backend system.
       /* istanbul ignore if */
-      if (!(userInfo.manager === 'super' || userInfo.manager === 'admin')) {
+      if (!(userInfo.manager === constant.Manager.super || userInfo.manager === constant.Manager.admin)) {
         log4js.error('request [%s %s] failed! userId:%d have no permission to do this operation', ctx.method, ctx.path, userId)
         throw new AccessDenyError('need super or admin user to do this operation.')
       }
