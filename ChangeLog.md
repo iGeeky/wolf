@@ -35,8 +35,14 @@
 
 * 日志记录支持查看请求 `body` 或 `args`
 
-2020-02-21 0.2.3
+2020-02-23 0.2.3
 
 * `token` 添加版本
 * RBAC 接口添加用户信息获取接口 `/wolf/rbac/user_info`
 * 禁用用户
+* rbac URL变更
+  * `/wolf/rbac/login` ==> `/wolf/rbac/login.html`
+  * `/wolf/rbac/login.rest` ==> `/wolf/rbac/login`
+  * `/wolf/rbac/change_pwd` ==> `/wolf/rbac/change_pwd.html`
+  * `/wolf/rbac/change_pwd.rest` ==> `/wolf/rbac/change_pwd`
+

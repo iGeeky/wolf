@@ -46,7 +46,7 @@ class Rbac extends BasicService {
     })
   }
 
-  async login() {
+  async loginHtml() {
     await this.loginPageRender();
   }
 
@@ -99,7 +99,7 @@ class Rbac extends BasicService {
     return {ok: true, token, expiresIn, userInfo}
   }
 
-  async loginRest() {
+  async login() {
     const {ok, reason, token, userInfo} = await this._loginPostInternal();
     if (!ok) {
       this.fail(200, reason, {})
@@ -108,6 +108,11 @@ class Rbac extends BasicService {
     const {id, username, nickname} = userInfo;
     const data = {userInfo: {id, username, nickname}, token}
     this.success(data)
+  }
+
+  
+  async loginRest() {
+    this.login()
   }
 
   async loginPost() {
@@ -254,11 +259,11 @@ class Rbac extends BasicService {
       }
     )
     this.ctx.status = 302;
-    const appid = userInfo.appid || 'unset'
-    this.ctx.redirect('/wolf/rbac/login?appid=' + appid);
+    const appid = this.ctx.appid
+    this.ctx.redirect('/wolf/rbac/login.html?appid=' + appid);
   }
 
-  async changePwd() {
+  async changePwdHtml() {
     const {username} = this.ctx.userInfo;
     const error = null
     const success = null;
@@ -306,7 +311,7 @@ class Rbac extends BasicService {
     return {ok: true, userInfo}
   }
 
-  async changePwdRest() {
+  async changePwd() {
     const {ok, reason} = await this._changePwdInternal();
     if (!ok) {
       this.fail(200, reason, {})

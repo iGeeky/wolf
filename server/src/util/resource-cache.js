@@ -19,7 +19,9 @@ async function getResourceFromDb(appID, action, name) {
   const options = {where, order}
 
   let resource = await ResourceModel.findOne(options)
-  resource = resource.toJSON()
+  if (resource) {
+    resource = resource.toJSON()
+  }
   return resource
 }
 

@@ -1,13 +1,13 @@
 
 local _M = {}
 
-local login_url = "/wolf/rbac/login"
+local login_url = "/wolf/rbac/login.html"
 local login_post_url = "/wolf/rbac/login.post"
 local logout_url = "/wolf/rbac/logout"
 local no_permission = "/wolf/rbac/no_permission"
 local no_permission_html = "/wolf/rbac/no_permission.html"
 local access_check_url = "/wolf/rbac/access_check"
-local change_pwd_url = "/wolf/rbac/change_pwd"
+local change_pwd_url = "/wolf/rbac/change_pwd.html"
 local change_pwd_post_url = "/wolf/rbac/change_pwd.post"
 
 

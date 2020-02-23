@@ -3,7 +3,7 @@ local util = require("util")
 local agent_pub = require("agent_pub")
 
 local logout_url = "/wolf/rbac/logout"
-local change_pwd_url = "/wolf/rbac/change_pwd"
+local change_pwd_url = "/wolf/rbac/change_pwd.html"
 
 local def_topbar_style = [[
 <style type="text/css">

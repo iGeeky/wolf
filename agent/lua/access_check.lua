@@ -4,7 +4,7 @@ local json = require("json")
 local agent_pub = require("agent_pub")
 local config = require("config")
 
-local login_url = "/wolf/rbac/login"
+local login_url = "/wolf/rbac/login.html"
 local no_permission = "/wolf/rbac/no_permission"
 local no_permission_html = "/wolf/rbac/no_permission.html"
 local access_check_url = "/wolf/rbac/access_check"
