@@ -271,7 +271,8 @@ class Rbac extends BasicService {
     await this.ctx.render('change_pwd.html', args)
   }
 
-  async _changePwdInternal() {
+  async _changePwdInternal(opts) {
+    opts = opts || {}
     const args = this.getArgs();
     const {id: userId, username} = this.ctx.userInfo;
     args.username = username;
@@ -281,7 +282,6 @@ class Rbac extends BasicService {
 
     const oldPassword = this.getArg('oldPassword')
     const newPassword = this.getArg('newPassword')
-    const reNewPassword = this.getArg('reNewPassword')
     if (!oldPassword) {
       return {ok: false, reason: 'ERR_OLD_PASSWORD_REQUIRED'}
     }
@@ -289,8 +289,11 @@ class Rbac extends BasicService {
       return {ok: false, reason: 'ERR_NEW_PASSWORD_REQUIRED'}
     }
 
-    if (newPassword !== reNewPassword) {
-      return {ok: false, reason: 'ERR_REPEATED_PASSWORD_INCORRECT'}
+    if (opts.checkReNewPassword) {
+      const reNewPassword = this.getArg('reNewPassword')
+      if (newPassword !== reNewPassword) {
+        return {ok: false, reason: 'ERR_REPEATED_PASSWORD_INCORRECT'}
+      }
     }
 
     const userInfo = await UserModel.findByPk(userId);
@@ -323,14 +326,14 @@ class Rbac extends BasicService {
 
   async changePwdPost() {
     const args = this.getArgs();
-    const {id: userId, username} = this.ctx.userInfo;
+    const {id: username} = this.ctx.userInfo;
     args.username = username;
     args.success = null;
     args.oldPassword = args.oldPassword || '';
     args.newPassword = args.newPassword || '';
     args.reNewPassword = args.reNewPassword || '';
 
-    const res = await this._changePwdInternal();
+    const res = await this._changePwdInternal({checkReNewPassword: true});
     if(!res.ok) {
       const error = errors[res.reason] || 'Change password failed!'
       args.error = error
