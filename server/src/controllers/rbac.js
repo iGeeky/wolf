@@ -112,7 +112,7 @@ class Rbac extends BasicService {
 
   
   async loginRest() {
-    this.login()
+    await this.login()
   }
 
   async loginPost() {
