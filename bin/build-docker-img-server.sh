@@ -6,7 +6,7 @@ fi
 
 TAG="$1"
 echo "BUILD TAG: $TAG"
-cd ./console && npm run build:prod && cd ../
+cd ./console && npm install && npm run build:prod && cd ../
 
 docker build -t igeeky/wolf-server:$TAG -f ./server/Dockerfile ./server
 docker build -t igeeky/wolf-server:latest -f ./server/Dockerfile ./server
