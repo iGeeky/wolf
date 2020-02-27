@@ -1,8 +1,9 @@
 const NodeCache = require( 'node-cache' );
+const config = require('../../conf/config')
 const UserModel = require('../model/user')
 const UserRoleModel = require('../model/user-role')
 const RoleModel = require('../model/role')
-const userCache = new NodeCache({stdTTL: 3600, checkperiod: 60*5});
+const userCache = new NodeCache({stdTTL: config.memCacheTTLSecond, checkperiod: 60*5});
 const log4js = require('./log4js')
 
 

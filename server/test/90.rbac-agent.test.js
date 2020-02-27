@@ -203,13 +203,6 @@ describe('rbac', function() {
       await mocha.post({url, headers, body, schema})
     });
 
-    it('change password failed, repeat password incorrect', async function() {
-      const schema = util.failSchema('ERR_REPEATED_PASSWORD_INCORRECT')
-      const url = '/wolf/rbac/change_pwd'
-      const body = {oldPassword: '123456', newPassword: '123456', reNewPassword: 'abcdef'}
-      await mocha.post({url, headers, body, schema})
-    });
-
     it('change password failed, old password incorrect', async function() {
       const schema = util.failSchema('ERR_OLD_PASSWORD_INCORRECT')
       const url = '/wolf/rbac/change_pwd'

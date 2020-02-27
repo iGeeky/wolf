@@ -30,7 +30,7 @@ class Resource extends BasicService {
     super(ctx, ResourceModel)
   }
   async log(bizMethod) {
-    if (bizMethod === 'update' || bizMethod === 'delete') {
+    if (bizMethod === 'add' || bizMethod === 'update' || bizMethod === 'delete') {
       this.log4js.info('---- url: %s, method: %s, flush resource cache ----', this.url, bizMethod)
       resourceCache.flushResourceCache();
     }

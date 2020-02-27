@@ -1,6 +1,7 @@
 const NodeCache = require( 'node-cache' );
+const config = require('../../conf/config')
 const ResourceModel = require('../model/resource')
-const resourceCache = new NodeCache({stdTTL: 3600, checkperiod: 60*5});
+const resourceCache = new NodeCache({stdTTL: config.memCacheTTLSecond, checkperiod: 60*5});
 const constant = require('./constant')
 const Sequelize = require('sequelize')
 const Op = require('sequelize').Op;
