@@ -1,11 +1,11 @@
 {
   "name": "wolf-console",
-  "version": "0.1.0",
-  "author": "",
+  "version": "0.2.0",
+  "author": "igeeky.io@gmail.com",
   "license": "MIT",
   "scripts": {
     "dev": "vue-cli-service serve",
-    "build:prod": "vue-cli-service build && mkdir -p ../server/html && rm -Rf ../server/html/* && cp -R dist/* ../server/html/",
+    "build:prod": "vue-cli-service build --force && mkdir -p ../server/html && rm -Rf ../server/html/* && cp -R dist/* ../server/html/",
     "build:stage": "vue-cli-service build --mode staging",
     "preview": "node build/index.js --preview",
     "lint": "eslint --ext .js,.vue src",
@@ -44,6 +44,7 @@
     "moment": "^2.24.0",
     "normalize.css": "7.0.0",
     "nprogress": "0.2.0",
+    "path-to-regexp": "^6.1.0",
     "screenfull": "4.2.0",
     "vue": "2.6.10",
     "vue-json-viewer": "^2.2.8",
