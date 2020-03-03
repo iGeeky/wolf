@@ -6,12 +6,14 @@
 
 * docker
 * docker-compose
+* node 12+
+* npm
 
 #### 2.构建docker镜像
 
 ```shell
 cd path/to/wolf
-sh bin/build-all.sh 0.1.10
+bash bin/build-all.sh 0.1.10
 ```
 
 构建成功后, 可以使用如下命令查看镜像:
