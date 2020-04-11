@@ -1,31 +1,33 @@
+[Chinese](README-CN.md)
+
 ## Introductions
 
-wolf是一个通用RBAC系统，适用于所有的HTTP应用．统一授权及访问控制.
+wolf is a universal RBAC system, suitable for all HTTP applications. Unified authorization and access control.
 
 
-每个公司内部会有各种不同的后台服务及相应的管理后台．通常不同的系统会有一套自己的账号系统及权限管理模块。重复的开发使得开发资源浪费．并且不统一的账号，造成管理上的混乱。如果系统是由不同的团队来开发，这种情况将更糟糕．
+Within each company, there are different backend services and corresponding management backend. Usually different systems have their own account system and permission management module. Repeated development makes development resources wasteful. And there is no unified account number, causing administrative confusion. This would be even worse if the system was developed by a different team.
 
-本系统可以应用于各种平台，及各种系统之上． 统一账号及统一授权．并且各系统无需任何开发工作．
+The system can be applied to a variety of platforms and systems. Unified account number and unified authorization. And no development work is required for each system.
 
-演示地址(因服务器不在国内,首次访问会比较慢, 还请耐心等待, 或使用docker本地运行测试):
+Demo address (first visit will be slow, please be patient, or use docker to run the test locally):
 
-* 管理后台: [Console](http://console.igeeky.ml/)
+* Management backend: [Console](http://console.igeeky.ml/)
 
-| 账号  | 密码        |
+| Account  | Password |
 | ----- | ----------- |
 | admin | wolf-123456 |
 
-* Restful Demo应用: [Demo](http://demo.igeeky.ml/), 下面是测试账号及密码:
+* Restful Demo: [Demo](http://demo.igeeky.ml/), Test account and password:
 
-| 账号               | 密码        |
+| Account            | Password   |
 | ------------------ | ----------- |
 | app-man            | wolf-123456 |
 | user-role-perm-man | wolf-123456 |
 | log                | wolf-123456 |
 
-* Html Demo应用: [Html Demo](http://demo-or.igeeky.ml/), 下面是测试账号及密码:
+* Html Demo: [Html Demo](http://demo-or.igeeky.ml/), Test account and password:
 
-| 账号                | 密码        |
+| Account             | Password   |
 | ------------------- | ----------- |
 | or_index            | wolf-123456 |
 | or_en               | wolf-123456 |
@@ -35,7 +37,8 @@ wolf是一个通用RBAC系统，适用于所有的HTTP应用．统一授权及�
 | or_cn_getting_start | wolf-123456 |
 | or_suffix_match     | wolf-123456 |
 
-注意: Html Demo应用是代理了OpenResty官网并添加了Rbac访问控制. 原网站并不需要登陆访问, 可以访问[这里](https://openresty.org)查看原网站.
+
+Note: The Html Demo application is a proxy for the OpenResty official website and adds Rbac access control. The original website does not require login, you can visit [here](https://openresty.org) to view the original website.
 
 
 
@@ -43,46 +46,46 @@ wolf是一个通用RBAC系统，适用于所有的HTTP应用．统一授权及�
 
 
 
-* 语言无关，任何HTTP程序都能使用，包括但不限于：纯静态网页，JSP，PHP，ASP，PYTHON，NODE JS等WEB系统
-* 低耦合, 无侵入性, 支持新的应用不需要对应用进行任何修改与改造, 系统在代理层对资源权限进行管理
-* 自带管理后台(`console模块`)，可对`应用`，`用户`，`角色`, `权限`及`资源`进行管理
-* 支持`Restful`接口, 也支持后端渲染的`纯html`应用
-* 支持访问日志记录与查询, 以进行审计及问题追溯.
-* 支持APISIX网关[apache-apisix:wolf-rbac](https://github.com/apache/incubator-apisix/blob/master/doc/plugins/wolf-rbac-cn.md)
-* 系统有三大模块:
-  * Wolf-Server 服务实现,管理后台功能实现
-  * Wolf-Console 管理后台前端代码实现
-  * Wolf-Agent RBAC的Access Check代理
-* 系统包含以下实体对象:
-  * `Application`, 应用, 支持多应用. 不同的应用可以拥有不同的权限,角色及资源. 可以查看应用下的RBAC对象关系图表.
-  * `User`, 用户, 整体系统共享用户. 可以给用户授权的对象包括:
-    * 管理员权限, 设置为管理员的用户可以登陆`Console`管理后台,并对应用进行管理
-    * 应用列表, 可以为用户分配零到多个应用. 根据用户类型不同, 应用列表的意义也不同: 
-      * 对于管理员用户, 表示可以对这些应用进行管理.
-      * 对于非管理员用户, 表示可以对这些应用进行登陆及使用
-    * 角色, 可以为用户分配多个角色, 用户最终拥有的权限是所有角色的权限的合集
-    * 权限, 可以直接为用户分配权限. 虽然标准的RBAC模型中通常不支持这种方式, 但是本系统支持
-  * `Role`, 角色, 角色可以包含一组权限.
-  * `Category`, 权限分类, 一种对权限进行分类(分组)的方式, 方便管理, 通常可以按大的功能模块进行分类. 在系统中`权限选择框`中会按分类对权限进行分组显示.
-  * `Permission`, 权限, 权限与资源是一对多的关系, 可以一个资源一个权限, 也可以多个资源使用同一个权限.
-  * `Resource`, 资源, 目前主要是HTTP请求. 资源的属性`Match Type` + `Name` + `Action` 确定一条唯一的资源. 一个资源最重要的4元组是:
-    * `Match Type`, URL匹配类型, 支持`精确匹配`，`后缀匹配`，`前缀匹配`三种模式
-    * `Name`, 指请求的HTTP URL. 如果是`精确匹配`和`前缀匹配`, 通常是以`/`开头. 如果是`后缀匹配`, 通常是资源共有的后缀, 如: `.jpg`, `.js`,  *不支持通配符或正则*.
-    * `Action`, 指请求的`HTTP Method`.  方法`ALL`能匹配所有方法.
-    * `Permission`, 指定访问该资源需要的权限. 两个内置权限: `Allow All`表示所有用户可访问, `Deny All`表示所有用户不可访问.
-  * `Audit Log`, 审计日志, 记录了所有经过本系统的访问情况(包含`Wolf-Console`及本系统管理的应用). 记录了以下主要信息:
-    * 用户ID, 用户名, 用户昵称
-    * 访问日期, 时间及访问者的IP
-    * HTTP方法,及URL,
-    * 匹配上的资源.
-    * 访问响应的状态码.
-    * 请求args参数或request body(只支持了`Wolf-Console`的记录).
-* 资源匹配方式, 支持不同的优先级, 优先级规则如下:
-  * `Match Type`优先级从高到低, 依次是: 精确匹配, 后缀匹配, 前缀匹配.
-  * `Action` 即`HTTP Method`.  `ALL`优先级比较低, 其它方法(如`GET`, `POST`, `PUT`)优先级相同, 但都比`ALL`高.
-  * `Name` 即`HTTP URL`.  优先级与URL长度有关, URL越长优先级越高.
+* Language independent, any HTTP program can be used, including but not limited to: pure static web pages, JSP, PHP, ASP, PYTHON, NODE JS and other WEB systems
+* Low coupling, non-intrusive, supports new applications without any modifications or changes to the application, the system manages resource rights at the proxy level
+* Management backend (`console module`) for `application`, `user`, `role`, `permission` and `resources` management
+* Supports `Restful` interface, also supports `pure html` applications for backend rendering
+* Support access logging and querying for auditing
+* APISIX gateway support[apache-apisix:wolf-rbac](https://github.com/apache/incubator-apisix/blob/master/doc/plugins/wolf-rbac-cn.md)
+* The system has three main modules:
+  * Wolf-Server, Service implementation, management backend functionality implementation
+  * Wolf-Console, Management-backend's frontend code implementation
+  * Wolf-Agent, RBAC's access check agent
+* The system contains the following entity objects:
+  * `Application`, Multi-application support. Different applications can have different permissions, roles and resources. You can view the RBAC object relationship diagram under the application.
+  * `User`, Users are Shared by all applications. Objects that can be authorized for users include:
+    * Administrator privileges, users set as administrators can log in to "Console" to manage the backend and manage the application.
+    * Application list, which can assign zero to multiple applications to a user. Depending on the type of user, the meaning of the application list varies:
+      * For administrative users, these applications can be managed.
+      * For non-administrative users, these applications can be accessed and used
+    * Roles, you can assign multiple roles to the user, and the permissions you end up with are a collection of permissions for all roles
+    * Permission, the system can assign permissions directly to users. Although this approach is not usually supported in standard RBAC models, this system supports
+  * `Role`, role can contain a set of permissions.
+  * `Category`, permissions category, is a way to classify (group) permissions for easy management, usually by large functional modules. In the system Permissions selection box, the permissions will be grouped by category.
+  * `Permission`, permissions and resources are a one-to-many relationship, one resource can have one permission, or multiple resources can use the same permission.
+  * `Resource`, Currently it is mainly HTTP requests. The properties `Match Type` + `Name` + `Action` of a resource determine a unique resource. The most important 4 tuple groups for a resource are:
+    * `Match Type`, URL match type, supports `equals match`, `suffix match`,`prefix match` three types.
+    * `Name`, Refers to the requested HTTP URL. If it is an `equals match` and `prefix match`, it usually starts with `/`. If it is a `suffix match`, it is usually a common resource suffix, such as: `.jpg', `.js', *no wildcards or regulars* are supported.
+    * `Action`, refers to the requested `HTTP Method`.  The method `ALL` matches all methods.
+    * `Permission`, Specify the permissions required to access the resource. Two built-in permissions: `Allow All` means that all users have access, and `Deny All` means that all users cannot access.
+  * `Audit Log`, An audit log, which records all accesses to the system (including `Wolf-Console` and applications managed by the system). The following key information was recorded:
+    * User ID, User Name, User Nickname
+    * Access date, time and IP of the visitor
+    * HTTP method, and URL
+    * Match on resources.
+    * The status code of the access response.
+    * Request args parameter or request body (only `Wolf-Console` records are supported).
+* The resource matching method, which supports different priorities, has the following priority rules:
+  * `Match Type` priority from high to low, in order:equals match, suffix match, prefix match.
+  * `Action` means` HTTP Method`. `ALL` has lower priority. Other methods (such as` GET`, `POST`,` PUT`) have the same priority, but all have higher priority than `ALL`.
+  * `Name` means `HTTP URL`. The priority is related to the URL length. The longer the URL, the higher the priority.
 
-**注意: 本文中的URL仅指URL标准中的path部分, 不包含域名,端口及参数部分**
+**Note: The URL in this article refers only to the path section of the URL standard, not the domain name, port and parameters section.**
 
 ## Architecture
 
@@ -104,11 +107,9 @@ wolf是一个通用RBAC系统，适用于所有的HTTP应用．统一授权及�
 
 
 
-
-
 ## Getting Started
 
-[快速起步](./quick-start-with-docker/README-CN.md)
+[Getting Started](./quick-start-with-docker/README.md)
 
 
 
@@ -116,61 +117,61 @@ wolf是一个通用RBAC系统，适用于所有的HTTP应用．统一授权及�
 
 #### Console
 
-| ![应用列表](./docs/imgs/screenshot/console/application.png) |
+| ![Application List](./docs/imgs/screenshot/console/application.png) |
 |:--:|
-| *应用列表* |
+| *Application List* |
 
-| ![应用列表](./docs/imgs/screenshot/console/application-diagram.png) |
+| ![Application List](./docs/imgs/screenshot/console/application-diagram.png) |
 |:--:|
-| *应用,用户,角色,权限关系图* |
+| *Application, User, Role, Permission Relations* |
 
 
-| ![用户管理](./docs/imgs/screenshot/console/user.png) |
+| ![user management](./docs/imgs/screenshot/console/user.png) |
 |:--:|
-| *用户管理* |
+| *user management* |
 
-| ![角色管理](./docs/imgs/screenshot/console/role.png) |
+| ![role management](./docs/imgs/screenshot/console/role.png) |
 |:--:|
-| *角色管理* |
+| *role management* |
 
-| ![角色的权限详情](./docs/imgs/screenshot/console/permission-detail.png) |
+| ![Details of the role's permissions](./docs/imgs/screenshot/console/permission-detail.png) |
 |:--:|
-| *角色的权限详情/权限分组显示* |
+| *Details of the role's permissions/Permissions grouping display* |
 
-| ![权限管理](./docs/imgs/screenshot/console/permission.png) |
+| ![permission management](./docs/imgs/screenshot/console/permission.png) |
 |:--:|
-| *权限管理* |
+| *permission management* |
 
-| ![审核日志](./docs/imgs/screenshot/console/audit-log.png) |
+| ![Audit log](./docs/imgs/screenshot/console/audit-log.png) |
 |:--:|
-| *审核日志* |
+| *Audit log* |
 
 
 
 #### Client/Demo
 
-| ![客户端登陆](./docs/imgs/screenshot/client/login.png) |
+| ![client login](./docs/imgs/screenshot/client/login.png) |
 |:--:|
-| *客户端登陆* |
+| *client login* |
 
-| ![主页面](./docs/imgs/screenshot/client/main.png) |
+| ![main page](./docs/imgs/screenshot/client/main.png) |
 |:--:|
-| *主页面(注意: 顶部添加了信息栏)* |
+| *main page(Note: Added information bar at top.)* |
 
-| ![无权限页](./docs/imgs/screenshot/client/no-permission.png) |
+| ![No permission page](./docs/imgs/screenshot/client/no-permission.png) |
 |:--:|
-| *无权限页* |
+| *No permission page* |
 
 
 
 ## Deployment
 
-[部署文档](./docs/deploy.md)
+[deployment document](./docs/deploy.md)
 
 
 ## Manual Document
 
-[使用指南](./docs/usage.md)
+[Usage](./docs/usage.md)
 
 
 ## Change Log

@@ -1,28 +1,28 @@
-[中文](deploy-cn.md)
+[English](deploy.md)
 
-There are two ways to deploy, Docker can be used to deploy faster. It can also be deployed manually in all steps.
+部署方式有两种, 可以采用Docker进行部署, 比较快速. 也可以所有步骤都手动部署.
 
-## A.Docker environment deployment
+## A.Docker环境部署
 
-#### 1.required environment
+#### 1.必要环境
 
 * docker
 * docker-compose
 * node 12+
 * npm
 
-#### 2.Building the docker image
+#### 2.构建docker镜像
 
 ```shell
 cd path/to/wolf
 bash bin/build-all.sh 0.1.10
 ```
 
-After a successful build, you can view the image using the following command:
+构建成功后, 可以使用如下命令查看镜像:
 
 `docker images |grep wolf`
 
-The output is approximately as follows:
+输出大概如下: 
 
 ```
 igeeky/wolf-agent         0.1.10              c8013cdbc95d        1 hours ago         101MB
@@ -31,45 +31,45 @@ igeeky/wolf-server        0.1.10              25ee3cb46296        7 hours ago   
 igeeky/wolf-server        latest              25ee3cb46296        7 hours ago         143MB
 ```
 
-#### 3.Starting the docker image with docker-compose
+#### 3.使用docker-compose启动docker镜像
 
-[Reference here](../quick-start-with-docker/README.md)
+[参考这里](../quick-start-with-docker/README-CN.md)
 
-## B.Manual deployment
+## B.手动部署
 
-#### 1.Initializing the database
+#### 1.初始化数据库
 
-* Installing PostgreSQL
+* 安装PostgreSQL
 
-Please google the installation method yourself.
+请自行google安装方法.
 
-* Create accounts and databases
+* 创建账号及数据库
 
-Login to the postgres database with a postgres account and execute the following script to create the `wolfroot` user and `wolf` database (please change the username and password as needed):
+以postgres账号登陆postgres数据库, 执行以下脚本, 创建`wolfroot`用户及`wolf`数据库(请根据需要修改用户名及密码):
 
 ```sql
 CREATE USER wolfroot WITH PASSWORD '123456';
 CREATE DATABASE wolf with owner=wolfroot ENCODING='UTF8';
 GRANT ALL PRIVILEGES ON DATABASE wolf to wolfroot;
--- To access the wolf database as wolfroot, if prompted for a password, please enter the password above.
+-- 以 wolfroot身份登陆wolf数据库, 如果提示要输入密码, 请输入上面的密码.
 \c wolf wolfroot;
 ```
 
-* Creation tables
+* 创建表
 
-Creating database tables using scripts
+使用脚本创建数据库表
 
 ```sql
 \i path/to/wolf/server/script/db.sql;
 ```
 
-View the created table:
+查看创建的表:
 
 ```
 \d
 ```
 
-Output a result similar to the one below, indicating that the database table was created successfully:
+输出类似下面的结果, 表示数据库表创建成功:
 
 ```
                List of relations
@@ -92,25 +92,24 @@ Output a result similar to the one below, indicating that the database table was
 
 
 
-#### 2.Server configuration items
+#### 2.服务器配置项
 
-* There are 3 main configuration parameters for the server:
+* 服务器主要配置参数有3个:
 
-  * RBAC_ROOT_PASSWORD The default password for root and admin accounts. The default is `123456`.
-  * RBAC_TOKEN_KEY To encrypt the KEY used by the user token, it is highly recommended to set this value.
-  * RBAC_SQL_URL The database link to the postgres database. The default is `postgres://wolfroot:123456@127.0.0.1:5432/wolf`
+  * RBAC_ROOT_PASSWORD root账号及admin账号的默认密码. 默认为`123456`
+  * RBAC_TOKEN_KEY 加密用户token使用的KEY, 强烈建议设置该值.
+  * RBAC_SQL_URL 连接postgres数据库的数据库链接. 默认为: `postgres://wolfroot:123456@127.0.0.1:5432/wolf`
 
-  The above three configurations can be configured in the system environment variables or specified at startup.
+  以上三个配置, 可以在系统环境变量中配置, 也可以在启动时指定.
 
-#### 3.startup server
+#### 3.启动服务器
 
-Please install node and npm yourself.
+请自行安装node及npm, 并设置合适的npm库镜像.
 
-
-* Important: Install the pg-native dependencies first.
+* 重要: 先安装pg-native依赖项.
 
 ```shell
-# Refer to: https://www.npmjs.com/package/pg-native
+# 可参考: https://www.npmjs.com/package/pg-native
 On OS X: brew install postgres
 On Ubuntu/Debian: apt-get install libpq-dev g++ make
 On RHEL/CentOS: yum install postgresql-devel
@@ -120,37 +119,37 @@ Install PostgreSQL (http://www.postgresql.org/download/windows/)
 Add your Postgre Installation's bin folder to the system path (i.e. C:\Program Files\PostgreSQL\9.3\bin).
 ```
 
-* Startup service.
+* 启动服务.
 
 ```shell
 export RBAC_ROOT_PASSWORD=123456
 export RBAC_TOKEN_KEY=THE-NEW-TOKEN-KEY
-# Please make the changes according to the user and database you have created.
+# 请根据你创建用户及数据库的实际情况进行修改.
 export RBAC_SQL_URL=postgres://wolfroot:123456@127.0.0.1:5432/wolf
 cd path/to/wolf/server
-# Installation dependencies (executed on first boot)
+# 安装依赖项(首次启动时执行)
 npm install
-# Initiate service procedures.
+# 启动服务程序.
 npm run start
 ```
 
-**If you start successfully, you should see a similar output:**
+**如果启动成功, 应该能看到类似输出:**
 
 > listen at 0.0.0.0:10080 success!
 >
-> # The following are some initialized system account output information
+> # 后面是一些初始化系统账号的输出信息
 
-#### 4.Startup Console
+#### 4.启动Console
 
 ```shell
 cd path/to/wolf/console
-# Installation dependencies (executed on first boot)
+# 安装依赖项(首次启动时执行)
 npm install
-# Start the console.
+# 启动控制台程序.
 cnpm run dev
 ```
 
-**Compile, when started successfully, you should see a similar output:**
+**编译, 启动成功后, 应该能看到类似输出:**
 
 ```
  DONE  Compiled successfully in 1000ms    
@@ -160,20 +159,24 @@ cnpm run dev
   - Network: http://192.168.x.x:10088/
 ```
 
-Once the Console has been successfully started, it is now accessible using the root account. The password is `123456` or the one you specify when starting the server with the variable `RBAC_ROOT_PASSWORD`.
+Console启动成功后, 可使用root账号进行访问了. 密码是`123456`或你在启动服务器时通过`RBAC_ROOT_PASSWORD`变量指定的.
 
-#### 5.Configuring Agent
+[Console的使用, 请参考这里](./)
 
-* Installing OpenResty
+#### 5.配置Agent
 
-Please google the installation method yourself.
+* 安装OpenResty
 
-- Create applications in Console, and the corresponding users, roles, permissions, resources, etc.
+请自行google安装方法.
 
-* Add Agent configuration to nginx.conf (or the subconfiguration it contains) (the following configuration assumes Wolf's code is in the `/opt` directory)
+- 在Console创建项目, 及相应的用户,角色, 权限, 资源等.
+
+[参考这里](.)
+
+* 在nginx.conf(或是它包含的子配置)中添加Agent代理配置(下面配置假定wolf的代码在`/opt`目录下)
 
 ```nginx
-# The following configuration is within the HTTP node.
+# 以下配置在http节点内.
 
 lua_code_cache on;
 client_max_body_size 5m;
@@ -181,11 +184,11 @@ client_body_buffer_size 256k;
 lua_package_path "/opt/wolf/agent/lua/?.lua;;";
 
 server {
-    # Apply external address, port. If you need to configure the domain name, you need to configure it here as well.
+    # 应用对外地址,端口. 如果需要配置域名, 也需要在这儿配置好.
     listen   10082;
     server_name localhost;
 
-  	# If it is a restful interface, you need to customize the json format that is returned without permissions. This needs to be coordinated with the front-end.
+  	# 如果是restful接口, 需要定制配置没有权限时, 返回的json格式. 这里需要跟前端协调好.
     location = /wolf/rbac/no_permission {
         content_by_lua_block {
             ngx.status = 200;
@@ -201,7 +204,7 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header REMOTE-HOST $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    		# rbac server address. If the server is not local, please change the IP address to the actual address.
+    		# rbac server地址. 如果服务器不在本机, 请修改IP地址为实际地址.
         proxy_pass   http://127.0.0.1:10080;
     }
 
@@ -212,7 +215,7 @@ server {
 
     # proxy for application
     location / {
-        # $appID，You need to set an application ID that is already configured in Wolf-Server.
+        # $appID，需要设置一个在Wolf-Server中已经配置的应用ID.
         set $appID appIDInWolfServer;
         # access check
         access_by_lua_file /opt/wolf/agent/lua/access_check.lua;
@@ -222,7 +225,7 @@ server {
         proxy_set_header REMOTE-HOST $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 
-        # The real address and port of the APP that requires privileged access control
+        # 需要进行权限访问控制的APP的真实地址及端口
         proxy_pass http://127.0.0.1:10084;
     }
 }
@@ -230,13 +233,13 @@ server {
 
 
 
-#### 6.Startup Agent(Nginx)
+#### 6.启动Agent(Nginx)
 
 ```
-# Test.
+# 测试.
 path/to/nginx/sbin/nginx -t
-# Startup
+# 启动
 path/to/nginx/sbin/nginx 
 ```
 
-Once started, you can access the application at: `http://127.0.0.1:10082`. You will need to enter a username and password to access the application.
+启动成功后, 可以通过地址: `http://127.0.0.1:10082` 访问应用. 这时应该是需要输入用户名及密码才能正常访问.
