@@ -26,7 +26,7 @@ service.interceptors.request.use(
   },
   error => {
     // do something with request error
-    console.log(error) // for debug
+    console.error(error) // for debug
     return Promise.reject(error)
   }
 )
@@ -49,11 +49,7 @@ service.interceptors.response.use(
     // if the custom code is not 20000, it is judged as an error.
     // console.info('>>>response data: ', JSON.stringify(res))
     if (!res.ok) {
-      let data = null
-      if (res.data && typeof (res.data) === 'string') {
-        data = res.data
-      }
-      const errmsg = data || res.reason || 'unknow error'
+      const errmsg = res.errmsg || res.reason || 'unknow error'
       Message({
         message: errmsg,
         type: 'error',
@@ -68,8 +64,8 @@ service.interceptors.response.use(
     console.error('axios request failed! ' + error) // for debug
     let errmsg = null
     let reason = null
-    if (typeof (error.response.data) === 'object' && !error.response.data.ok && typeof (error.response.data.data) === 'string') {
-      errmsg = error.response.data.data
+    if (typeof (error.response.data) === 'object' && !error.response.data.ok && error.response.data.errmsg) {
+      errmsg = error.response.data.errmsg
       reason = error.response.data.reason
     } else {
       errmsg = `error: ${error.message}`

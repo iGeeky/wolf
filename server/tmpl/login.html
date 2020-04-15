@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>RBAC Login</title>
+<title>Sign in to wolf rbac</title>
 <style type="text/css">
 <!--
 body {
@@ -25,15 +25,27 @@ body {
   box-shadow: 0 1px 4px 0 rgba(0,0,0,0.37);
 }
 .box .title {
-	height: 40px;
-  line-height: 40px;
+  line-height: 25px;
   text-align: center;
   background: #E6E8E7;
   border-radius: 10px 10px 0px 0px;
   border-top: 1px solid rgba(0,0,0,0.12);
   border-bottom: 1px solid rgba(0,0,0,0.12);
-  box-sizing: border-box;
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
 }
+
+.box .title .t1 {
+	margin-block-start: 8px;
+}
+
+.box .title .t2 {
+	margin-block-end: 5px;
+}
+
 .box .content {
 	display:  flex;
   flex-direction: column;
@@ -85,10 +97,42 @@ body {
 
 .form-submit input.submit {
 	width: 100px;
-	line-height: 18px;
-	font-size: 20px;
 }
 
+.btn-block {
+	display: block;
+	width: 100%;
+	text-align: center;
+}
+.btn-primary {
+	color: #fff;
+	background-color: #28a745;
+	background-image: linear-gradient(-180deg,#34d058,#28a745 90%);
+}
+
+.btn {
+	position: relative;
+	display: inline-block;
+	padding: 6px 12px;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 20px;
+	white-space: nowrap;
+	vertical-align: middle;
+	cursor: pointer;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	background-repeat: repeat-x;
+	background-position: -1px -1px;
+	background-size: 110% 110%;
+	border: 1px solid rgba(27,31,35,.2);
+	border-radius: .25em;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+}
 -->
 </style>
 </head>
@@ -96,16 +140,27 @@ body {
 <body>
 
 <div class="container">
-	<form action="/wolf/rbac/login.post" method="post" enctype="application/x-www-form-urlencoded" name="login" target="_self">
+	<form action="/wolf/rbac/login.submit" method="post" enctype="application/x-www-form-urlencoded" name="login" target="_self">
 		<div class="box">
 			<div class="title">
-				RBAC Login <input name="url" type="hidden" value="<%= url %>" />
-				<input name="appid" type="hidden" value="<%= appid %>" />
+				<span class="t1">Sign in to <strong>Wolf</strong></span>
+        <% if (appid) { %>
+					<span class="t2">to continue to <strong><%= appid + '(' + appname + ')' %></strong></span>
+        <% } %>
+				<input name="return_to" type="hidden" value="<%= returnTo %>" />
 			</div>
       <div class="content">
         <% if (error) { %>
           <div class="error"> <%= error %> </div>
         <% } %>
+        <% if (appid) { %>
+					<input name="appid" type="hidden" value="<%= appid %>" />
+				<% } else { %>
+					<div class="form-item">
+						<div class="label">AppID:</div>
+						<div class="input"><input name="appid" type="text" class="input-text" maxlength="64" length="30"/></div>
+					</div>
+				<% } %>
 				<div class="form-item">
 					<div class="label">Username:</div>
 					<div class="input"><input name="username" type="text" class="input-text" maxlength="64" length="30" value="<%= username %>"/></div>
@@ -115,7 +170,7 @@ body {
 					<div class="input"><input name="password" type="password" class="input-text" maxlength="64" length="30" value="<%= password %>"/></div>
 				</div>
 				<div class="form-submit">
-					<input type="submit" name="submit" class="submit" value="Login" /> 
+					<input type="submit" name="submit" class="submit btn btn-block btn-primary" value="Sign in"/> 
 				</div>
 			</div>
 		</div>

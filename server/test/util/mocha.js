@@ -44,7 +44,12 @@ function setHeaders(req, headers) {
 }
 
 async function httpRequest(method, url, headers, args, body) {
-  const data = JSON.stringify(body)
+  let data = null;
+  if (typeof(body) === 'object') {
+    data = JSON.stringify(body)
+  } else {
+    data = body;
+  }
   const req = request(server)[method](url)
   setHeaders(req, headers)
   let res = {}
@@ -64,8 +69,8 @@ async function httpGet(url, headers, args) {
   return await httpRequest('get', url, headers, args, undefined)
 }
 
-async function checkResponse(res, status, schema, match, notMatch) {
-  if (argv.schema) {
+async function checkResponse(res, status, schema, match, notMatch, showSchema) {
+  if (argv.schema || showSchema) {
     const deep = argv.deep || 4;
     const method = res.req.method;
     const path = res.req.path;
@@ -87,40 +92,35 @@ async function checkResponse(res, status, schema, match, notMatch) {
     assert.equal(res.status, status, `expect status (${status}), but res.status (${res.status})`);
   }
 
+  let body = res.text
+  if (res.status === 302 || res.status === 301) {
+    body = `location:${res.headers['location']}`
+    // console.log('request: [%s %s] status: %s, Set body to the value of Location.',
+    // res.req.method, res.req.path, res.status)
+  }
+
   if (match) {
     if (isArray(match)) {
       for (const pattern of match) {
-        assert.match(res.text, new RegExp(pattern), `response text not matched regex: ${pattern}`)
+        assert.match(body, new RegExp(pattern), `response text not matched regex: ${pattern}`)
       }
     } else {
       const pattern = match;
-      assert.match(res.text, new RegExp(pattern), `response text not matched regex: ${pattern}`)
+      assert.match(body, new RegExp(pattern), `response text not matched regex: ${pattern}`)
     }
   }
   if (notMatch) {
     if (isArray(notMatch)) {
       for (const pattern of notMatch) {
-        assert.notMatch(res.text, new RegExp(pattern), `response text matched regex: ${pattern}`)
+        assert.notMatch(body, new RegExp(pattern), `response text matched regex: ${pattern}`)
       }
     } else {
       const pattern = notMatch;
-      assert.notMatch(res.text, new RegExp(pattern), `response text matched regex: ${pattern}`)
+      assert.notMatch(body, new RegExp(pattern), `response text matched regex: ${pattern}`)
     }
   }
 
   if (schema) {
-    // 由于响应的body可能没读取完, 这里做了等待.
-    if (argv.encrypt) {
-      const contentLength = res.headers['content-length']
-      const sleepMs = 100
-      for (let i=0; i < 20; i++) {
-        if (res.recvLength >= contentLength) {
-          break;
-        }
-        console.log('contentLength: %d, recvLength: %d, sleep(%s) for wait...', contentLength, res.recvLength, sleepMs)
-        await sleep(sleepMs);
-      }
-    }
     assert.jsonSchema(res.body, schema, `res.body[[${JSON.stringify(res.body)}]]`)
   }
 }
@@ -144,7 +144,7 @@ const methods = {
    * @return {res} http response object.
    */
 async function http(options) {
-  const {method, url, headers, args, body, status, schema, match, notMatch} = options;
+  const {method, url, headers, args, body, status, schema, match, notMatch, showSchema} = options;
   assert(methods[method], `not support http method ${method}`)
 
   if (headers && typeof(headers) === 'object' && typeof(body) === 'object') {
@@ -155,7 +155,7 @@ async function http(options) {
     console.log('>>> request [%s %s] headers: %o, body: %o', 'POST', url, headers, body)
     console.log('>>> response status: %d, body: %o', res.status, res.body)
   }
-  await checkResponse(res, status, schema, match, notMatch)
+  await checkResponse(res, status, schema, match, notMatch, showSchema)
   return res;
 }
 

@@ -35,6 +35,14 @@ export async function listApplications(args) {
   })
 }
 
+export async function getSecret(args) {
+  return await request({
+    url: '/application/secret',
+    method: 'get',
+    params: args,
+  })
+}
+
 export async function applicationDiagram(id) {
   const args = { id }
   return await request({

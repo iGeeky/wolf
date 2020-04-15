@@ -28,6 +28,10 @@ function needCheckToken(ctx) {
     return false;
   }
 
+  if (_.startsWith(ctx.path, '/wolf/oauth2')) {
+    return false;
+  }
+
   const methodPath = `${ctx.method}:${ctx.path}`
   // log4js.info('---- request [%s]', methodPath)
   return !IGNORE_URLS[methodPath]
@@ -86,7 +90,6 @@ module.exports = function() {
       }
 
       userInfo = userInfo.toJSON()
-      userInfo.id = parseInt(userInfo.id)
 
       ctx.userInfo = userInfo
       ctx.token = token

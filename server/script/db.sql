@@ -7,42 +7,51 @@ GRANT ALL PRIVILEGES ON DATABASE wolf to wolfroot;
 \c wolf wolfroot;
 */
 
-CREATE FUNCTION unix_timestamp() RETURNS integer AS $$ 
-SELECT (date_part('epoch',now()))::integer;   
+CREATE FUNCTION unix_timestamp() RETURNS bigint AS $$
+SELECT (date_part('epoch',now()))::bigint;
 $$ LANGUAGE SQL IMMUTABLE;
 
-CREATE FUNCTION from_unixtime(int) RETURNS timestamp AS $$ 
-SELECT to_timestamp($1)::timestamp; 
+CREATE FUNCTION from_unixtime(bigint) RETURNS timestamp AS $$
+SELECT to_timestamp($1)::timestamp;
 $$ LANGUAGE SQL IMMUTABLE;
 
 
 CREATE TABLE "application" (
-  id varchar(64) NOT NULL,
-  name varchar(128) NOT NULL,
-  "description" varchar(1024),
-  create_time int NOT NULL,
-  update_time int NOT NULL,
+  id text NOT NULL,
+  name text NOT NULL,
+  "description" text,
+  secret text DEFAULT NULL,
+  redirect_uris text[] DEFAULT NULL,
+  grants text[] DEFAULT NULL,
+  access_token_lifetime bigint DEFAULT NULL,
+  refresh_token_lifetime bigint DEFAULT NULL,
+  create_time bigint NOT NULL,
+  update_time bigint NOT NULL,
   primary key(id)
 );
 
 CREATE UNIQUE INDEX idx_application_name ON "application"(name);
 COMMENT ON TABLE "application" IS 'Managed applications';
-
+COMMENT ON COLUMN application.id IS 'application id, client.id in oauth2';
+COMMENT ON COLUMN application.secret IS 'client.secret in oauth2';
+COMMENT ON COLUMN application.redirect_uris IS 'client.redirect_uris in oauth2';
+COMMENT ON COLUMN application.access_token_lifetime IS 'access_token.lifetime in oauth2';
+COMMENT ON COLUMN application.refresh_token_lifetime IS 'refresh_token.lifetime in oauth2';
 
 CREATE TABLE "user" (
   id bigserial,
-  username varchar(64) not null,
-  nickname varchar(128),
-  email varchar(128),
-  tel varchar(16),
-  password varchar(64),
-  app_ids varchar(64)[],
-  manager varchar(32),
+  username text not null,
+  nickname text,
+  email text,
+  tel text,
+  password text,
+  app_ids text[],
+  manager text,
   status smallint DEFAULT 0,
   profile jsonb default NULL,
-  last_login int DEFAULT 0,
-  create_time int NOT NULL,
-  update_time int NOT NULL,
+  last_login bigint DEFAULT 0,
+  create_time bigint NOT NULL,
+  update_time bigint NOT NULL,
   primary key(id)
 );
 
@@ -55,23 +64,23 @@ COMMENT ON COLUMN "user".manager IS 'super,admin,NULL';
 
 CREATE TABLE "category" (
   id serial,
-  app_id varchar(64) NOT NULL,
-  name varchar(64),
-  create_time int NOT NULL,
-  update_time int NOT NULL,
+  app_id text NOT NULL,
+  name text,
+  create_time bigint NOT NULL,
+  update_time bigint NOT NULL,
   primary key(id)
 );
 CREATE UNIQUE INDEX idx_category_app_id_name ON "category"(app_id,name);
 
 
 CREATE TABLE "permission" (
-  id varchar(64),
-  app_id varchar(64) NOT NULL,
-  name varchar(64) NOT NULL,
-  "description" varchar(128),
+  id text,
+  app_id text NOT NULL,
+  name text NOT NULL,
+  "description" text,
   category_id int,
-  create_time int NOT NULL,
-  update_time int NOT NULL,
+  create_time bigint NOT NULL,
+  update_time bigint NOT NULL,
   primary key(app_id, id)
 );
 
@@ -81,15 +90,15 @@ COMMENT ON COLUMN permission.category_id IS 'reference to category.id';
 
 CREATE TABLE "resource" (
   id bigserial,
-  app_id varchar(64) NOT NULL,
-  match_type varchar(16) NOT NULL,
-  name varchar(512) NOT NULL,
+  app_id text NOT NULL,
+  match_type text NOT NULL,
+  name text NOT NULL,
   name_len smallint DEFAULT 0,
-  priority int DEFAULT 0,
-  action varchar(64) DEFAULT 'ALL',
-  perm_id varchar(64),
-  create_time int NOT NULL,
-  update_time int NOT NULL,
+  priority bigint DEFAULT 0,
+  action text DEFAULT 'ALL',
+  perm_id text,
+  create_time bigint NOT NULL,
+  update_time bigint NOT NULL,
   primary key(id)
 );
 
@@ -103,13 +112,13 @@ Use suffix match, then prefix';
 COMMENT ON COLUMN resource.action IS 'for http resource, action is http method: GET, HEAD, POST, OPTIONS, DELETE, PUT, PATCH, ALL means includes all.';
 
 CREATE TABLE "role" (
-  id varchar(64) ,
-  app_id varchar(64) NOT NULL,
-  name varchar(64) NOT NULL,
-  "description" varchar(128),
-  perm_ids varchar(64)[],
-  create_time int NOT NULL,
-  update_time int NOT NULL,
+  id text ,
+  app_id text NOT NULL,
+  name text NOT NULL,
+  "description" text,
+  perm_ids text[],
+  create_time bigint NOT NULL,
+  update_time bigint NOT NULL,
   primary key(app_id, id)
 );
 
@@ -118,11 +127,11 @@ CREATE UNIQUE INDEX idx_role_app_id_name ON "role"(app_id, name);
 
 CREATE TABLE "user_role" (
   user_id bigint,
-  app_id varchar(64) NOT NULL,
-  perm_ids varchar(64)[],
-  role_ids varchar(64)[],
-  create_time int NOT NULL,
-  update_time int NOT NULL,
+  app_id text NOT NULL,
+  perm_ids text[],
+  role_ids text[],
+  create_time bigint NOT NULL,
+  update_time bigint NOT NULL,
   primary key(user_id, app_id)
 );
 
@@ -131,19 +140,19 @@ CREATE INDEX idx_user_role_role_ids ON "user_role"(role_ids);
 
 CREATE TABLE "access_log" (
   id bigserial,
-  app_id varchar(64),
-  user_id bigint,
-  username varchar(64),
-  nickname varchar(128),
-  action varchar(32), 
-  res_name varchar(512),
+  app_id text,
+  user_id text,
+  username text,
+  nickname text,
+  action text,
+  res_name text,
   matched_resource jsonb default NULL,
   status smallint DEFAULT 0,
   body jsonb default NULL,
-  content_type varchar(128),
-  date varchar(32),
-  ip varchar(64),
-  access_time int NOT NULL,
+  content_type text,
+  date text,
+  ip text,
+  access_time bigint NOT NULL,
   primary key(id)
 );
 CREATE INDEX idx_access_log_app_id ON "access_log"(app_id);
@@ -155,3 +164,41 @@ CREATE INDEX idx_access_log_status ON "access_log"(status);
 CREATE INDEX idx_access_log_date ON "access_log"(date);
 CREATE INDEX idx_access_log_ip ON "access_log"(ip);
 CREATE INDEX idx_access_log_access_time ON "access_log"(access_time);
+
+
+CREATE TABLE oauth_code (
+  id bigserial NOT NULL,
+  authorization_code text NOT NULL,
+  expires_at timestamp without time zone NOT NULL,
+  redirect_uri text NOT NULL,
+  scope text DEFAULT NULL,
+  client_id text NOT NULL,
+  user_id text NOT NULL,
+  create_time bigint NOT NULL,
+  update_time bigint NOT NULL,
+  primary key(id)
+);
+CREATE UNIQUE INDEX idx_oauth_code_authorization_code ON "oauth_code"(authorization_code);
+CREATE INDEX idx_oauth_code_user_id ON "oauth_token"(user_id);
+COMMENT ON COLUMN oauth_code.authorization_code IS 'authorization_code in oauth';
+
+
+CREATE TABLE oauth_token (
+  id bigserial NOT NULL,
+  access_token text NOT NULL,
+  access_token_expires_at timestamp without time zone NOT NULL,
+  client_id text NOT NULL,
+  refresh_token text,
+  refresh_token_expires_at timestamp without time zone,
+  scope text DEFAULT NULL,
+  user_id text NOT NULL,
+  create_time bigint NOT NULL,
+  update_time bigint NOT NULL,
+  primary key(id)
+);
+CREATE UNIQUE INDEX idx_oauth_token_access_token ON "oauth_token"(access_token);
+CREATE UNIQUE INDEX idx_oauth_token_refresh_token ON "oauth_token"(refresh_token);
+CREATE INDEX idx_oauth_token_user_id ON "oauth_token"(user_id);
+
+COMMENT ON COLUMN oauth_token.client_id IS 'client_id in oauth, which corresponds to application.id in this system';
+COMMENT ON COLUMN oauth_token.user_id IS 'ID of the user corresponding to client_id, mapped to user.id';

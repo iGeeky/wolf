@@ -1,0 +1,116 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>User Login status</title>
+<style type="text/css">
+<!--
+body {
+	background-color: #FFFFFF;
+}
+
+.container {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+}
+.box {
+	width: 500px;
+  background: #F5F5F5;
+  display: flex;
+  flex-direction: column;
+  margin-top: 150px;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px 0 rgba(0,0,0,0.37);
+}
+.box .title {
+  line-height: 30px;
+  text-align: center;
+  background: #E6E8E7;
+  border-radius: 10px 10px 0px 0px;
+  border-top: 1px solid rgba(0,0,0,0.12);
+  border-bottom: 1px solid rgba(0,0,0,0.12);
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+}
+
+.box .title .t1 {
+	margin-block-start: 8px;
+}
+
+
+.box .content {
+	display:  flex;
+  flex-direction: column;
+}
+
+.content .form-item {
+	display: flex;
+  height: 45px;
+}
+
+.form-item .label {
+	width: 30%;
+	height: 100%;
+	line-height: 45px;
+	padding: 0px 10px;
+	text-align: right;
+}
+
+.form-item .value {
+	width: 60%;
+	height: 100%;
+	padding: 0px 5px;
+	display: flex;
+	align-items: center;
+/*     border: 1px solid #d5cfcf; */
+}
+
+.form-item .value .separater {
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+-->
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+	<div class="box">
+		<div class="title">
+			<span class="t1">User Login Status</span>
+		</div>
+		<div class="content">
+			<div class="form-item">
+				<div class="label">Login User:</div>
+				<div class="value">
+					<% if (userInfo) { %>
+						<%= userInfo.username %>/<%= userInfo.nickname %>
+					<% } else { %>
+						None
+					<% } %>
+				</div>
+			</div>
+			<div class="form-item">
+				<div class="label">Operation:</div>
+				<div class="value">
+					<% if (userInfo) { %>
+						<a target="_self" href="/wolf/rbac/logout?return_to=/wolf/oauth2/login_status">[Logout]</a> <span class="separater">|</span> <a target="_blank" href="/wolf/rbac/change_pwd">[Change Password]</a>
+					<% } else { %>
+						<a target="_self" href="/wolf/rbac/login?return_to=/wolf/oauth2/login_status">Login</a>
+					<% } %>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+</body>
+</html>

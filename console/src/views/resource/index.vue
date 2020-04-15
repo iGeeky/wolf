@@ -58,7 +58,7 @@
     </div>
 
     <el-dialog :visible.sync="dialogVisible" :title="dialogTitle" custom-class="rbac-edit-dialog">
-      <el-form ref="resource" :model="resource" :rules="rules" label-width="100px" label-position="left">
+      <el-form ref="resource" :model="resource" :rules="rules" label-width="120px" label-position="left">
         <el-form-item label="App" prop="appID">
           <el-select v-model="resource.appID" placeholder="Change App" size="small" style="display: block" />
         </el-form-item>

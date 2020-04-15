@@ -22,11 +22,13 @@ router.all('/wolf/ping', async (ctx, next) => {
   ctx.body = json.ok({server: 'rbac', now: util.currentDate()})
 })
 
-router.all(('/wolf/:service/:method'), async (ctx, next) => {
+router.all(('/wolf/:service/:bizMethod'), async (ctx, next) => {
   const service = ctx.params.service; // get the service from uri.
-  let method = ctx.params.method; // get the method from uri.
-  method = _.camelCase(method.replace('\.', '_'))
-  log4js.info('service: %s call method [%s]', service, method)
+  let method = ctx.request.method
+  const originalBizMethod = ctx.params.bizMethod; // get the bizMethod from uri.
+  const bizMethod = _.camelCase(originalBizMethod.replace('\.', '_'))
+  const bizMethodEx = _.camelCase((originalBizMethod + '_' + method).replace('\.', '_'))
+  log4js.info('service: %s call bizMethod [%s] or [%s]', service, bizMethod, bizMethodEx)
   const requestClass = routers.get(service);
   if (!requestClass) {
     ctx.status = 404;
@@ -34,14 +36,15 @@ router.all(('/wolf/:service/:method'), async (ctx, next) => {
     return;
   }
   const serviceInstance = new requestClass(ctx)
-  await serviceInstance.do(method)
+  serviceInstance.setNext(next)
+  await serviceInstance.do(bizMethod, bizMethodEx)
 })
 
 router.all(('/wolf/:service'), async (ctx, next) => {
   const service = ctx.params.service.toLowerCase(); // get the service from uri
-  let method = ctx.request.method
-  method = _.camelCase(method.replace('\.', '_'))
-  log4js.info('service: %s call method [%s]', service, method)
+  let bizMethod = ctx.request.method
+  bizMethod = _.camelCase(bizMethod.replace('\.', '_'))
+  log4js.info('service: %s call bizMethod [%s]', service, bizMethod)
   const requestClass = routers.get(service);
   if (!requestClass) {
     ctx.status = 404;
@@ -49,7 +52,8 @@ router.all(('/wolf/:service'), async (ctx, next) => {
     return;
   }
   const serviceInstance = new requestClass(ctx)
-  await serviceInstance.do(method)
+  serviceInstance.setNext(next)
+  await serviceInstance.do(bizMethod)
 })
 
 module.exports = router

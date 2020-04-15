@@ -53,11 +53,9 @@ const actions = {
             applications = [{ id: -1, name: 'none', description: 'no application' }]
           }
           commit('SET_TOKEN', data.token)
-          // console.log('>>> login data.token:', data.token)
           commit('SET_USER_INFO', data.userInfo)
           commit('SET_APPLICATIONS', applications)
           checkCurrentApp(applications, rootState, dispatch)
-          // console.log('login SET_USER_INFO', JSON.stringify(userInfo))
           setToken(data.token)
         }
         resolve()

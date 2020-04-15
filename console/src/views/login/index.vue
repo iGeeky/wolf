@@ -159,7 +159,7 @@ export default {
               console.error('login failed! err: ', err)
             })
         } else {
-          console.log('error submit!!')
+          console.error('error submit!!')
           return false
         }
       })

@@ -20,17 +20,17 @@
     </div>
 
     <el-table :data="roles" style="margin-top:30px; " border>
-      <el-table-column align="center" label="ID" min-width="15" show-overflow-tooltip>
+      <el-table-column align="center" label="ID" min-width="25" show-overflow-tooltip>
         <template slot-scope="scope">
           {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Name" min-width="20" show-overflow-tooltip>
+      <el-table-column align="center" label="Name" min-width="25" show-overflow-tooltip>
         <template slot-scope="scope">
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Description" min-width="60" show-overflow-tooltip>
+      <el-table-column align="center" label="Description" min-width="40" show-overflow-tooltip>
         <template slot-scope="scope">
           {{ scope.row.description }}
         </template>
@@ -58,7 +58,7 @@
     </div>
 
     <el-dialog :visible.sync="dialogVisible" :title="dialogTitle" custom-class="rbac-edit-dialog">
-      <el-form ref="role" :model="role" :rules="rules" label-width="100px" label-position="left">
+      <el-form ref="role" :model="role" :rules="rules" label-width="120px" label-position="left">
         <el-form-item label="ID" prop="id">
           <el-input
             v-model="role.id"

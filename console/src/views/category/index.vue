@@ -48,7 +48,7 @@
     </div>
 
     <el-dialog :visible.sync="dialogVisible" :title="dialogType==='edit'?'Edit Category':'New Category'" custom-class="rbac-edit-dialog">
-      <el-form ref="category" :model="category" :rules="rules" label-width="100px" label-position="left">
+      <el-form ref="category" :model="category" :rules="rules" label-width="120px" label-position="left">
         <el-form-item v-if="dialogType==='edit'" label="Category ID" prop="id">
           <el-input
             v-model="category.id"

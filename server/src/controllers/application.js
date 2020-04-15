@@ -6,8 +6,8 @@ const AccessDenyError = require('../errors/access-deny-error')
 const constant = require('../util/constant')
 const util = require('../util/util')
 const Op = require('sequelize').Op;
-const applicationFields = ['id', 'name', 'description', 'createTime'];
-
+const applicationFields = ['id', 'name', 'description', 'redirectUris', 'grants', 'accessTokenLifetime', 'refreshTokenLifetime', 'createTime', 'updateTime'];
+const applicationDetailFields =  applicationFields.slice()
 
 class Application extends BasicService {
   constructor(ctx) {
@@ -17,7 +17,8 @@ class Application extends BasicService {
 
   async access(bizMethod) {
     const method = this.ctx.method
-    if (method !== 'GET' && bizMethod !== 'checkExist') { // POST, PUT, DELETE
+    const checkSuperRole = (method !== 'GET' && bizMethod !== 'checkExist') || (method === 'GET' && bizMethod === 'secret')
+    if (checkSuperRole) { // POST, PUT, DELETE
       if (this.ctx.userInfo.manager !== constant.Manager.super) {
         this.log4js.error('access [%s] failed! user:%s have no permission to do this operation', bizMethod, this.ctx.userInfo.username)
         throw new AccessDenyError('need super user to do this operation.')
@@ -67,7 +68,6 @@ class Application extends BasicService {
     }
 
     const data = {nodeDataArray: nodes, linkDataArray: links};
-    
     this.success(data);
   }
 
@@ -78,8 +78,20 @@ class Application extends BasicService {
       this.fail(200, errors.ERR_OBJECT_NOT_FOUND)
       return
     }
-    
-    const data = {application}
+
+    const data = {application: util.filterFieldWhite(application.toJSON(), applicationDetailFields)}
+    this.success(data)
+  }
+
+  async secret() {
+    const id = this.getRequiredArg('id')
+    const application = await ApplicationModel.findByPk(id)
+    if (!application) {
+      this.fail(200, errors.ERR_OBJECT_NOT_FOUND)
+      return
+    }
+
+    const data = {secret: application.secret}
     this.success(data)
   }
 
@@ -105,8 +117,7 @@ class Application extends BasicService {
     }
     const applications = await ApplicationModel.findAll(options)
     applications.forEach((application, i) => {
-      application = application.toJSON()
-      applications[i] = application;
+      applications[i] = util.filterFieldWhite(application.toJSON(), applicationFields)
     });
     const total = await ApplicationModel.count({where})
     const data = {applications, total}
@@ -116,6 +127,9 @@ class Application extends BasicService {
   async listAll() {
     const options = {}
     const applications = await ApplicationModel.findAll(options)
+    applications.forEach((application, i) => {
+      applications[i] = util.filterFieldWhite(application.toJSON(), applicationFields)
+    });
     const total = applications.length;
     const data = {applications, total}
     this.success(data)
@@ -126,6 +140,11 @@ class Application extends BasicService {
       id: {type: 'string', required: true},
       name: {type: 'string', required: true},
       description: {type: 'string'},
+      secret: {type: 'string', required: false},
+      redirectUris: {type: 'array'},
+      grants: {type: 'array', required: false},
+      accessTokenLifetime: {type: 'integer', required: false},
+      refreshTokenLifetime: {type: 'integer', required: false},
     }
     const values = this.getCheckedValues(fieldsMap)
     // values.status = 0;
@@ -140,6 +159,11 @@ class Application extends BasicService {
     const fieldsMap = {
       name: {type: 'string'},
       description: {type: 'string'},
+      secret: {type: 'string', required: false},
+      redirectUris: {type: 'array'},
+      grants: {type: 'array', required: false},
+      accessTokenLifetime: {type: 'integer', required: false},
+      refreshTokenLifetime: {type: 'integer', required: false},
     }
     const id = this.getRequiredArg('id')
     const values = this.getCheckedValues(fieldsMap)

@@ -161,7 +161,7 @@ describe('user', function() {
     const username = 'root'
     const body = {username}
     const url = '/wolf/user/delete';
-    const res = await mocha.post({url, headers, body, schema})
+    const res = await mocha.post({url, headers, body, status:401, schema})
   });
 
   it('list', async function() {

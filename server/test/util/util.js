@@ -9,6 +9,19 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function setDefaultOfSchema(schema, data, fields) {
+  const properties = schema.properties;
+  if(!data || !properties) {
+    return
+  }
+  for (let field of fields) {
+    if(data[field] != undefined) {
+      properties[field]["enum"] = [data[field]]
+    }
+  }
+}
+
+
 function okSchema(dataSchema) {
   const resultSchema = {
     type: 'object',
@@ -36,7 +49,7 @@ function okSchema2(reason, dataSchema) {
 }
 
 
-function failSchema(reason) {
+function failSchema(reason, errmsg) {
   const resultSchema = {
     type: 'object',
     properties: {
@@ -44,6 +57,9 @@ function failSchema(reason) {
       reason: {type: 'string', enum: [reason]},
     },
     required: ['ok', 'reason'],
+  }
+  if(errmsg) {
+    resultSchema.properties['errmsg'] = {type: 'string', enum: [errmsg]}
   }
   return resultSchema;
 }
@@ -72,6 +88,40 @@ function getSimpleUserInfoSchema() {
   }
   return userInfoSchema;
 }
+
+function userInfoSchema() {
+  const schema = {
+    type: 'object',
+    properties: {
+      id: { 'type': ['integer','string'] },
+      username: { 'type': 'string' },
+      nickname: { 'type': 'string' },
+      email: { 'type': ['string', 'null'] },
+      appIDs: { 'type': 'array' },
+      manager: { 'type': ['string', 'null'] },
+      lastLogin: { 'type': 'number' },
+      profile: { 'type': ['object', 'null'] },
+      createTime: { 'type': 'number' },
+      permissions: { 'type': 'object' },
+      roles: { 'type': 'object' },
+    },
+    required: ['id', 'username', 'nickname'],
+  }
+  return schema;
+}
+
+function getUserInfoSchema() {
+  const dataSchema = {
+    type: 'object',
+    properties: {
+      userInfo: userInfoSchema()
+    },
+    required: ['userInfo'],
+  }
+  const schema = okSchema(dataSchema)
+  return schema;
+}
+
 
 function getAdminLoginResponseSchema() {
   const schema = okSchema({
@@ -108,6 +158,18 @@ async function updateUserStatus(userID, status) {
   await mocha.post({url, headers: adminHeaders(), body, status: 200, schema})
 }
 
+function getRbacCookie(cookies) {
+  let cookie = '';
+  if(cookies && cookies.length > 0) {
+    cookie = cookies[0]
+    const regex = new RegExp('x-rbac-token=[^;]*')
+    const arr = regex.exec(cookie);
+    if(arr) {
+      cookie = arr[0]
+    }
+  }
+  return cookie;
+}
 
 before(async () => {
   if (exports.ignoreInit) {
@@ -123,7 +185,10 @@ exports.sleep = sleep;
 exports.okSchema = okSchema;
 exports.okSchema2 = okSchema2;
 exports.failSchema = failSchema;
+exports.setDefaultOfSchema = setDefaultOfSchema;
 exports.defPassword = defPassword;
 exports.adminHeaders = adminHeaders;
 exports.updateUserStatus = updateUserStatus;
 exports.getSimpleUserInfoSchema = getSimpleUserInfoSchema
+exports.getUserInfoSchema = getUserInfoSchema;
+exports.getRbacCookie = getRbacCookie;

@@ -30,7 +30,7 @@ describe('framework', function() {
     });
 
     it('request internal method start with _', async function(){
-      const schema = util.failSchema("method 'loginPostInternal' not found");
+      const schema = util.failSchema("bizMethod 'loginPostInternal' not found");
       const body = {}
       const url = '/wolf/rbac/_login_post_internal';
       await mocha.post({url, headers, body, status: 404, schema})

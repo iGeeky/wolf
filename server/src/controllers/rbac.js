@@ -1,9 +1,8 @@
 const config = require('../../conf/config')
-const BasicService = require('./basic-service')
-const UserModel = require('../model/user')
+const RbacPub = require('./rbac-pub')
 const RbacTokenError = require('../errors/rbac-token-error')
-const AccessLogModel = require('../model/access-log')
-const resourceCache = require('../util/resource-cache')
+const UserModel = require('../model/user')
+const ApplicationModel = require('../model/application')
 const constant = require('../util/constant')
 const util = require('../util/util')
 const userCache = require('../util/user-cache')
@@ -26,28 +25,45 @@ const errors = {
   ERR_USER_DISABLED: 'User is disabled.'
 }
 
-class Rbac extends BasicService {
+class Rbac extends RbacPub {
   constructor(ctx) {
     super(ctx, UserModel)
   }
 
-  async loginPageRender() {
-    const url = this.getArg('url', '/');
+  async _loginPageRender() {
+    const returnTo = this.getArg('return_to', '/');
     const username = this.getArg('username');
-    const error = this.getArg('error');
+    let error = this.getArg('error');
     const password = this.getArg('password');
-    const appid = this.getArg('appid')
+    const appid = this.getArg('appid', '')
+    let appname = ''
+    if(appid) {
+      const application = await ApplicationModel.findByPk(appid)
+      if (!error && !application) {
+        error = `application id '${appid}' not found`
+      } else if(application) {
+        appname = application.name
+      }
+    } else {
+      error = `appid missing`
+    }
+
     await this.ctx.render('login', {
-      url,
+      returnTo,
       username,
       password,
       error,
       appid,
+      appname,
     })
   }
 
   async loginHtml() {
-    await this.loginPageRender();
+    await this._loginPageRender();
+  }
+
+  async loginGet() {
+    await this._loginPageRender();
   }
 
   async index() {
@@ -58,10 +74,10 @@ class Rbac extends BasicService {
   async _loginPostInternal() {
     const username = this.getArg('username')
     const password = this.getArg('password')
-    const url = this.getArg('url', '/')
+    const returnTo = this.getArg('return_to', '/')
     const appid = this.getArg('appid')
 
-    this.log4js.info('appid: %s, username %s login, redirect url: %s', appid, username, url)
+    this.log4js.info('appid: %s, username %s login, return to url: %s', appid, username, returnTo)
     if (!username) {
       return {ok: false, reason: 'ERR_USERNAME_MISSING'}
     }
@@ -94,12 +110,11 @@ class Rbac extends BasicService {
     userCache.flushUserCacheByID(userInfo.id, appid)
 
     userInfo = userInfo.toJSON()
-    userInfo.id = parseInt(userInfo.id)
     const { token, expiresIn } = await this.tokenCreate(userInfo, appid)
     return {ok: true, token, expiresIn, userInfo}
   }
 
-  async login() {
+  async loginPost() {
     const {ok, reason, token, userInfo} = await this._loginPostInternal();
     if (!ok) {
       this.fail(200, reason, {})
@@ -110,21 +125,23 @@ class Rbac extends BasicService {
     this.success(data)
   }
 
-  
   async loginRest() {
-    await this.login()
+    await this.loginPost()
   }
 
-  async loginPost() {
+  async loginSubmit() {
     const res = await this._loginPostInternal();
     if(!res.ok) {
       const error = errors[res.reason] || 'Login failed!'
-      this.args.error = error
-      await this.loginPageRender();
+      const args = Object.assign({}, this.args)
+      args.error = error;
+      delete(args["password"])
+      const loginUrl = '/wolf/rbac/login?' + Object.keys(args).map(arg => `${arg}=${encodeURIComponent(args[arg])}`).join('&')
+      this.ctx.redirect(loginUrl)
       return
     }
 
-    const url = this.getArg('url', '/')
+    const returnTo = this.getArg('return_to', '/')
 
     const maxAge = config.tokenExpireTime * 1000;
     this.ctx.cookies.set('x-rbac-token', res.token,
@@ -135,87 +152,7 @@ class Rbac extends BasicService {
       }
     )
     this.ctx.status = 302;
-    this.ctx.redirect(url);
-  }
-
-  isRecordAccessLog() {
-    if (this.ctx.action === 'OPTIONS') {
-      return false;
-    }
-
-    return true;
-  }
-
-  _writeAccessLog() {
-    if (!this.isRecordAccessLog()) {
-      return
-    }
-
-    // Record the access log if the user logs in
-    let userID = -1;
-    let username = 'none'
-    let nickname = 'none';
-    let matchedResource = {}
-    const userInfo = this.ctx.userInfo;
-    if (userInfo) {
-      userID = userInfo.id;
-      username = userInfo.username;
-      nickname = userInfo.nickname;
-    }
-    if (this.ctx.resource) {
-      matchedResource = util.filterFieldWhite(this.ctx.resource, ['id', 'appID', 'matchType', 'url', 'action', 'permID'])
-      // ignore url when permID ===ALLOW_ALL
-      if (matchedResource.permID === constant.SystemPerm.ALLOW_ALL) {
-        return
-      }
-    }
-    const appID = this.ctx.appid || this.getStringArg('appID');
-    const action = this.getStringArg('action')
-    const resName = this.getStringArg('resName')
-    const ip = this.getStringArg('clientIP')
-    const body = {}
-    const contentType = null;
-    const status = this.ctx.status
-    const date = util.currentDate('YYYY-MM-DD')
-    const accessTime = util.unixtime();
-    const values = {appID, userID, username, nickname, action, resName, matchedResource, status, body, contentType, date, accessTime, ip}
-    AccessLogModel.create(values);
-  }
-
-  async _accessCheckInternal(userInfo, appID, action, resName) {
-    const {resource, cached} = await resourceCache.getResource(appID, action, resName)
-    if(resource) {
-      resource.toString = function toString() {
-        return JSON.stringify(this)
-      }
-    }
-    this.log4js.info('getResource({appID: %s, action: %s, resName: %s}) res: %s, cached: %s', appID, action, resName, resource, cached)
-    const data = {userInfo: util.filterFieldWhite(userInfo, userFields)}
-    if (resource) {
-      this.ctx.resource = resource;
-      const permID = resource.permID;
-      if (permID === constant.SystemPerm.ALLOW_ALL) { // allow all user access
-        this.log4js.info('resource {appID: %s, action: %s, resName: %s} permission is [%s], allow all user to access!', appID, action, resName, permID)
-        this.success(data)
-      } else if (permID === constant.SystemPerm.DENY_ALL) { // deny all user access
-        this.log4js.info('resource {appID: %s, action: %s, resName: %s} permission is [%s], not allow any user to access!', appID, action, resName, permID)
-        const reason = `Access failure. resource '${resName}' is deny all user`
-        this.fail(401, reason, data)
-      } else if (userInfo.permissions[permID]) { // have permission
-        this.log4js.info('user [%s] have permission [%s] to access {appID: %s, action: %s, resName: %s}', userInfo.username, permID, appID, action, resName)
-        this.success(data)
-      } else { // have no permission
-        this.log4js.info('user [%s] have no permission [%s] to access {appID: %s, action: %s, resName: %s}', userInfo.username, permID, appID, action, resName)
-        // TODO: get perm name.
-        const reason = `Access failure. resource '${resName}' is required permission [${permID}]`
-        this.fail(401, reason, data)
-      }
-      return
-    } else {
-      this.log4js.info('user [%s] check permission for resource {appID: %s, action: %s, resName: %s} failed, resource not exist!', userInfo.username, appID, action, resName)
-      const reason = `Access failure. resource '${resName}' not exist`
-      this.fail(401, reason, data)
-    }
+    this.ctx.redirect(returnTo);
   }
 
   async accessCheck() {
@@ -259,16 +196,21 @@ class Rbac extends BasicService {
       }
     )
     this.ctx.status = 302;
-    const appid = this.ctx.appid
-    this.ctx.redirect('/wolf/rbac/login.html?appid=' + appid);
+    const defaultReturnTo = '/wolf/rbac/login.html?appid=' + this.ctx.appid
+    const returnTo = this.getArg('return_to', defaultReturnTo)
+    this.ctx.redirect(returnTo);
   }
 
   async changePwdHtml() {
     const {username} = this.ctx.userInfo;
-    const error = null
+    const error = this.getArg('error', '')
     const success = null;
     const args = {username, error, success, oldPassword: undefined, newPassword: undefined, reNewPassword: undefined}
     await this.ctx.render('change_pwd.html', args)
+  }
+
+  async changePwdGet() {
+    await this.changePwdHtml()
   }
 
   async _changePwdInternal(opts) {
@@ -314,7 +256,7 @@ class Rbac extends BasicService {
     return {ok: true, userInfo}
   }
 
-  async changePwd() {
+  async changePwdPost() {
     const {ok, reason} = await this._changePwdInternal();
     if (!ok) {
       this.fail(200, reason, {})
@@ -324,7 +266,7 @@ class Rbac extends BasicService {
     this.success(data)
   }
 
-  async changePwdPost() {
+  async changePwdSubmit() {
     const args = this.getArgs();
     const {id: username} = this.ctx.userInfo;
     args.username = username;
@@ -336,8 +278,8 @@ class Rbac extends BasicService {
     const res = await this._changePwdInternal({checkReNewPassword: true});
     if(!res.ok) {
       const error = errors[res.reason] || 'Change password failed!'
-      args.error = error
-      await this.ctx.render('change_pwd.html', args)
+      this.ctx.status = 302;
+      this.ctx.redirect('/wolf/rbac/change_pwd?error=' + error);
       return
     }
 
@@ -352,6 +294,7 @@ class Rbac extends BasicService {
     const data = {userInfo: util.filterFieldWhite(userInfo, userFields)}
     this.success(data)
   }
+
 }
 
 module.exports = Rbac

@@ -5,6 +5,8 @@ const BackendError = require('../errors/backend-error')
 const ArgsError = require('../errors/args-error')
 const _ = require('lodash');
 
+require('pg').defaults.parseInt8 = true
+
 const pgConfig = config.database
 
 /**

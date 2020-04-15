@@ -37,7 +37,7 @@ local function url_args_as_args(ext_args)
     local host_port = get_host_port()
 
     local full_url = host_port .. ngx.var.uri
-	args["url"] = full_url
+	args["return_to"] = full_url
 	if ext_args and type(ext_args) == 'table' then
         for k, v in pairs(ext_args) do
 			args[k] = v

@@ -12,7 +12,7 @@
       </el-dropdown-menu>
     </el-dropdown>
     <el-dialog :visible.sync="detailDialogVisible" title="Permission Detail" custom-class="rbac-edit-dialog">
-      <el-form ref="user" :model="user" label-width="100px" label-position="left">
+      <el-form ref="user" :model="user" label-width="120px" label-position="left">
         <el-form-item label="Username" prop="username">
           <el-input v-model="user.username" readonly />
         </el-form-item>

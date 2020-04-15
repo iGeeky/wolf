@@ -5,38 +5,6 @@ const policyFileName = './test/init/0-rbac-data-unittest.md'
 const data = rbacUtil.rbacDataRead(policyFileName)
 const argv = require('minimist')(process.argv.slice(2))
 
-function userInfoSchema() {
-  const schema = {
-    type: 'object',
-    properties: {
-      id: { 'type': 'integer' },
-      username: { 'type': 'string' },
-      nickname: { 'type': 'string' },
-      email: { 'type': ['string', 'null'] },
-      appIDs: { 'type': 'array', minItems: 1 },
-      manager: { 'type': ['string', 'null'] },
-      lastLogin: { 'type': 'number' },
-      profile: { 'type': ['object', 'null'] },
-      createTime: { 'type': 'number' },
-      permissions: { 'type': 'object' },
-      roles: { 'type': 'object' },
-    },
-    required: ['id', 'username', 'nickname'],
-  }
-  return schema;
-}
-
-function getUserInfoSchema() {
-  const dataSchema = {
-    type: 'object',
-    properties: {
-      userInfo: userInfoSchema()
-    },
-    required: ['userInfo'],
-  }
-  const schema = util.okSchema(dataSchema)
-  return schema;
-}
 
 function getLoginSuccessSchema() {
   const dataSchema = {
@@ -117,7 +85,7 @@ describe('rbac', function() {
 
     it('login failed, username missing', async function() {
       const schema = util.failSchema('ERR_USERNAME_MISSING')
-      const url = '/wolf/rbac/login'
+      const url = '/wolf/rbac/login.rest'
       const body = {}
       await mocha.post({url, headers, body, schema})
     });
@@ -162,7 +130,7 @@ describe('rbac', function() {
 
 
     it('get userInfo success', async function() {
-      const schema = getUserInfoSchema()
+      const schema = util.getUserInfoSchema()
       const url = '/wolf/rbac/user_info'
       const args = {}
       await mocha.get({url, headers, args, schema})
@@ -266,54 +234,46 @@ describe('rbac', function() {
     const headers = {redirects: 0}
     const newPassword = '123456'
 
-    function getCookie(cookies) {
-      let cookie = '';
-      if(cookies && cookies.length > 0) {
-        cookie = cookies[0]
-        const regex = new RegExp('x-rbac-token=[^;]*')
-        const arr = regex.exec(cookie);
-        if(arr) {
-          cookie = arr[0]
-        }
-      }
-      return cookie;
-    }
     it('login render', async function() {
+      const url = '/wolf/rbac/login'
+      const args = {username: 'root', password: '123456', appid: appID}
+      const res = await mocha.get({url, headers, args, status: 200, match: 'form.*/wolf/rbac/login.submit'})
+    });
+    it('login.html render', async function() {
       const url = '/wolf/rbac/login.html'
       const args = {username: 'root', password: '123456', appid: appID}
-      const res = await mocha.get({url, headers, args, status: 200, match: 'form.*/wolf/rbac/login'})
-      // console.log(res.text)
+      const res = await mocha.get({url, headers, args, status: 200, match: 'form.*/wolf/rbac/login.submit'})
     });
 
-    it('login failed, username missing', async function() {
-      const url = '/wolf/rbac/login.post'
+    it('login.submit failed, username missing', async function() {
+      const url = '/wolf/rbac/login.submit'
       const body = {}
-      await mocha.post({url, headers, body, match: 'Username missing'})
+      await mocha.post({url, headers, body, status: 302, match: 'location:\/wolf\/rbac\/login\\?error=Username%20missing'})
     });
 
     it('login failed, password missing', async function() {
-      const url = '/wolf/rbac/login.post'
+      const url = '/wolf/rbac/login.submit'
       const body = {username: 'unit-user'}
-      await mocha.post({url, headers, body, match: ['Password missing', 'RBAC Login']})
+      await mocha.post({url, headers, body, status: 302, match: 'location:\/wolf\/rbac\/login\\?username=unit-user&error=Password%20missing'})
     });
 
     it('login failed, user not found', async function() {
-      const url = '/wolf/rbac/login.post'
+      const url = '/wolf/rbac/login.submit'
       const body = {username: 'not-exist-user', password, appid: appID}
-      await mocha.post({url, headers, body, match: 'User not found'})
+      await mocha.post({url, headers, body, status: 302, match: 'location:\/wolf\/rbac\/login\\?username=not-exist-user&appid=unittest&error=User%20not%20found'})
     });
 
     it('login failed, password error', async function() {
-      const url = '/wolf/rbac/login.post'
+      const url = '/wolf/rbac/login.submit'
       const body = {username: 'unit-user', password: 'password error', appid: appID}
-      await mocha.post({url, headers, body, match: 'Password error'})
+      await mocha.post({url, headers, body, status: 302, match: 'location:\/wolf\/rbac\/login\\?username=unit-user&appid=unittest&error=Password%20error'})
     });
 
     it('login success', async function() {
-      const url = '/wolf/rbac/login.post'
-      const body = {username: 'unit-user', password, appid: appID}
-      const res = await mocha.post({url, headers, body, status: 302})
-      const cookie = getCookie(res.headers['set-cookie'])
+      const url = '/wolf/rbac/login.submit'
+      const body = {username: 'unit-user', password, appid: appID, return_to: '/test/url?key=value'}
+      const res = await mocha.post({url, headers, body, status: 302, match: 'location:/test/url\\?key=value'})
+      const cookie = util.getRbacCookie(res.headers['set-cookie'])
       headers['Cookie'] = cookie;
     });
 
@@ -336,37 +296,37 @@ describe('rbac', function() {
     });
 
     it('change password failed, old password missing', async function() {
-      const url = '/wolf/rbac/change_pwd.post'
+      const url = '/wolf/rbac/change_pwd.submit'
       const body = {}
-      await mocha.post({url, headers, body, match: 'Old password is required'})
+      await mocha.post({url, headers, body, status: 302, match: 'location:\/wolf\/rbac\/change_pwd\\?error=Old%20password%20is%20required'})
     });
 
     it('change password failed, new password missing', async function() {
-      const url = '/wolf/rbac/change_pwd.post'
+      const url = '/wolf/rbac/change_pwd.submit'
       const body = {oldPassword: '123456'}
-      await mocha.post({url, headers, body, match: 'New password is required'})
+      await mocha.post({url, headers, body, status: 302, match: 'location:\/wolf\/rbac\/change_pwd\\?error=New%20password%20is%20required'})
     });
 
     it('change password failed, repeat password incorrent', async function() {
-      const url = '/wolf/rbac/change_pwd.post'
+      const url = '/wolf/rbac/change_pwd.submit'
       const body = {oldPassword: '123456', newPassword: '123456', reNewPassword: 'abcdef'}
-      await mocha.post({url, headers, body, match: 'The password you entered repeatedly is incorrect'})
+      await mocha.post({url, headers, body, status: 302, match: 'location:\/wolf\/rbac\/change_pwd\\?error=The%20password%20you%20entered%20repeatedly%20is%20incorrect'})
     });
 
     it('change password failed, Old password is incorrect', async function() {
-      const url = '/wolf/rbac/change_pwd.post'
+      const url = '/wolf/rbac/change_pwd.submit'
       const body = {oldPassword: 'error-password', newPassword: newPassword, reNewPassword: newPassword}
-      await mocha.post({url, headers, body, match: 'Old password is incorrect'})
+      await mocha.post({url, headers, body, status: 302, match: 'location:\/wolf\/rbac\/change_pwd\\?error=Old%20password%20is%20incorrect'})
     });
 
     it('change password success', async function() {
-      const url = '/wolf/rbac/change_pwd.post'
+      const url = '/wolf/rbac/change_pwd.submit'
       const body = {oldPassword: password, newPassword: newPassword, reNewPassword: newPassword}
       await mocha.post({url, headers, body, match: 'change password successfully'})
     });
 
     it('change password to original success', async function() {
-      const url = '/wolf/rbac/change_pwd.post'
+      const url = '/wolf/rbac/change_pwd.submit'
       const body = {oldPassword: newPassword, newPassword: password, reNewPassword: password}
       await mocha.post({url, headers, body, match: 'change password successfully'})
     });
@@ -374,7 +334,7 @@ describe('rbac', function() {
     it('logout', async function() {
       const url = '/wolf/rbac/logout'
       const body = {}
-      await mocha.post({url, headers, body, status: 302})
+      await mocha.post({url, headers, body, status: 302, match: 'location:/wolf/rbac/login.html\\?appid=unittest'})
     });
   });
 

@@ -15,8 +15,11 @@ class Service extends ArgsUtil {
     this.log4js = log4js
     this.config = config
     this.ctx = ctx;
-
     this.transaction = null;
+  }
+
+  setNext(next){
+    this.next = next
   }
 
   /**
@@ -82,24 +85,38 @@ class Service extends ArgsUtil {
 
   }
 
-  async do(method) {
-    log4js.info('url: %s, method: %s', this.url, method)
+  async do(bizMethod, bizMethodEx) {
+    if (bizMethodEx) {
+      log4js.info('url: %s, bizMethod: %s or %s', this.url, bizMethod, bizMethodEx)
+    } else {
+      log4js.info('url: %s, bizMethod: %s', this.url, bizMethod)
+    }
+    let callMethod = bizMethod;
+    if (this[bizMethodEx] && typeof(this[bizMethodEx]) === 'function') {
+      callMethod = bizMethodEx
+    }
     try {
-      await this.access(method);
-      if (this[method] && typeof(this[method]) === 'function') {
-        await this[method]()
+      await this.access(callMethod);
+      if (this[callMethod] && typeof(this[callMethod]) === 'function') {
+        await this[callMethod]()
       } else { // 404, method not found
-        this.fail(404, `method '${method}' not found`)
+        this.fail(404, `bizMethod '${callMethod}' not found`)
       }
     } finally {
-      await this.log(method);
+      await this.log(callMethod);
     }
   }
 
 
   fail(status, reason, data=null) {
     this.ctx.status = status;
-    const body = json.fail(reason, data || errors.errmsg(reason))
+    const body = json.fail(reason, errors.errmsg(reason), data)
+    this.ctx.body = body
+  }
+
+  fail2(status, reason, errmsg, data=null) {
+    this.ctx.status = status;
+    const body = json.fail(reason, errmsg || errors.errmsg(reason), data)
     this.ctx.body = body
   }
 

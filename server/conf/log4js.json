@@ -19,7 +19,7 @@
                 "server",
                 "console"
             ],
-            "level": "warn"
+            "level": "info"
         }
     },
     "replaceConsole": true

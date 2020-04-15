@@ -4,15 +4,27 @@ const util = require('./util/util')
 
 const headers = util.adminHeaders()
 
-function getAddResponseSchema() {
+function getAddResponseSchema(values) {
+  const applicationSchema = {
+    type: "object",
+    properties: {
+        id: {"type":"string"},
+        name: {"type":"string"},
+        description: {"type":"string"},
+        redirectUris: {"type":"array","items":{"type":"string"}},
+        grants: {"type":"array","items":{"type":"string"}},
+        accessTokenLifetime: {"type":"integer"},                                                                                                                                          refreshTokenLifetime: {"type":"integer"},
+        createTime: {"type":"integer"},
+        updateTime: {"type":"integer"}
+    },
+    required: ["id","name","description","redirectUris","grants","accessTokenLifetime","refreshTokenLifetime","createTime","updateTime"]
+  }
+
+  util.setDefaultOfSchema(applicationSchema, values, applicationSchema.required)
   const schema = util.okSchema({
     type: "object",
     properties: {
-        application: {
-            type: "object",
-            properties: {"id":{"type":"string"},"name":{"type":"string"},"description":{"type":"string"},"createTime":{"type":"integer"}},
-            required: ["id","name","description","createTime"]
-        }
+        application: applicationSchema
     },
     required: ["application"]
   })
@@ -51,19 +63,29 @@ describe('application', function() {
   const name = 'test-application-name'
 
   it('add', async function() {
-    const schema = getAddResponseSchema();
     const description = 'application description'
-    const body = {id, name, description}
-
+    const secret = 'secret'
+    const redirectUris = ['http://localhost/path']
+    const grants = ['authorization_code', 'refresh_token']
+    const accessTokenLifetime = 3600;
+    const refreshTokenLifetime = 7200;
+    const body = {id, name, description, secret, redirectUris, grants, accessTokenLifetime, refreshTokenLifetime}
+    const schema = getAddResponseSchema(body);
     const url = '/wolf/application/add';
     await mocha.post({url, headers, body, schema})
   });
 
   it('update', async function() {
-    const schema = getAddResponseSchema();
     const name = 'test-application-name:updated'
     const description = 'application description updated'
-    const body = {id, name, description}
+    const secret = 'secret2'
+    const redirectUris = ['http://localhost/path2']
+    const grants = ['authorization_code']
+    const accessTokenLifetime = 3601
+    const refreshTokenLifetime = 7201
+
+    const body = {id, name, description, secret, redirectUris, grants, accessTokenLifetime, refreshTokenLifetime}
+    const schema = getAddResponseSchema(body);
 
     const url = '/wolf/application/update';
     await mocha.post({url, headers, body, schema})
@@ -78,8 +100,32 @@ describe('application', function() {
 
   it('get failed, not found', async function() {
     const schema = util.failSchema('ERR_OBJECT_NOT_FOUND')
-    const args = {id: 'not-found-app-id'}
+    const args = {id: 'id-not-exist'}
     const url = '/wolf/application/get';
+    await mocha.get({url, headers, args, schema})
+  });
+
+  it('get secret', async function(){
+    const dataSchema = {
+      type: "object",
+      properties: {
+        "secret":{
+          "type":"string",
+          "enum": ["secret2"]
+        }
+      },
+      required: ["secret"]
+    }
+    const schema = util.okSchema(dataSchema);
+    const args = {id}
+    const url = '/wolf/application/secret'
+    await mocha.get({url, headers, args, schema, showSchema: true})
+  });
+
+  it('get secret failed, not found', async function() {
+    const schema = util.failSchema('ERR_OBJECT_NOT_FOUND')
+    const args = {id: 'id-not-exist'}
+    const url = '/wolf/application/secret';
     await mocha.get({url, headers, args, schema})
   });
 
@@ -134,6 +180,14 @@ describe('application', function() {
       const body = { id: 'id-not-exist' }
       const url = `/wolf/application/delete`;
       await mocha.post({url, headers, body, status: 401, schema})
+    });
+
+
+    it('get secret failed, access deny', async function() {
+      const schema = util.failSchema('ERR_ACCESS_DENIED')
+      const args = {id: 'id-not-exist'}
+      const url = '/wolf/application/secret';
+      await mocha.get({url, headers, args, status: 401, schema})
     });
 
     it('list', async function() {

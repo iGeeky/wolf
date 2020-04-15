@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Logged In Client</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body class='container'>
+  <h1>Part 1: Get Token from Code</h1>
+  <p>The client needs to use the provided authorization_code to get a valid token</p>
+  <button onclick = 'onClick()' class='btn btn-success' >Get Token From Code</button>
+  <p>Authorization Code: <span id='code'></span></p>
+  <p>Token: <span id='token'></span></p>
+  <p>Refresh Token: <span id='refresh_token'></span></p>
+  <h1>Part 2: Access Protected Resources from Token</h1>
+  <p>If the client has a valid access token, client will be able to access protected resources</p>
+  <button onclick='accessSecretArea()' class='btn btn-danger'>Access Secret Area</button>
+  <p>Success?<br/>
+    <pre> <span id='success'></span></pre>
+</p>
+  <h1>Part 3: Refresh Token</h1>
+  <p>If client has a valid refresh token, send it up to get a new token</p>
+  <button onclick='refreshTokenNow()' class='btn btn-primary'>Refresh Token</button>
+
+  <script>
+  let code
+  let token // TODO: DON'T STORE THE TOKEN ON THE CLIENT FRONT END!!! Put it in a session cookie or something to be more secure
+  let tokenType
+  let refreshToken
+  const secret = '123456' // probs shouldn't be stored locally on the frontend
+  const id = 'restful'  // probs shouldn't be stored locally on the frontend
+  ;(function(){ // We are immediately executing this anonymous function. The semi-colon is necessary
+    const urlParams = new URLSearchParams(window.location.search) // retrieve the authorization code from the url
+    code = urlParams.get('code')
+    document.getElementById('code').innerText = code
+  }())
+  function onClick() {
+
+    fetch('/wolf/oauth2/token', {
+      method: 'POST',
+      body: `code=${code}&client_secret=${secret}&client_id=${id}&grant_type=authorization_code`, // this is how we send that data up
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',  // This is REALLY important
+      },
+    })
+      .then(res => res.json())
+      .then(res => {
+        console.log('Credentials', res)
+        const data = res.data || {}
+        token = data.access_token || ''
+        tokenType = data.token_type
+        document.getElementById('token').innerText = token
+        if(data.refresh_token) {
+          refreshToken = data.refresh_token
+          document.getElementById('refresh_token').innerText = refreshToken
+        }
+      })
+  }
+
+  function accessSecretArea() {
+    const authorization = `${tokenType} ${token}`
+    console.log('Bearer token:', authorization)
+    fetch('/wolf/oauth2/user_info', {
+      headers: new Headers({
+        Authorization: authorization,
+      }),
+    })
+      .then(res => res.json())
+      .then(res => {
+        document.getElementById('success').innerText = res.ok ? JSON.stringify(res.data.userInfo, null, 2) : res.reason || 'Failed.'
+      })
+      .catch(e => {
+        console.error('Fail:',e)
+        document.getElementById('success').innerText = 'Failed.'
+      })
+  }
+  function refreshTokenNow() {
+    fetch('/wolf/oauth2/token', {
+      method: 'POST',
+      body: `refresh_token=${refreshToken}&client_secret=${secret}&client_id=${id}&grant_type=refresh_token`,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',  // This is REALLY important
+      },
+    })
+      .then(res => res.json())
+      .then(res => {
+        console.log('Credentials', res)
+        const data = res.data;
+        token = data.access_token
+        tokenType = data.token_type
+        refreshToken = data.refresh_token
+        document.getElementById('token').innerText = token
+        document.getElementById('refresh_token').innerText = refreshToken
+      })
+  }
+  </script>
+</body>
+</html>

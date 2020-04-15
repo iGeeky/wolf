@@ -2,6 +2,16 @@
 const _ = require('lodash')
 const bcrypt = require('bcrypt-node')
 const moment = require('moment')
+const crypto = require('crypto')
+
+function sha1hex(data) {
+  const sha1 = crypto.createHash('sha1')
+  return sha1.update(data).digest('hex')
+}
+
+function isNumeric(num) {
+  return !isNaN(num)
+}
 
 function randomString(length) {
   let result = ''
@@ -50,6 +60,8 @@ function filterFieldBlack(obj, blackFields) {
   return _.pickBy(obj, (val, key) => _.findIndex(blackFields, (v) => v === key) === -1)
 }
 
+exports.isNumeric = isNumeric
+exports.sha1hex = sha1hex
 exports.encodePassword = encodePassword
 exports.comparePassword = comparePassword
 exports.currentDate = currentDate

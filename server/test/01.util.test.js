@@ -1,5 +1,6 @@
-
+const util = require('../src/util/util')
 const ArgsHelper = require('../src/util/args-util')
+const OAuthUtil = require('../src/util/oauth-util')
 const ArgsError = require('../src/errors/args-error')
 const chai = require('chai')
 const assert = chai.assert
@@ -82,6 +83,19 @@ describe('util', function() {
     it('normal', function() {
       assert.equal(argsHelper.getStringArg('string'), 'value')
       assert.equal(argsHelper.getIntArg('int'), 1)
+    })
+  })
+  describe('oauth-util', function() {
+    it('encode and decode', function() {
+      const userID = util.unixtime()
+      const clientID = 'test'
+      const oauthUserID = OAuthUtil.OAuthUserID(userID, clientID)
+      console.log('>>>oauthUserID:', oauthUserID)
+      const { error, userID: userID2, clientID: clientID2 } = OAuthUtil.parseOAuthUserID(oauthUserID)
+      assert.ifError(error, error)
+      assert.equal(userID, userID2)
+      assert.equal(clientID, clientID2)
+      console.info('oauthUserID: %s, parsed userID: %d, clientID: %s', oauthUserID, userID2, clientID2)
     })
   })
 })

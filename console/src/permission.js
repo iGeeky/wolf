@@ -18,7 +18,7 @@ async function initMenu() {
   await store.dispatch('permission/generateRoutes', null)
   NProgress.done()
 }
-initMenu().then(console.log)
+initMenu().then(() => {})
 
 const whiteList = ['/login', '/auth-redirect'] // no redirect whitelist
 

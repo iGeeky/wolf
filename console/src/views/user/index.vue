@@ -65,7 +65,7 @@
       <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="listUsers" />
     </div>
     <el-dialog :visible.sync="dialogVisible" :title="dialogType==='edit'?'Edit User':'New User'" custom-class="rbac-edit-dialog">
-      <el-form ref="user" :model="user" :rules="rules" label-width="80px" label-position="left">
+      <el-form ref="user" :model="user" :rules="rules" label-width="120px" label-position="left">
         <el-form-item label="Username" prop="username">
           <el-input v-model="user.username" placeholder="User Name" />
         </el-form-item>
@@ -206,7 +206,6 @@ export default {
   mounted() {},
   methods: {
     tableRowClassName({ row, rowIndex }) {
-      console.log('>>> row:', row)
       if (row.status === -1) {
         return 'disabled-row'
       }

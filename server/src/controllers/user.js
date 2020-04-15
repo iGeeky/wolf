@@ -11,6 +11,7 @@ const util = require('../util/util')
 const _ = require('lodash')
 
 const userFields = ['id', 'username', 'nickname', 'email', 'appIDs', 'manager', 'createTime'];
+const applicationFields = ['id', 'name', 'description', 'redirectUris', 'grants', 'accessTokenLifetime', 'refreshTokenLifetime', 'createTime'];
 
 
 class User extends BasicService {
@@ -54,7 +55,6 @@ class User extends BasicService {
       return {err: errors.ERR_USER_DISABLED}
     }
     userInfo = userInfo.toJSON()
-    userInfo.id = parseInt(userInfo.id)
     return { userInfo };
   }
 
@@ -72,7 +72,9 @@ class User extends BasicService {
       }
 
       if (applications) {
-        applications = _.map(applications, (ele) => ele.toJSON())
+        applications.forEach((application, i) => {
+          applications[i] = util.filterFieldWhite(application.toJSON(), applicationFields)
+        });
       }
     }
     return applications;
@@ -144,7 +146,6 @@ class User extends BasicService {
     const userInfos = await UserModel.findAll(options)
     userInfos.forEach((userInfo, i) => {
       userInfo = userInfo.toJSON()
-      userInfo.id = parseInt(userInfo.id)
       userInfo.appIDs = userInfo.appIDs || []
       userInfos[i] = userInfo;
     });
@@ -172,7 +173,6 @@ class User extends BasicService {
     values.updateTime = util.unixtime();
     let userInfo = await UserModel.create(values);
     userInfo = userInfo.toJSON()
-    userInfo.id = parseInt(userInfo.id)
     const data = {password, 'userInfo': util.filterFieldWhite(userInfo, userFields)}
     this.success(data);
   }
@@ -207,7 +207,6 @@ class User extends BasicService {
     const options = {where: {id}}
     let {effects, newValues: userInfo} = await UserModel.mustUpdate(values, options)
     userInfo = userInfo.toJSON()
-    userInfo.id = parseInt(userInfo.id)
     const data = {effects, 'userInfo': util.filterFieldWhite(userInfo, userFields)}
     this.success(data);
   }
@@ -250,11 +249,10 @@ class User extends BasicService {
       }
     }
     userInfo = userInfo.toJSON()
-    userInfo.id = parseInt(userInfo.id)
 
     if (userInfo.manager === constant.Manager.super) {
       this.log4js.error('delete super user {id:%s, username:%s} failed!', userInfo.id, userInfo.username)
-      this.fail(200, errors.ERR_PERMISSION_DENY, `Can't delete 'super' user`)
+      this.fail2(401, errors.ERR_PERMISSION_DENY, `Can't delete 'super' user`)
       return
     }
 
