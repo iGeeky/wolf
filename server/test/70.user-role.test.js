@@ -82,8 +82,8 @@ describe('user-role', function() {
 
 
   after(async function() {
-    const url = '/wolf/user-role/delete';
+    const url = '/wolf/user-role';
     const body = {userID, appID}
-    await mocha.post({url, headers, body})
+    await mocha.delete({url, headers, body})
   });
 });

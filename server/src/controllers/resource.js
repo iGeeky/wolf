@@ -30,7 +30,7 @@ class Resource extends BasicService {
     super(ctx, ResourceModel)
   }
   async log(bizMethod) {
-    if (bizMethod === 'add' || bizMethod === 'update' || bizMethod === 'delete') {
+    if (bizMethod === 'post' || bizMethod === 'put' || bizMethod === 'delete') {
       this.log4js.info('---- url: %s, method: %s, flush resource cache ----', this.url, bizMethod)
       resourceCache.flushResourceCache();
     }
@@ -62,7 +62,7 @@ class Resource extends BasicService {
     this.success(data)
   }
 
-  async add() {
+  async post() {
     const fieldsMap = {
       appID: {type: 'string', required: true},
       matchType: {type: 'string', required: true, enums: [constant.MatchType.equal, constant.MatchType.suffix, constant.MatchType.prefix]},
@@ -81,7 +81,7 @@ class Resource extends BasicService {
     this.success(data);
   }
 
-  async update() {
+  async put() {
     const fieldsMap = {
       matchType: {type: 'string', required: true, enums: [constant.MatchType.equal, constant.MatchType.suffix, constant.MatchType.prefix]},
       name: {type: 'string', required: true},

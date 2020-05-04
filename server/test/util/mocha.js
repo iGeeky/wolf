@@ -193,6 +193,40 @@ async function post(options) {
   return await http(options)
 }
 
+/**
+   * http put request
+   * @param {!options} options request options
+   *        url: request url
+   *        headers: request headers
+   *        body: request body for post,put,delete request.
+   *        status: expect response status, default is 200.
+   *        schema: expect response body schema for restful response
+   *        match: regex pattern for matching response body.
+   *        notMatch: regex pattern for not matching response body.
+   * @return {res} http response object.
+   */
+async function put(options) {
+  options.method = 'put'
+  return await http(options)
+}
+
+/**
+   * http delete request
+   * @param {!options} options request options
+   *        url: request url
+   *        headers: request headers
+   *        body: request body for post,put,delete request.
+   *        status: expect response status, default is 200.
+   *        schema: expect response body schema for restful response
+   *        match: regex pattern for matching response body.
+   *        notMatch: regex pattern for not matching response body.
+   * @return {res} http response object.
+   */
+async function delete_(options) {
+  options.method = 'delete'
+  return await http(options)
+}
+
 
 function onFailed(callback, args) {
   afterEach(function(){
@@ -215,3 +249,5 @@ exports.httpGet = httpGet;
 exports.http = http;
 exports.get = get;
 exports.post = post;
+exports.put = put;
+exports.delete = delete_;

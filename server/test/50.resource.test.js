@@ -82,7 +82,7 @@ describe('resource', function() {
     const permID = 'PERM_DEFAULT'
     const body = {appID, matchType, name, action, permID}
 
-    const url = '/wolf/resource/add';
+    const url = '/wolf/resource';
     const res = await mocha.post({url, headers, body, schema})
     resource = res.body.data.resource;
 
@@ -114,8 +114,8 @@ describe('resource', function() {
     const action = 'ALL';
     const permID = 'PERM_DEFAULT'
     const body = {id, matchType, name, action, permID}
-    const url = '/wolf/resource/update';
-    await mocha.post({url, headers, body, schema})
+    const url = '/wolf/resource';
+    await mocha.put({url, headers, body, schema})
   });
 
   it('list', async function() {

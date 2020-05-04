@@ -3,7 +3,7 @@ import { checkExist } from '@/api/common'
 
 export async function addApplication(application) {
   return await request({
-    url: '/application/add',
+    url: '/application',
     method: 'post',
     data: application,
   })
@@ -12,8 +12,8 @@ export async function addApplication(application) {
 export async function updateApplication(id, application) {
   application = Object.assign({ id }, application)
   return await request({
-    url: '/application/update',
-    method: 'post',
+    url: '/application',
+    method: 'put',
     data: application,
   })
 }
@@ -21,8 +21,8 @@ export async function updateApplication(id, application) {
 export async function deleteApplication(id) {
   const data = { id: id }
   return await request({
-    url: '/application/delete',
-    method: 'post',
+    url: '/application',
+    method: 'delete',
     data,
   })
 }

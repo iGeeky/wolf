@@ -151,7 +151,7 @@ describe('oauth2', function() {
       const headers = util.adminHeaders()
       const body = {id, name, description}
       const schema = util.okSchema()
-      const url = '/wolf/application/add';
+      const url = '/wolf/application';
       await mocha.post({url, headers, body, schema})
     });
 
@@ -202,8 +202,8 @@ describe('oauth2', function() {
       const headers = util.adminHeaders()
       const body = {id, name, description, redirectUris}
       const schema = util.okSchema()
-      const url = '/wolf/application/update';
-      await mocha.post({url, headers, body, schema})
+      const url = '/wolf/application';
+      await mocha.put({url, headers, body, schema})
     });
 
     it('authorize failed, Missing parameter: `response_type`', async function() {
@@ -247,8 +247,8 @@ describe('oauth2', function() {
       const headers = util.adminHeaders()
       const body = {id, name, description, redirectUris}
       const schema = util.okSchema()
-      const url = '/wolf/application/update';
-      await mocha.post({url, headers, body, schema})
+      const url = '/wolf/application';
+      await mocha.put({url, headers, body, schema})
     });
 
     it('authorize failed, `redirect_uri` does not match client value', async function() {
@@ -327,8 +327,8 @@ describe('oauth2', function() {
       const headers = util.adminHeaders()
       const body = {id, name, description, secret, redirectUris, accessTokenLifetime, refreshTokenLifetime}
       const schema = util.okSchema()
-      const url = '/wolf/application/update';
-      await mocha.post({url, headers, body, schema})
+      const url = '/wolf/application';
+      await mocha.put({url, headers, body, schema})
     });
 
     it('token failed, secret missing', async function() {
@@ -440,8 +440,8 @@ describe('oauth2', function() {
       const headers = util.adminHeaders()
       const body = {id, name, description, secret, redirectUris, accessTokenLifetime, refreshTokenLifetime}
       const schema = util.okSchema()
-      const url = '/wolf/application/update';
-      await mocha.post({url, headers, body, schema})
+      const url = '/wolf/application';
+      await mocha.put({url, headers, body, schema})
     });
 
 
@@ -612,10 +612,10 @@ describe('oauth2', function() {
 
     after(async function() {
       const id = applicationID
-      const url = '/wolf/application/delete';
+      const url = '/wolf/application';
       const body = {id}
       const headers = util.adminHeaders()
-      await mocha.post({url, headers, body, status: 200, })
+      await mocha.delete({url, headers, body, status: 200, })
     });
     // TODO: user disabled
   });

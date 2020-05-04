@@ -14,7 +14,7 @@ class Role extends BasicService {
   }
 
   async log(bizMethod) {
-    if (bizMethod === 'update' || bizMethod === 'delete') {
+    if (bizMethod === 'post' || bizMethod === 'put' || bizMethod === 'delete') {
       this.log4js.info('---- url: %s, method: %s, flush user cache ----', this.url, bizMethod)
       userCache.flushUserCache();
     }
@@ -46,7 +46,7 @@ class Role extends BasicService {
     this.success(data)
   }
 
-  async add() {
+  async post() {
     const fieldsMap = {
       appID: {type: 'string', required: true},
       id: {type: 'string', required: true},
@@ -63,7 +63,7 @@ class Role extends BasicService {
     this.success(data);
   }
 
-  async update() {
+  async put() {
     const fieldsMap = {
       name: {type: 'string'},
       description: {type: 'string'},

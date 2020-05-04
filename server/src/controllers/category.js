@@ -38,7 +38,7 @@ class Category extends BasicService {
     this.success(data)
   }
 
-  async add() {
+  async post() {
     const fieldsMap = {
       appID: {type: 'string', required: true},
       name: {type: 'string', required: true},
@@ -51,7 +51,7 @@ class Category extends BasicService {
     this.success(data);
   }
 
-  async update() {
+  async put() {
     const fieldsMap = {
       name: {type: 'string'},
       appID: {type: 'string'},

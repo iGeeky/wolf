@@ -66,11 +66,13 @@ async function getUserInfoById(userId, appId) {
 
 function flushUserCache() {
   userCache.flushAll();
+  log4js.info("---- userCache.flushAll ----")
 }
 
 function flushUserCacheByID(userId, appId){
   const key = `user:${userId}-${appId}`
   userCache.del(key)
+  log4js.info("---- userCache.del(%s) ----", key)
 }
 
 exports.getUserInfoById = getUserInfoById;

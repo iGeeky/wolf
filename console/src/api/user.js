@@ -3,7 +3,7 @@ import { checkExist } from '@/api/common'
 
 export async function addUser(userInfo) {
   return await request({
-    url: '/user/add',
+    url: '/user',
     method: 'post',
     data: userInfo,
   })
@@ -12,8 +12,8 @@ export async function addUser(userInfo) {
 export async function updateUser(id, userInfo) {
   userInfo = Object.assign({ id }, userInfo)
   return await request({
-    url: '/user/update',
-    method: 'post',
+    url: '/user',
+    method: 'put',
     data: userInfo,
   })
 }
@@ -21,8 +21,8 @@ export async function updateUser(id, userInfo) {
 export async function deleteUser(id) {
   const data = { id }
   return await request({
-    url: '/user/delete',
-    method: 'post',
+    url: '/user',
+    method: 'delete',
     data,
   })
 }

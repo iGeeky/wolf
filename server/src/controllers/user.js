@@ -11,7 +11,7 @@ const util = require('../util/util')
 const _ = require('lodash')
 
 const userFields = ['id', 'username', 'nickname', 'email', 'appIDs', 'manager', 'createTime'];
-const applicationFields = ['id', 'name', 'description', 'redirectUris', 'grants', 'accessTokenLifetime', 'refreshTokenLifetime', 'createTime'];
+const applicationFields = ['id', 'name', 'description', 'createTime'];
 
 
 class User extends BasicService {
@@ -30,7 +30,7 @@ class User extends BasicService {
   }
 
   async log(bizMethod) {
-    if (bizMethod === 'update' || bizMethod === 'delete') {
+    if (bizMethod === 'put' || bizMethod === 'delete') {
       this.log4js.info('---- url: %s, method: %s, flush user cache ----', this.url, bizMethod)
       userCache.flushUserCache();
     }
@@ -70,12 +70,11 @@ class User extends BasicService {
         const where = {id: {[Op.in]: userInfo.appIDs}}
         applications = await ApplicationModel.findAll({where});
       }
-
-      if (applications) {
-        applications.forEach((application, i) => {
-          applications[i] = util.filterFieldWhite(application.toJSON(), applicationFields)
-        });
-      }
+    }
+    if (applications) {
+      applications.forEach((application, i) => {
+        applications[i] = util.filterFieldWhite(application.toJSON(), applicationFields)
+      });
     }
     return applications;
   }
@@ -154,7 +153,7 @@ class User extends BasicService {
     this.success(data)
   }
 
-  async add() {
+  async post() {
     const fieldsMap = {
       username: {type: 'string', required: true},
       nickname: {type: 'string', required: true},
@@ -177,7 +176,7 @@ class User extends BasicService {
     this.success(data);
   }
 
-  async update() {
+  async put() {
     const fieldsMap = {
       username: {type: 'string'},
       nickname: {type: 'string'},

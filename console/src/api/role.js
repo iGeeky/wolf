@@ -3,7 +3,7 @@ import { checkExist } from '@/api/common'
 
 export async function addRole(role) {
   return await request({
-    url: '/role/add',
+    url: '/role',
     method: 'post',
     data: role,
   })
@@ -12,8 +12,8 @@ export async function addRole(role) {
 export async function updateRole(id, role) {
   role = Object.assign({ id }, role)
   return await request({
-    url: '/role/update',
-    method: 'post',
+    url: '/role',
+    method: 'put',
     data: role,
   })
 }
@@ -21,8 +21,8 @@ export async function updateRole(id, role) {
 export async function deleteRole(id) {
   const data = { id }
   return await request({
-    url: '/role/delete',
-    method: 'post',
+    url: '/role',
+    method: 'delete',
     data,
   })
 }

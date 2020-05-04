@@ -51,7 +51,7 @@ describe('category', function() {
     const appID = 'test-application-id'
     const body = {appID, name}
 
-    const url = '/wolf/category/add';
+    const url = '/wolf/category';
     const res = await mocha.post({url, headers, body, schema})
     category = res.body.data.category;
   });
@@ -65,8 +65,8 @@ describe('category', function() {
     const name = 'test-category-name:updated'
     const body = {id, name}
 
-    const url = '/wolf/category/update';
-    await mocha.post({url, headers, body, schema})
+    const url = '/wolf/category';
+    await mocha.put({url, headers, body, schema})
   });
 
   it('list', async function() {
@@ -81,9 +81,9 @@ describe('category', function() {
     if (!category) {
       this.skip();
     }
-    const url = '/wolf/category/delete';
+    const url = '/wolf/category';
     const id = category.id
     const body = {id}
-    await mocha.post({url, headers, body})
+    await mocha.delete({url, headers, body})
   });
 });

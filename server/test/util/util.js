@@ -154,8 +154,8 @@ async function updateUserStatus(userID, status) {
     required: ["userInfo"]
   })
   const body = {id: userID, status}
-  const url = '/wolf/user/update';
-  await mocha.post({url, headers: adminHeaders(), body, status: 200, schema})
+  const url = '/wolf/user';
+  await mocha.put({url, headers: adminHeaders(), body, status: 200, schema})
 }
 
 function getRbacCookie(cookies) {

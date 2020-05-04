@@ -3,7 +3,7 @@ import { checkExist } from '@/api/common'
 
 export async function addCategory(category) {
   return await request({
-    url: '/category/add',
+    url: '/category',
     method: 'post',
     data: category,
   })
@@ -12,8 +12,8 @@ export async function addCategory(category) {
 export async function updateCategory(id, category) {
   category = Object.assign({ id }, category)
   return await request({
-    url: '/category/update',
-    method: 'post',
+    url: '/category',
+    method: 'put',
     data: category,
   })
 }
@@ -21,8 +21,8 @@ export async function updateCategory(id, category) {
 export async function deleteCategory(id) {
   const data = { id }
   return await request({
-    url: '/category/delete',
-    method: 'post',
+    url: '/category',
+    method: 'delete',
     data,
   })
 }

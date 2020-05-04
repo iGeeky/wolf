@@ -14,7 +14,6 @@ const IGNORE_URLS = {
   'POST:/wolf/rbac/login.submit': true,
   'POST:/wolf/rbac/login.rest': true,
   'POST:/wolf/rbac/login/rest': true,
-  // 'POST:/v1/user/add': true,
 }
 
 function needCheckToken(ctx) {

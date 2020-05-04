@@ -135,7 +135,7 @@ class Application extends BasicService {
     this.success(data)
   }
 
-  async add() {
+  async post() {
     const fieldsMap = {
       id: {type: 'string', required: true},
       name: {type: 'string', required: true},
@@ -155,7 +155,7 @@ class Application extends BasicService {
     this.success(data);
   }
 
-  async update() {
+  async put() {
     const fieldsMap = {
       name: {type: 'string'},
       description: {type: 'string'},

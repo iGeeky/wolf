@@ -3,7 +3,7 @@ import { checkExist } from '@/api/common'
 
 export async function addResource(resource) {
   return await request({
-    url: '/resource/add',
+    url: '/resource',
     method: 'post',
     data: resource,
   })
@@ -12,8 +12,8 @@ export async function addResource(resource) {
 export async function updateResource(id, resource) {
   resource = Object.assign({ id }, resource)
   return await request({
-    url: '/resource/update',
-    method: 'post',
+    url: '/resource',
+    method: 'put',
     data: resource,
   })
 }
@@ -21,8 +21,8 @@ export async function updateResource(id, resource) {
 export async function deleteResource(id) {
   const data = { id: id }
   return await request({
-    url: '/resource/delete',
-    method: 'post',
+    url: '/resource',
+    method: 'delete',
     data,
   })
 }

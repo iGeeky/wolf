@@ -78,10 +78,9 @@ describe('framework', function() {
                         id: {"type":"string"},
                         name: {"type":"string"},
                         description: {"type":"string"},
-                        createTime: {"type":"integer"},
-                        updateTime: {"type":"integer"}
+                        createTime: {"type":"integer"}
                     },
-                    required: ["id","name","description","createTime","updateTime"]
+                    required: ["id","name","description","createTime"]
                 }
             }
         },
@@ -138,7 +137,7 @@ describe('framework', function() {
         const tel = '13011002200'
         const appIds = []
         const body = {username, nickname, email, tel, appIDs: appIds, password}
-        const url = '/wolf/user/add';
+        const url = '/wolf/user';
         await mocha.post({url, headers, body, status: 200, schema})
       });
       it('normal user login failed, access deny error', async function() {
@@ -151,8 +150,8 @@ describe('framework', function() {
       after(async function() {
         const schema = util.okSchema({type: 'object'});
         const body = {username}
-        const url = '/wolf/user/delete';
-        await mocha.post({url, headers, body, schema})
+        const url = '/wolf/user';
+        await mocha.delete({url, headers, body, schema})
       });
     });
   });

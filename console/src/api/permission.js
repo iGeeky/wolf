@@ -3,7 +3,7 @@ import { checkExist } from '@/api/common'
 
 export async function addPermission(permission) {
   return await request({
-    url: '/permission/add',
+    url: '/permission',
     method: 'post',
     data: permission,
   })
@@ -12,8 +12,8 @@ export async function addPermission(permission) {
 export async function updatePermission(id, permission) {
   permission = Object.assign({ id }, permission)
   return await request({
-    url: '/permission/update',
-    method: 'post',
+    url: '/permission',
+    method: 'put',
     data: permission,
   })
 }
@@ -21,8 +21,8 @@ export async function updatePermission(id, permission) {
 export async function deletePermission(id) {
   const data = { id }
   return await request({
-    url: '/permission/delete',
-    method: 'post',
+    url: '/permission',
+    method: 'delete',
     data,
   })
 }

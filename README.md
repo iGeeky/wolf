@@ -49,6 +49,7 @@ Note: The Html Demo application is a proxy for the OpenResty official website an
 * Language independent, any HTTP program can be used, including but not limited to: pure static web pages, JSP, PHP, ASP, PYTHON, NODE JS and other WEB systems
 * Low coupling, non-intrusive, supports new applications without any modifications or changes to the application, the system manages resource rights at the proxy level
 * Management backend (`console module`) for `application`, `user`, `role`, `permission` and `resources` management
+* The `OAuth 2.0` authorization is supported and other applications can easily use `wolf` as an authentication source.
 * Supports `Restful` interface, also supports `pure html` applications for backend rendering
 * Support access logging and querying for auditing
 * APISIX gateway support[apache-apisix:wolf-rbac](https://github.com/apache/incubator-apisix/blob/master/doc/plugins/wolf-rbac-cn.md)

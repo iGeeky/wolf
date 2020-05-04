@@ -71,7 +71,7 @@ describe('application', function() {
     const refreshTokenLifetime = 7200;
     const body = {id, name, description, secret, redirectUris, grants, accessTokenLifetime, refreshTokenLifetime}
     const schema = getAddResponseSchema(body);
-    const url = '/wolf/application/add';
+    const url = '/wolf/application';
     await mocha.post({url, headers, body, schema})
   });
 
@@ -87,8 +87,8 @@ describe('application', function() {
     const body = {id, name, description, secret, redirectUris, grants, accessTokenLifetime, refreshTokenLifetime}
     const schema = getAddResponseSchema(body);
 
-    const url = '/wolf/application/update';
-    await mocha.post({url, headers, body, schema})
+    const url = '/wolf/application';
+    await mocha.put({url, headers, body, schema})
   });
 
   it('get ok', async function() {
@@ -164,7 +164,7 @@ describe('application', function() {
       const appIDs = [id]
       const manager = 'admin'
       const body = {username, nickname, email, tel, appIDs, manager, password}
-      const url = '/wolf/user/add';
+      const url = '/wolf/user';
       await mocha.post({url, headers: util.adminHeaders(), body, status: 200, schema})
     });
     it('admin login success', async function() {
@@ -178,8 +178,8 @@ describe('application', function() {
     it('delete application failed, access deny', async function() {
       const schema = util.failSchema('ERR_ACCESS_DENIED');
       const body = { id: 'id-not-exist' }
-      const url = `/wolf/application/delete`;
-      await mocha.post({url, headers, body, status: 401, schema})
+      const url = `/wolf/application`;
+      await mocha.delete({url, headers, body, status: 401, schema})
     });
 
 
@@ -200,14 +200,14 @@ describe('application', function() {
     after(async function() {
       const schema = util.okSchema({type: 'object'});
       const body = {username}
-      const url = '/wolf/user/delete';
-      await mocha.post({url, headers: util.adminHeaders(), body, schema})
+      const url = '/wolf/user';
+      await mocha.delete({url, headers: util.adminHeaders(), body, schema})
     });
   });
 
   after(async function() {
-    const url = '/wolf/application/delete';
+    const url = '/wolf/application';
     const body = {id}
-    await mocha.post({url, headers, body})
+    await mocha.delete({url, headers, body})
   });
 });

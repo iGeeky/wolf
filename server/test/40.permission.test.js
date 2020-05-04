@@ -43,7 +43,7 @@ describe('permission', function() {
     const appID = 'test-application-id'
     const body = {id, name, description, appID, categoryID: 2}
 
-    const url = '/wolf/permission/add';
+    const url = '/wolf/permission';
     await mocha.post({url, headers, body, schema})
   });
 
@@ -55,8 +55,8 @@ describe('permission', function() {
     const description = 'test-permission-description:updated'
     const body = {id, name, description, categoryID: categoryId}
 
-    const url = '/wolf/permission/update';
-    await mocha.post({url, headers, body, schema})
+    const url = '/wolf/permission';
+    await mocha.put({url, headers, body, schema})
   });
 
   it('list', async function() {
@@ -69,9 +69,9 @@ describe('permission', function() {
 
 
   after(async function() {
-    const url = '/wolf/permission/delete';
+    const url = '/wolf/permission';
     const id = 'test-permission-id'
     const body = {id}
-    await mocha.post({url, headers, body})
+    await mocha.delete({url, headers, body})
   });
 });

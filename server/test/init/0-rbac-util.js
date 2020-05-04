@@ -34,7 +34,7 @@ function rbacInit(data, userPassword, opts={}) {
     }
 
     for (const application of data.applications) {
-      const url = '/wolf/application/add';
+      const url = '/wolf/application';
       await mocha.post({url, headers, body: application})
     }
   });
@@ -45,7 +45,7 @@ function rbacInit(data, userPassword, opts={}) {
     }
 
     for (const category of data.categories) {
-      const url = '/wolf/category/add';
+      const url = '/wolf/category';
       category.appID = application.id;
       const res = await mocha.post({url, headers, body: category})
       const categoryID = res.body.data.category.id;
@@ -60,7 +60,7 @@ function rbacInit(data, userPassword, opts={}) {
     }
 
     for (const permission of data.permissions) {
-      const url = '/wolf/permission/add';
+      const url = '/wolf/permission';
       permission.appID = application.id;
       if(permission.category && categoryMap[permission.category]) {
         permission.categoryID = categoryMap[permission.category]
@@ -75,7 +75,7 @@ function rbacInit(data, userPassword, opts={}) {
     }
 
     for (const role of data.roles) {
-      const url = '/wolf/role/add';
+      const url = '/wolf/role';
       role.appID = application.id;
       await mocha.post({url, headers, body: role})
     }
@@ -90,7 +90,7 @@ function rbacInit(data, userPassword, opts={}) {
       console.log('---------- rbac users for application [%s]-----------', application.id)
     }
     for (const user of data.users) {
-      let url = '/wolf/user/add';
+      let url = '/wolf/user';
       user.appIDs = [application.id];
       if(userPassword && typeof(userPassword) !== 'boolean') {
         user.password = '' + userPassword
@@ -117,7 +117,7 @@ function rbacInit(data, userPassword, opts={}) {
     }
 
     for (const resource of data.resources) {
-      const url = '/wolf/resource/add';
+      const url = '/wolf/resource';
       resource.appID = application.id;
       await mocha.post({url, headers, body: resource})
     }
@@ -134,8 +134,8 @@ function rbacDestroy(data) {
     application = data.applications[0];
 
     for (const application of data.applications) {
-      const url = '/wolf/application/delete';
-      await mocha.post({url, headers, body: {id: application.id}})
+      const url = '/wolf/application';
+      await mocha.delete({url, headers, body: {id: application.id}})
     }
   });
 
@@ -172,13 +172,13 @@ function rbacDestroy(data) {
     }
 
     for (const user of data.users) {
-      let url = '/wolf/user/delete';
+      let url = '/wolf/user';
       user.appIDs = [application.id];
-      const res = await mocha.post({url, headers, body: {username: user.username}})
+      const res = await mocha.delete({url, headers, body: {username: user.username}})
       if (res.body.data && res.body.data.userInfo) {
         const userId = res.body.data.userInfo.id;
-        url = '/wolf/user-role/delete'
-        await mocha.post({url, headers, body: {userID: userId, appID: application.id}})
+        url = '/wolf/user-role'
+        await mocha.delete({url, headers, body: {userID: userId, appID: application.id}})
       }
     }
   });

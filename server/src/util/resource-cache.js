@@ -5,6 +5,7 @@ const resourceCache = new NodeCache({stdTTL: config.memCacheTTLSecond, checkperi
 const constant = require('./constant')
 const Sequelize = require('sequelize')
 const Op = require('sequelize').Op;
+const log4js = require('./log4js')
 
 
 async function getResourceFromDb(appID, action, name) {
@@ -45,6 +46,7 @@ async function getResource(appID, action, name) {
 
 function flushResourceCache() {
   resourceCache.flushAll();
+  log4js.info("---- resourceCache.flushAll ----")
 }
 
 exports.getResource = getResource
