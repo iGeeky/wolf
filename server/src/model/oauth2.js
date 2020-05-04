@@ -104,7 +104,11 @@ exports.getClient = async function (clientID, clientSecret) {
     throw new InvalidClientError('Invalid client: redirectUris is empty')
   }
   // check secret for token request only
-  if (clientSecret && client.secret !== clientSecret) {
+  let secret = client.secret;
+  if (secret) {
+    secret = oauthUtil.decryptSecret(secret)
+  }
+  if (clientSecret && secret !== clientSecret) {
     log4js.warn('getClient(%s) failed, the secret is wrong', clientID)
     throw new InvalidClientError('Secret is incorrect')
   }

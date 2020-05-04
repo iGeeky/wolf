@@ -98,6 +98,7 @@ GRANT ALL PRIVILEGES ON DATABASE wolf to wolfroot;
 
   * RBAC_ROOT_PASSWORD root账号及admin账号的默认密码. 默认为`123456`
   * RBAC_TOKEN_KEY 加密用户token使用的KEY, 强烈建议设置该值.
+  * WOLF_CRYPT_KEY 加密应用Secret及OAuth2登陆用户ID使用的Key.
   * RBAC_SQL_URL 连接postgres数据库的数据库链接. 默认为: `postgres://wolfroot:123456@127.0.0.1:5432/wolf`
 
   以上三个配置, 可以在系统环境变量中配置, 也可以在启动时指定.
@@ -122,8 +123,12 @@ Add your Postgre Installation's bin folder to the system path (i.e. C:\Program F
 * 启动服务.
 
 ```shell
+# 设置wolf的root及admin账号的初始密码.
 export RBAC_ROOT_PASSWORD=123456
+# 设置Token加密key, 为了系统安全, 强烈建议你设置该值.
 export RBAC_TOKEN_KEY=THE-NEW-TOKEN-KEY
+# 设置Secret加密key, 为了系统安全, 强烈建议你设置该值.
+export WOLF_CRYPT_KEY=THE-NEW-CRYPT-KEY
 # 请根据你创建用户及数据库的实际情况进行修改.
 export RBAC_SQL_URL=postgres://wolfroot:123456@127.0.0.1:5432/wolf
 cd path/to/wolf/server

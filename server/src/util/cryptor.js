@@ -6,6 +6,11 @@ function sha1hex(data) {
   return sha1.update(data).digest('hex')
 }
 
+function md5hex(data) {
+  const md5 = crypto.createHash('md5')
+  return md5.update(data).digest('hex')
+}
+
 function encodePassword(password) {
   return sha1hex('AJ53MCdmPJM|' + password)
 }
@@ -40,6 +45,7 @@ function aesEncrypt(data, key) {
 }
 
 exports.sha1hex = sha1hex
+exports.md5hex = md5hex
 exports.encodePassword = encodePassword
 exports.aesDecrypt = aesDecrypt
 exports.aesEncrypt = aesEncrypt

@@ -1,3 +1,8 @@
+2020-05-04 0.3.1
+
+* Application Secret加密保存
+* 添加 `WOLF_CRYPT_KEY` 环境变量, 用于设置Secret及OAuth用户ID加密的Key.
+
 2020-05-04 0.3.0
 
 * 登陆支持OAuth2

@@ -1,6 +1,7 @@
 const config = {
   rootUserInitialPassword: process.env.RBAC_ROOT_PASSWORD || '123456',
   tokenKey: process.env.RBAC_TOKEN_KEY || 'b5155b92b13a02d08d2cc1bf8b81bec7c0c70fb8',
+  cryptKey: process.env.WOLF_CRYPT_KEY || 'fbd4962351924792cb5e5b131435cd30b24e3570',
   tokenExpireTime: parseInt(process.env.RBAC_TOKEN_EXPIRE_TIME) || 3600 * 24 * 30,
   memCacheTTLSecond: 600,
   clientChangePassword: (process.env.CLIENT_CHANGE_PWD || 'yes') === 'yes',

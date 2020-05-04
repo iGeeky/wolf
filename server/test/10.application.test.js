@@ -75,6 +75,23 @@ describe('application', function() {
     await mocha.post({url, headers, body, schema})
   });
 
+  it('get secret', async function(){
+    const dataSchema = {
+      type: "object",
+      properties: {
+        "secret":{
+          "type":"string",
+          "enum": ["secret"]
+        }
+      },
+      required: ["secret"]
+    }
+    const schema = util.okSchema(dataSchema);
+    const args = {id}
+    const url = '/wolf/application/secret'
+    await mocha.get({url, headers, args, schema, showSchema: true})
+  });
+
   it('update', async function() {
     const name = 'test-application-name:updated'
     const description = 'application description updated'
@@ -105,7 +122,7 @@ describe('application', function() {
     await mocha.get({url, headers, args, schema})
   });
 
-  it('get secret', async function(){
+  it('get secret2', async function(){
     const dataSchema = {
       type: "object",
       properties: {

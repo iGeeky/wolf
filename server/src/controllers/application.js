@@ -5,6 +5,7 @@ const errors = require('../errors/errors')
 const AccessDenyError = require('../errors/access-deny-error')
 const constant = require('../util/constant')
 const util = require('../util/util')
+const oauthUtil = require('../util/oauth-util')
 const Op = require('sequelize').Op;
 const applicationFields = ['id', 'name', 'description', 'redirectUris', 'grants', 'accessTokenLifetime', 'refreshTokenLifetime', 'createTime', 'updateTime'];
 const applicationDetailFields =  applicationFields.slice()
@@ -90,8 +91,11 @@ class Application extends BasicService {
       this.fail(200, errors.ERR_OBJECT_NOT_FOUND)
       return
     }
-
-    const data = {secret: application.secret}
+    let secret = application.secret
+    if(secret) {
+      secret = oauthUtil.decryptSecret(secret)
+    }
+    const data = {secret: secret}
     this.success(data)
   }
 
@@ -147,7 +151,9 @@ class Application extends BasicService {
       refreshTokenLifetime: {type: 'integer', required: false},
     }
     const values = this.getCheckedValues(fieldsMap)
-    // values.status = 0;
+    if(values.secret) {
+      values.secret = oauthUtil.encryptSecret(values.secret)
+    }
     values.createTime = util.unixtime();
     values.updateTime = util.unixtime();
     const application = await ApplicationModel.create(values);
@@ -167,6 +173,9 @@ class Application extends BasicService {
     }
     const id = this.getRequiredArg('id')
     const values = this.getCheckedValues(fieldsMap)
+    if(values.secret) {
+      values.secret = oauthUtil.encryptSecret(values.secret)
+    }
     values.updateTime = util.unixtime();
     const options = {where: {id}}
     const {newValues: application} = await ApplicationModel.mustUpdate(values, options)

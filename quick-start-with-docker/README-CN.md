@@ -21,10 +21,12 @@ cd wolf/quick-start-with-docker
 
 # 使用docker命令, 启动wolf系统.
 docker-compose up -d database
+# 启动docker容器
+# 强烈建议您修改`docker-compose.yaml`中的 `RBAC_TOKEN_KEY` 及 `WOLF_CRYPT_KEY` 环境变量值, 使用默认设置可能会使系统处于风险之中.
 docker-compose up -d server restful-demo agent-or agent-demo
 
 # 初始化demo应用数据及账号数据.
-# 该脚本从配置中读取了三个测试应用的数据, 并初始化到系统中. 
+# 该脚本从配置中读取了三个测试应用的数据, 并初始化到系统中.
 # 初始化时有两种方式:
 # 1: 不指定密码, 系统为每个测试用户生成一个随机密码. 这是推荐的方式.
 sh wolf-demo-init.sh
