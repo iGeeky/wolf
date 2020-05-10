@@ -33,7 +33,7 @@ async function getUserInfoFromDbById(userId, appId) {
       for (let i=0; i < userRole.roleIDs.length; i++) {
         const roleId = userRole.roleIDs[i];
         userInfo.roles[roleId] = true;
-        const where = {id: roleId}
+        const where = {appID: appId, id: roleId}
         const role = await RoleModel.findOne({where})
         if (role) {
           role.permIDs.forEach((permId) => {

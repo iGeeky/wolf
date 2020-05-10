@@ -30,13 +30,10 @@ function getTokenSchema(expiresIn) {
         token_type: {"type":"string"},
         expires_in: expiresInSchema,
         refresh_token: {"type":"string"},
-        id: {"type":"integer"},
-        clientID: {"type":"string"},
-        userID: {"type":"string"},
-        createTime: {"type":"integer"},
-        updateTime: {"type":"integer"}
+        client_id: {"type":"string"},
+        user_id: {"type":"string"}
     },
-    required: ["access_token","token_type","expires_in","refresh_token","id","clientID","userID","createTime","updateTime"]
+    required: ["access_token","token_type","expires_in","refresh_token","client_id","user_id"]
   }
   const schema = util.okSchema(dataSchema)
   return schema
@@ -56,13 +53,10 @@ function getClientCredentialsTokenSchema(expiresIn) {
         access_token: {"type":"string"},
         token_type: {"type":"string"},
         expires_in: expiresInSchema,
-        id: {"type":"integer"},
-        clientID: {"type":"string"},
-        userID: {"type":"string"},
-        createTime: {"type":"integer"},
-        updateTime: {"type":"integer"}
+        client_id: {"type":"string"},
+        user_id: {"type":"string"}
     },
-    required: ["access_token","token_type","expires_in","id","clientID","userID","createTime","updateTime"]
+    required: ["access_token","token_type","expires_in","client_id","user_id"]
   }
   const schema = util.okSchema(dataSchema)
   return schema

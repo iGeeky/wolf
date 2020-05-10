@@ -55,7 +55,7 @@ class Resource extends BasicService {
     const resources = await ResourceModel.findAll(options)
     resources.forEach((resource, i) => {
       resource = resource.toJSON()
-      resources[i] = resource;
+      resources[i] = util.filterFieldWhite(resource, resourceFields)
     });
     const total = await ResourceModel.count({where})
     const data = {resources, total}

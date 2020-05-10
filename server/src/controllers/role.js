@@ -69,24 +69,26 @@ class Role extends BasicService {
       description: {type: 'string'},
       permIDs: {type: 'array'},
     }
+    const appID = this.getRequiredArg('appID')
     const id = this.getRequiredArg('id')
     const values = this.getCheckedValues(fieldsMap)
     values.updateTime = util.unixtime();
-    const options = {where: {id}}
+    const options = {where: {id, appID}}
     const {newValues: role} = await RoleModel.mustUpdate(values, options)
     const data = {'role': util.filterFieldWhite(role.toJSON(), roleFields)}
     this.success(data);
   }
 
   async delete() {
+    const appID = this.getRequiredArg('appID')
     const roleID = this.getRequiredArg('id')
-    const where = {roleIDs: { [Op.contains]: [roleID] }}
+    const where = {appID, roleIDs: { [Op.contains]: [roleID] }}
     const existObject = await UserRoleModel.findOne({where})
     if (existObject) {
       this.log4js.error('Deleting the role(%s) failed, it has been used.', roleID)
       throw new AccessDenyError('Deleting the role failed, it has been used.')
     }
-    await this.deleteByPk('id')
+    await this.deleteBy(['id', 'appID'])
   }
 
   async deleteByAppId() {

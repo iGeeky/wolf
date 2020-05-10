@@ -18,8 +18,8 @@ export async function updatePermission(id, permission) {
   })
 }
 
-export async function deletePermission(id) {
-  const data = { id }
+export async function deletePermission(id, appID) {
+  const data = { id, appID }
   return await request({
     url: '/permission',
     method: 'delete',

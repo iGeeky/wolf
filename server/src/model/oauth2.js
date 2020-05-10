@@ -193,6 +193,7 @@ exports.saveToken = async function (token, client, user) {
   oauthToken.userID = oauthUserID
   oauthToken.client = client
   oauthToken.user = user
+
   return oauthToken
 }
 

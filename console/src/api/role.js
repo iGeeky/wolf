@@ -18,8 +18,8 @@ export async function updateRole(id, role) {
   })
 }
 
-export async function deleteRole(id) {
-  const data = { id }
+export async function deleteRole(id, appID) {
+  const data = { id, appID }
   return await request({
     url: '/role',
     method: 'delete',

@@ -1,4 +1,5 @@
 const config = require('../../conf/config')
+const _ = require('lodash')
 const util = require('../util/util')
 const constant = require('../util/constant')
 const RbacPub = require('./rbac-pub')
@@ -11,6 +12,8 @@ const ServerError = OAuth2Server.ServerError;
 const InvalidTokenError = OAuth2Server.InvalidTokenError;
 const tokenUtil = require('../util/token-util')
 const userCache = require('../util/user-cache')
+
+const oauthTokenFields = ["client_id","user_id","access_token","refresh_token","token_type","expires_in"]
 
 // doc: https://oauth2-server.readthedocs.io/en/latest/api/oauth2-server.html
 
@@ -113,11 +116,14 @@ class OAuth2 extends RbacPub {
   }
 
   async clientTest() {
-    await this.ctx.render('oauth2/clientAuthenticate', {})
+    const client_id = this.getArg('client_id', 'restful')
+    await this.ctx.render('oauth2/clientAuthenticate', {client_id})
   }
 
   async clientApp() {
-    await this.ctx.render('oauth2/clientApp', {})
+    const client_id = this.getArg('client_id', 'restful')
+    const secret = this.getArg('client_id', '123456')
+    await this.ctx.render('oauth2/clientApp', {client_id, secret})
   }
 
   async loginStatus() {
@@ -161,8 +167,10 @@ class OAuth2 extends RbacPub {
       requireClientAuthentication: { password: false },
     }
     return oauth.token(request, response, options).then((resp)=>{
-      const data = response.body;
-      this.success(data)
+      const data = _.mapKeys(response.body, function(value, key) {
+        return _.snakeCase(key)
+      });
+      this.success(_.pick(data, oauthTokenFields))
     }).catch((err) => {
       let reason = 'ERR_OAUTH_GET_TOKEN_FAILED'
       if(grantType === 'refresh_token') {

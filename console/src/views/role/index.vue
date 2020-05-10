@@ -253,7 +253,7 @@ export default {
         type: 'warning',
       })
         .then(async() => {
-          const res = await deleteRole(row.id)
+          const res = await deleteRole(row.id, row.appID)
           if (res.ok) {
             this.listRoles()
             this.$message({

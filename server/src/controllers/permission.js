@@ -64,18 +64,20 @@ class Permission extends BasicService {
       description: {type: 'string'},
       categoryID: {type: 'integer'},
     }
+    const appID = this.getRequiredArg('appID')
     const id = this.getRequiredArg('id')
     const values = this.getCheckedValues(fieldsMap)
     values.updateTime = util.unixtime();
-    const options = {where: {id}}
+    const options = {where: {id, appID}}
     const {newValues: permission} = await PermissionModel.mustUpdate(values, options)
     const data = {'permission': util.filterFieldWhite(permission.toJSON(), permissionFields)}
     this.success(data);
   }
 
   async delete() {
+    const appID = this.getRequiredArg('appID')
     const permID = this.getRequiredArg('id')
-    const where = {permIDs: { [Op.contains]: [permID] }}
+    const where = { appID, permIDs: { [Op.contains]: [permID] }}
     let existObject = await UserRoleModel.findOne({where})
     if(!existObject) {
       existObject = await RoleModel.findOne({where})
@@ -85,7 +87,7 @@ class Permission extends BasicService {
       throw new AccessDenyError('Deleting the permission failed, it has been used.')
     }
 
-    await this.deleteByPk('id')
+    await this.deleteBy(['id', 'appID'])
   }
 
   async deleteByAppId() {

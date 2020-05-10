@@ -42,14 +42,12 @@ function getListResponseSchema() {
                     "nickname",
                     "email",
                     "tel",
-                    "password",
                     "appIDs",
                     "manager",
                     "status",
                     "lastLogin",
                     "profile",
-                    "createTime",
-                    "updateTime"
+                    "createTime"
                 ]
             }
         },

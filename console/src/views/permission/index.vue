@@ -258,7 +258,7 @@ export default {
         type: 'warning',
       })
         .then(async() => {
-          const res = await deletePermission(row.id)
+          const res = await deletePermission(row.id, row.appID)
           if (res.ok) {
             this.listPermissions()
             this.$message({

@@ -6,6 +6,17 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 <body class='container'>
+  <p style="font-color: #ff0000;">These API requests should usually be made in the backend service. This is just to show the process and the principle on the front end.  </p>
+  
+  <li>client_id: 
+  <input type="text" class="form-control" id="client_id" placeholder="Change client id" value="<%= client_id %>">
+  </li>
+  <li>secret: 
+    <input type="text" class="form-control" id="secret" placeholder="Change secret" value="<%= secret %>">
+ </li>
+  Request Error:
+  <pre><span id='apiError'></span></pre>
+
   <h1>Part 1: Get Token from Code</h1>
   <p>The client needs to use the provided authorization_code to get a valid token</p>
   <button onclick = 'onClick()' class='btn btn-success' >Get Token From Code</button>
@@ -16,7 +27,7 @@
   <p>If the client has a valid access token, client will be able to access protected resources</p>
   <button onclick='accessSecretArea()' class='btn btn-danger'>Access Secret Area</button>
   <p>Success?<br/>
-    <pre> <span id='success'></span></pre>
+    <pre><span id='success'></span></pre>
 </p>
   <h1>Part 3: Refresh Token</h1>
   <p>If client has a valid refresh token, send it up to get a new token</p>
@@ -27,8 +38,12 @@
   let token // TODO: DON'T STORE THE TOKEN ON THE CLIENT FRONT END!!! Put it in a session cookie or something to be more secure
   let tokenType
   let refreshToken
-  const secret = '123456' // probs shouldn't be stored locally on the frontend
-  const id = 'restful'  // probs shouldn't be stored locally on the frontend
+  function get_secret() {
+    return document.getElementById('secret').value;
+  }
+  function get_client_id() {
+    return document.getElementById('client_id').value;
+  }
   ;(function(){ // We are immediately executing this anonymous function. The semi-colon is necessary
     const urlParams = new URLSearchParams(window.location.search) // retrieve the authorization code from the url
     code = urlParams.get('code')
@@ -38,7 +53,7 @@
 
     fetch('/wolf/oauth2/token', {
       method: 'POST',
-      body: `code=${code}&client_secret=${secret}&client_id=${id}&grant_type=authorization_code`, // this is how we send that data up
+      body: `code=${code}&client_secret=${get_secret()}&client_id=${get_client_id()}&grant_type=authorization_code`, // this is how we send that data up
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',  // This is REALLY important
       },
@@ -46,13 +61,18 @@
       .then(res => res.json())
       .then(res => {
         console.log('Credentials', res)
-        const data = res.data || {}
-        token = data.access_token || ''
-        tokenType = data.token_type
-        document.getElementById('token').innerText = token
-        if(data.refresh_token) {
-          refreshToken = data.refresh_token
-          document.getElementById('refresh_token').innerText = refreshToken
+        if(res.ok) {
+          const data = res.data || {}
+          token = data.access_token || ''
+          tokenType = data.token_type
+          document.getElementById('token').innerText = token
+          if(data.refresh_token) {
+            refreshToken = data.refresh_token
+            document.getElementById('refresh_token').innerText = refreshToken
+          }
+          document.getElementById('apiError').innerText = 'get token success'
+        } else {
+          document.getElementById('apiError').innerText = JSON.stringify(res, null, 2)
         }
       })
   }
@@ -67,17 +87,22 @@
     })
       .then(res => res.json())
       .then(res => {
-        document.getElementById('success').innerText = res.ok ? JSON.stringify(res.data.userInfo, null, 2) : res.reason || 'Failed.'
+        if(res.ok) {
+          document.getElementById('success').innerText = JSON.stringify(res.data.userInfo, null, 2)
+          document.getElementById('apiError').innerText = 'get user_info success'
+        } else {
+          document.getElementById('apiError').innerText = JSON.stringify(res, null, 2)
+        }
       })
       .catch(e => {
         console.error('Fail:',e)
-        document.getElementById('success').innerText = 'Failed.'
+        document.getElementById('apiError').innerText = 'Failed.'
       })
   }
   function refreshTokenNow() {
     fetch('/wolf/oauth2/token', {
       method: 'POST',
-      body: `refresh_token=${refreshToken}&client_secret=${secret}&client_id=${id}&grant_type=refresh_token`,
+      body: `refresh_token=${refreshToken}&client_secret=${get_secret()}&client_id=${get_client_id()}&grant_type=refresh_token`,
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',  // This is REALLY important
       },
@@ -85,12 +110,18 @@
       .then(res => res.json())
       .then(res => {
         console.log('Credentials', res)
-        const data = res.data;
-        token = data.access_token
-        tokenType = data.token_type
-        refreshToken = data.refresh_token
-        document.getElementById('token').innerText = token
-        document.getElementById('refresh_token').innerText = refreshToken
+        if(res.ok) {
+          const data = res.data;
+          token = data.access_token
+          tokenType = data.token_type
+          refreshToken = data.refresh_token
+          document.getElementById('token').innerText = token
+          document.getElementById('refresh_token').innerText = refreshToken
+          document.getElementById('apiError').innerText = 'refresh token success'
+        } else {
+          document.getElementById('apiError').innerText = JSON.stringify(res, null, 2)
+        }
+
       })
   }
   </script>

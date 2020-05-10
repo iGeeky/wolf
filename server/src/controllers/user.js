@@ -10,7 +10,7 @@ const constant = require('../util/constant')
 const util = require('../util/util')
 const _ = require('lodash')
 
-const userFields = ['id', 'username', 'nickname', 'email', 'appIDs', 'manager', 'createTime'];
+const userFields = ['id', 'username', 'nickname', 'email', 'tel', 'appIDs', 'manager', 'status', 'lastLogin', 'profile', 'createTime'];
 const applicationFields = ['id', 'name', 'description', 'createTime'];
 
 
@@ -144,7 +144,7 @@ class User extends BasicService {
     }
     const userInfos = await UserModel.findAll(options)
     userInfos.forEach((userInfo, i) => {
-      userInfo = userInfo.toJSON()
+      userInfo = util.filterFieldWhite(userInfo.toJSON(), userFields)
       userInfo.appIDs = userInfo.appIDs || []
       userInfos[i] = userInfo;
     });

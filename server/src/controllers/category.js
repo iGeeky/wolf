@@ -54,7 +54,6 @@ class Category extends BasicService {
   async put() {
     const fieldsMap = {
       name: {type: 'string'},
-      appID: {type: 'string'},
     }
     const id = this.getRequiredIntArg('id')
     const values = this.getCheckedValues(fieldsMap)
