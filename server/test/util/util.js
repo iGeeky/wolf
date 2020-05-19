@@ -97,7 +97,7 @@ function userInfoSchema() {
       username: { 'type': 'string' },
       nickname: { 'type': 'string' },
       email: { 'type': ['string', 'null'] },
-      appIDs: { 'type': 'array' },
+      appIDs: { 'type': ['array', 'null'] },
       manager: { 'type': ['string', 'null'] },
       lastLogin: { 'type': 'number' },
       profile: { 'type': ['object', 'null'] },

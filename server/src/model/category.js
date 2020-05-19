@@ -1,5 +1,5 @@
 const Sequelize = require('../util/sequelize')
-const Seq = require('sequelize');
+const Seq = require('sequelize')
 
 const model = Sequelize.define('category', {
   id: {
@@ -7,10 +7,10 @@ const model = Sequelize.define('category', {
     autoIncrement: true,
     primaryKey: true,
   },
-  appID: {type: Seq.STRING, field: 'app_id'},
-  name: {type: Seq.STRING},
-  createTime: {type: Seq.INTEGER, field: 'create_time'},
-  updateTime: {type: Seq.INTEGER, field: 'update_time'},
+  appID: { type: Seq.TEXT, field: 'app_id' },
+  name: { type: Seq.TEXT },
+  createTime: { type: Seq.INTEGER, field: 'create_time' },
+  updateTime: { type: Seq.INTEGER, field: 'update_time' },
 }, {
   freezeTableName: true,
 })

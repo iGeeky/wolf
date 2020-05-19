@@ -179,7 +179,7 @@ CREATE TABLE oauth_code (
   primary key(id)
 );
 CREATE UNIQUE INDEX idx_oauth_code_authorization_code ON "oauth_code"(authorization_code);
-CREATE INDEX idx_oauth_code_user_id ON "oauth_token"(user_id);
+CREATE INDEX idx_oauth_code_user_id ON "oauth_code"(user_id);
 COMMENT ON COLUMN oauth_code.authorization_code IS 'authorization_code in oauth';
 
 
