@@ -169,6 +169,10 @@ Note: The Html Demo application is a proxy for the OpenResty official website an
 
 [deployment document](./docs/deploy.md)
 
+[API documentation](./docs/admin-api.md)
+
+[OAuth2 interface documentation](./docs/admin-api-oauth2.0.md)
+
 
 ## Manual Document
 

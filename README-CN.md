@@ -170,6 +170,10 @@ wolf是一个通用RBAC系统，适用于所有的HTTP应用．统一授权及�
 
 [部署文档](./docs/deploy-cn.md)
 
+[API文档](./docs/admin-api-cn.md)
+
+[OAuth2接口文档](./docs/admin-api-oauth2.0-cn.md)
+
 
 ## Manual Document
 

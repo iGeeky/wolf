@@ -501,9 +501,8 @@ describe('oauth2', function() {
       const accessCheckUrl = '/wolf/oauth2/access_check'
       const action = 'GET';
       const ip = '192.168.168.168'
-      const appID = applicationID
       const resName = '/resource/path'
-      const args = {appID, action, resName, ip}
+      const args = { action, resName, ip}
       const headers = {}
       headers['authorization'] = `${refreshTokenInfo1.token_type} ${refreshTokenInfo1.access_token}`
       const schema = util.failSchema("Access failure. resource '/resource/path' not exist")
