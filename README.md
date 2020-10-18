@@ -9,38 +9,6 @@ Within each company, there are different backend services and corresponding mana
 
 The system can be applied to a variety of platforms and systems. Unified account number and unified authorization. And no development work is required for each system.
 
-Demo address (first visit will be slow, please be patient, or use docker to run the test locally):
-
-* Management backend: [Console](http://console.igeeky.ml/)
-
-| Account  | Password |
-| ----- | ----------- |
-| admin | wolf-123456 |
-
-* Restful Demo: [Demo](http://demo.igeeky.ml/), Test account and password:
-
-| Account            | Password   |
-| ------------------ | ----------- |
-| app-man            | wolf-123456 |
-| user-role-perm-man | wolf-123456 |
-| log                | wolf-123456 |
-
-* Html Demo: [Html Demo](http://demo-or.igeeky.ml/), Test account and password:
-
-| Account             | Password   |
-| ------------------- | ----------- |
-| or_index            | wolf-123456 |
-| or_en               | wolf-123456 |
-| or_cn               | wolf-123456 |
-| or_changes          | wolf-123456 |
-| or_changes_all      | wolf-123456 |
-| or_cn_getting_start | wolf-123456 |
-| or_suffix_match     | wolf-123456 |
-
-
-Note: The Html Demo application is a proxy for the OpenResty official website and adds Rbac access control. The original website does not require login, you can visit [here](https://openresty.org) to view the original website.
-
-
 
 ## Features
 
