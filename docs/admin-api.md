@@ -10,6 +10,7 @@
   - [User](#API-User)
   - [Role](#API-role)
   - [Permission](#API-Permission)
+  - [User-Role](#API-User-Role)
   - [Category](#API-Category)
   - [Resource](#API-Resource)
   - [AccessLog](#API-AccessLog)
@@ -1523,6 +1524,152 @@ curl http://127.0.0.1:10080/wolf/permission \
   }
 }
 ```
+
+## API-User-Role
+
+User role related operations can only work on one application. So the related interfaces need to pass `userID` and `appID` parameters.
+
+### Get User Roles
+
+Get user roles and permissions
+
+#### Method: GET
+#### URL: /wolf/user-role
+#### `Header` parameters: Requires a token of [`Console` login](#Login), passed through the `x-rbac-token` request header.
+#### `Request Body` parameters
+
+Field | Type | Required | Description
+-------|-------|------|-----
+userID | integer | Yes | UserID for which roles and permissions need to be get
+appID | string | Yes | ApplicationID for which roles and permissions need to be get
+
+#### example
+
+* Request
+
+```json
+curl "http://127.0.0.1:10080/wolf/user-role?userID=1&appID=restful" \
+-H "Content-Type: application/json" \
+-H "x-rbac-token: $WOLF_TOKEN"
+```
+
+* Response
+
+```json
+{
+  "ok": true,
+  "reason": "",
+  "data": {
+    "userRole": {
+      "userID": 1,
+      "appID": "restful",
+      "permIDs": [
+        "RESTFUL_INDEX"
+      ],
+      "roleIDs": [
+        "application"
+      ],
+      "createTime": 1609055508
+    }
+  }
+}
+```
+
+### Set User Roles
+
+Set user roles or permissions
+
+#### Method: POST
+#### URL: /wolf/user-role/set
+#### `Header` parameters: Requires a token of [`Console` login](#Login), passed through the `x-rbac-token` request header.
+#### `Request Body` parameters
+
+Field | Type | Required | Description
+-------|-------|------|-----
+userID | integer | Yes | UserID for which roles or permissions need to be set
+appID | string | Yes | ApplicationID for which roles and permissions need to be set
+permIDs | string[] | Yes | List of permission IDs to be set
+roleIDs | string[] | Yes | List of role IDs to be set
+
+#### example
+
+* Request
+
+```json
+curl http://127.0.0.1:10080/wolf/user-role/set \
+-H "Content-Type: application/json" \
+-H "x-rbac-token: $WOLF_TOKEN" \
+-d '{
+    "userID": 1,
+    "appID": "restful",
+    "permIDs": ["RESTFUL_INDEX"],
+    "roleIDs": ["application"]
+}'
+```
+
+* Response
+
+```json
+{
+  "ok": true,
+  "reason": "",
+  "data": {
+    "userRole": {
+      "userID": 1,
+      "appID": "restful",
+      "permIDs": [
+        "RESTFUL_INDEX"
+      ],
+      "roleIDs": [
+        "application"
+      ],
+      "createTime": 1609054766
+    }
+  }
+}
+```
+
+### Clear User Roles
+
+Clear user roles and permissions
+
+#### Method: DELETE
+#### URL: /wolf/user-role
+#### `Header` parameters: Requires a token of [`Console` login](#Login), passed through the `x-rbac-token` request header.
+#### `Request Body` parameters
+
+Field | Type | Required | Description
+-------|-------|------|-----
+userID | integer | Yes | UserID for which roles or permissions need to be clear
+appID | string | Yes | ApplicationID for which roles and permissions need to be clear
+
+#### example
+
+* Request
+
+```json
+curl http://127.0.0.1:10080/wolf/user-role \
+-H "Content-Type: application/json" \
+-H "x-rbac-token: $WOLF_TOKEN" \
+-X DELETE \
+-d '{
+    "userID": 1,
+    "appID": "restful"
+}'
+```
+
+* Response
+
+```json
+{
+  "ok": true,
+  "reason": "",
+  "data": {
+    "count": 1
+  }
+}
+```
+
 
 ## API-Category
 

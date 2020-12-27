@@ -10,6 +10,7 @@
   - [User](#API-User)
   - [Role](#API-role)
   - [Permission](#API-Permission)
+  - [User-Role](#API-User-Role)
   - [Category](#API-Category)
   - [Resource](#API-Resource)
   - [AccessLog](#API-AccessLog)
@@ -1506,6 +1507,153 @@ curl http://127.0.0.1:10080/wolf/permission \
 -X DELETE \
 -d '{
     "id": "test-permission",
+    "appID": "restful"
+}'
+```
+
+* 响应
+
+```json
+{
+  "ok": true,
+  "reason": "",
+  "data": {
+    "count": 1
+  }
+}
+```
+
+## API-User-Role
+
+用户角色相关操作都只能作用于一个应用. 所以相关接口都需要传递 `userID` 及 `appID` 参数.
+
+### Get User Roles
+
+查询用户的角色及权限信息
+
+#### 请求方法: GET
+#### 请求URL: /wolf/user-role
+#### `Header` 参数: 需要 [`Console`登录](#Login)的token, 通过 `x-rbac-token` 请求头传递.
+#### `Query`参数
+
+字段 | 类型 | 必填项 |说明
+-------|-------|------|-----
+userID | integer | Yes | 需要查询角色与权限的UserID
+appID | string | Yes | 需要查询角色与权限的应用ID.
+
+
+#### 示例
+
+* 请求
+
+```json
+curl "http://127.0.0.1:10080/wolf/user-role?userID=1&appID=restful" \
+-H "Content-Type: application/json" \
+-H "x-rbac-token: $WOLF_TOKEN"
+```
+
+* 响应
+
+```json
+{
+  "ok": true,
+  "reason": "",
+  "data": {
+    "userRole": {
+      "userID": 1,
+      "appID": "restful",
+      "permIDs": [
+        "RESTFUL_INDEX"
+      ],
+      "roleIDs": [
+        "application"
+      ],
+      "createTime": 1609055508
+    }
+  }
+}
+```
+
+### Set User Roles
+
+设置用户角色与权限
+
+#### 请求方法: POST
+#### 请求URL: /wolf/user-role/set
+#### `Header` 参数: 需要 [`Console`登录](#Login)的token, 通过 `x-rbac-token` 请求头传递.
+#### `Request Body`参数
+
+
+字段 | 类型 | 必填项 |说明
+-------|-------|------|-----
+userID | integer | Yes | 需要设置角色与权限的UserID
+appID | string | Yes | 需要设置角色与权限的应用ID.
+permIDs | string[] | Yes | 要设置的权限列表
+roleIDs | string[] | Yes | 要设置的角色列表
+
+#### 示例
+
+* 请求
+
+```json
+curl http://127.0.0.1:10080/wolf/user-role/set \
+-H "Content-Type: application/json" \
+-H "x-rbac-token: $WOLF_TOKEN" \
+-d '{
+    "userID": 1,
+    "appID": "restful",
+    "permIDs": ["RESTFUL_INDEX"],
+    "roleIDs": ["application"]
+}'
+```
+
+* 响应
+
+```json
+{
+  "ok": true,
+  "reason": "",
+  "data": {
+    "userRole": {
+      "userID": 1,
+      "appID": "restful",
+      "permIDs": [
+        "RESTFUL_INDEX"
+      ],
+      "roleIDs": [
+        "application"
+      ],
+      "createTime": 1609054766
+    }
+  }
+}
+```
+
+### Clear User Roles
+
+清除用户的某个应用的角色及权限.
+
+#### 请求方法: DELETE
+#### 请求URL: /wolf/user-role
+#### `Header` 参数: 需要 [`Console`登录](#Login)的token, 通过 `x-rbac-token` 请求头传递.
+#### `Request Body` 参数
+
+字段 | 类型 | 必填项 |说明
+-------|-------|------|-----
+userID | integer | Yes | 需要清除角色与权限的UserID
+appID | string | Yes | 需要清除角色与权限的应用ID.
+
+#### 示例
+
+* 请求
+
+```json
+curl http://127.0.0.1:10080/wolf/user-role \
+-H "Content-Type: application/json" \
+-H "x-rbac-token: $WOLF_TOKEN" \
+-X DELETE \
+-d '{
+    "userID": 1,
     "appID": "restful"
 }'
 ```
