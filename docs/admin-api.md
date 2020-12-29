@@ -181,6 +181,8 @@ The `Console` login interface is available only to users with administrator role
 
 Most interfaces in the administration backend require a Token, which is obtained after login with the administrator account. For interfaces that require a token, the token can be passed through the request header `x-rbac-token`.
 
+The default token expiration time is 30 days. This can be changed via the environment variable `RBAC_TOKEN_EXPIRE_TIME`, in seconds. After modification, you need to restart `Wolf-Server`.
+
 #### Method: POST
 #### URL: /wolf/user/login
 #### `Request Body` parameters
