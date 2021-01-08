@@ -99,7 +99,8 @@ GRANT ALL PRIVILEGES ON DATABASE wolf to wolfroot;
   * RBAC_ROOT_PASSWORD root账号及admin账号的默认密码. 默认为`123456`
   * RBAC_TOKEN_KEY 加密用户token使用的KEY, 强烈建议设置该值.
   * WOLF_CRYPT_KEY 加密应用Secret及OAuth2登陆用户ID使用的Key.
-  * RBAC_TOKEN_EXPIRE_TIME `Console` 登录接口返回的token的有效期, 默认为30天. 单位为秒.
+  * RBAC_TOKEN_EXPIRE_TIME `Agent` 登录接口返回的token的有效期, 默认为30天. 单位为秒.
+  * CONSOLE_TOKEN_EXPIRE_TIME `Console` 登录接口返回的token的有效期, 默认为30天. 单位为秒.
   * RBAC_SQL_URL 连接postgres数据库的数据库链接. 默认为: `postgres://wolfroot:123456@127.0.0.1:5432/wolf`
 
   以上三个配置, 可以在系统环境变量中配置, 也可以在启动时指定.

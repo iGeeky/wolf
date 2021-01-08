@@ -1,4 +1,4 @@
-FROM node:alpine
+FROM node:12.10.0-alpine
 
 COPY ./ /opt/wolf/server
 WORKDIR /opt/wolf/server
