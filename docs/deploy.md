@@ -99,7 +99,8 @@ Output a result similar to the one below, indicating that the database table was
   * RBAC_ROOT_PASSWORD The default password for root and admin accounts. The default is `123456`.
   * RBAC_TOKEN_KEY To encrypt the KEY used by the user token, it is highly recommended to set this value.
   * WOLF_CRYPT_KEY To encrypt the application Secret and OAuth2 login user ID keys.
-  * RBAC_TOKEN_EXPIRE_TIME The expiration time of the token returned by the `Console` login interface, the default is 30 days. The unit is seconds.
+  * RBAC_TOKEN_EXPIRE_TIME The expiration time of the token returned by the `Agent` login interface, the default is 30 days. The unit is seconds.
+  * CONSOLE_TOKEN_EXPIRE_TIME The expiration time of the token returned by the `Console` login interface, the default is 30 days. The unit is seconds.
   * RBAC_SQL_URL The database link to the postgres database. The default is `postgres://wolfroot:123456@127.0.0.1:5432/wolf`
 
   The above three configurations can be configured in the system environment variables or specified at startup.

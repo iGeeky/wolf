@@ -181,7 +181,7 @@ ip | string | 是 | 访问者的IP
 
 管理后台大部分接口都需要使用Token进行操作, Token在使用管理员账号登录后获取. 需要Token的接口, token可通过请求头 `x-rbac-token` 来传递.
 
-token过期时间默认为30天. 可通过环境变量 `RBAC_TOKEN_EXPIRE_TIME` 来修改, 单位是秒. 修改之后, 需要重启`Wolf-Server`
+token过期时间默认为30天. 可通过环境变量 `CONSOLE_TOKEN_EXPIRE_TIME` 来修改, 单位是秒. 修改之后, 需要重启`Wolf-Server`
 
 
 #### 请求方法: POST
@@ -2308,6 +2308,7 @@ curl http://127.0.0.1:10080/wolf/rbac/login.rest \
 export RBAC_TOKEN="WOLF-RBAC-TOKEN-ENCODE-BY-JWT"
 ```
 
+token过期时间默认为30天. 可通过环境变量 `RBAC_TOKEN_EXPIRE_TIME` 来修改, 单位是秒. 修改之后, 需要重启`Wolf-Server`
 
 
 ### RBAC页面登录提交
