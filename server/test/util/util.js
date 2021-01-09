@@ -158,6 +158,56 @@ async function updateUserStatus(userID, status) {
   await mocha.put({url, headers: adminHeaders(), body, status: 200, schema})
 }
 
+function getAddResponseSchema(values) {
+  const applicationSchema = {
+    type: "object",
+    properties: {
+        id: {"type":"string"},
+        name: {"type":"string"},
+        description: {"type":"string"},
+        redirectUris: {"type":"array","items":{"type":"string"}},
+        grants: {"type":"array","items":{"type":"string"}},
+        accessTokenLifetime: {"type":"integer"},                                                                                                                                          refreshTokenLifetime: {"type":"integer"},
+        createTime: {"type":"integer"},
+        updateTime: {"type":"integer"}
+    },
+    required: ["id","name","description","redirectUris","grants","accessTokenLifetime","refreshTokenLifetime","createTime","updateTime"]
+  }
+
+  setDefaultOfSchema(applicationSchema, values, applicationSchema.required)
+  const schema = okSchema({
+    type: "object",
+    properties: {
+        application: applicationSchema
+    },
+    required: ["application"]
+  })
+  return schema
+}
+
+
+async function addApplication(body, headers) {
+  const url = '/wolf/application';
+  await mocha.post({url, headers, body})
+}
+
+async function deleteApplication(appID, headers) {
+  const body = {id: appID}
+  const url = '/wolf/application';
+  await mocha.delete({url, headers, body})
+}
+
+async function addPermission(body, headers) {
+  const url = '/wolf/permission';
+  await mocha.post({url, headers, body})
+}
+
+async function deletePermission(permID, appID, headers) {
+  const body = {id: permID, appID}
+  const url = '/wolf/permission';
+  await mocha.delete({url, headers, body})
+}
+
 function getRbacCookie(cookies) {
   let cookie = '';
   if(cookies && cookies.length > 0) {
@@ -192,3 +242,8 @@ exports.updateUserStatus = updateUserStatus;
 exports.getSimpleUserInfoSchema = getSimpleUserInfoSchema
 exports.getUserInfoSchema = getUserInfoSchema;
 exports.getRbacCookie = getRbacCookie;
+exports.getAddResponseSchema = getAddResponseSchema;
+exports.addApplication = addApplication;
+exports.deleteApplication = deleteApplication;
+exports.addPermission = addPermission;
+exports.deletePermission = deletePermission;

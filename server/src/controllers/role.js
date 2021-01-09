@@ -5,6 +5,7 @@ const UserRoleModel = require('../model/user-role')
 const AccessDenyError = require('../errors/access-deny-error')
 const util = require('../util/util')
 const Op = require('sequelize').Op;
+const errors = require('../errors/errors')
 const roleFields = ['id', 'appID', 'name', 'description', 'permIDs', 'createTime'];
 
 
@@ -55,7 +56,12 @@ class Role extends BasicService {
       permIDs: {type: 'array'},
     }
     const values = this.getCheckedValues(fieldsMap)
-    // values.status = 0;
+
+    await RoleModel.checkNotExist({id: values.id}, errors.ERR_ROLE_ID_EXIST)
+    await RoleModel.checkNotExist({name: values.name}, errors.ERR_ROLE_NAME_EXIST)
+    await this.checkAppIDsExist([values.appID])
+    await this.checkPermIDsExist(values.permIDs)
+
     values.createTime = util.unixtime();
     values.updateTime = util.unixtime();
     const role = await RoleModel.create(values);
@@ -72,6 +78,14 @@ class Role extends BasicService {
     const appID = this.getRequiredArg('appID')
     const id = this.getRequiredArg('id')
     const values = this.getCheckedValues(fieldsMap)
+
+    await RoleModel.checkExist({ id }, errors.ERR_ROLE_ID_NOT_FOUND)
+    if (values.name) {
+      await RoleModel.checkNotExist({'id': {[Op.ne]: id}, name: values.name}, errors.ERR_ROLE_NAME_EXIST)
+    }
+    await this.checkAppIDsExist([appID])
+    await this.checkPermIDsExist(values.permIDs)
+
     values.updateTime = util.unixtime();
     const options = {where: {id, appID}}
     const {newValues: role} = await RoleModel.mustUpdate(values, options)

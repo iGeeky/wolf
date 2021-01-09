@@ -154,6 +154,10 @@ class Application extends BasicService {
     if(values.secret) {
       values.secret = oauthUtil.encryptSecret(values.secret)
     }
+
+    await ApplicationModel.checkNotExist({'id': values.id}, errors.ERR_APPLICATION_ID_EXIST)
+    await ApplicationModel.checkNotExist({'name': values.name}, errors.ERR_APPLICATION_NAME_EXIST)
+
     values.createTime = util.unixtime();
     values.updateTime = util.unixtime();
     const application = await ApplicationModel.create(values);
@@ -176,6 +180,10 @@ class Application extends BasicService {
     if(values.secret) {
       values.secret = oauthUtil.encryptSecret(values.secret)
     }
+    if (values.name) {
+      await ApplicationModel.checkNotExist({'id': {[Op.ne]: id}, 'name': values.name}, errors.ERR_APPLICATION_NAME_EXIST)
+    }
+
     values.updateTime = util.unixtime();
     const options = {where: {id}}
     const {newValues: application} = await ApplicationModel.mustUpdate(values, options)

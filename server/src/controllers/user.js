@@ -165,6 +165,10 @@ class User extends BasicService {
       status: {type: 'integer', default: constant.UserStatus.Normal}
     }
     const values = this.getCheckedValues(fieldsMap)
+
+    await UserModel.checkNotExist({username: values.username}, errors.ERR_USERNAME_EXIST)
+    await this.checkAppIDsExist(values.appIDs)
+
     const password = values.password;
     values.password = util.encodePassword(password);
     values.lastLogin = 0;
@@ -190,7 +194,7 @@ class User extends BasicService {
     const values = this.getCheckedValues(fieldsMap)
     const user = await UserModel.findOne({where: {id}})
     if (!user) { // user not exist
-      this.log4js.warn('update user [id:%s] failed! user not exist', id, values.username)
+      this.log4js.warn('update user [id:%s] failed! user not exist', id)
       this.fail(400, errors.ERR_USER_NOT_FOUND)
       return
     }
@@ -200,6 +204,10 @@ class User extends BasicService {
         this.log4js.error('update failed! cannot disabled a super user(%d:%s)', id, values.username)
         throw new AccessDenyError('update failed! cannot disabled a super user.')
       }
+    }
+
+    if (values.username) {
+      await UserModel.checkNotExist({'id': {[Op.ne]: id}, username: values.username}, errors.ERR_USERNAME_EXIST)
     }
 
     values.updateTime = util.unixtime();
