@@ -131,6 +131,18 @@ describe('role', function() {
     await mocha.post({url, headers, body, schema})
   });
 
+  it('add failed, permID not match', async function() {
+    const schema = util.failSchema('ERR_PERMISSION_ID_NOT_FOUND', 'Permission ID not found')
+    const id = 'test-role-id-new'
+    const name = 'test-role-name-new'
+    const description = ''
+    const permIDs = permIDMaps[appID2]
+    const body = {id, name, description, appID, permIDs}
+
+    const url = '/wolf/role';
+    await mocha.post({url, headers, body, schema})
+  });
+
   it('update first', async function() {
     const schema = getAddResponseSchema();
     const id = 'test-role-id'
@@ -177,6 +189,16 @@ describe('role', function() {
     const schema = util.failSchema('ERR_PERMISSION_ID_NOT_FOUND', 'Permission ID not found')
     const id = 'test-role-id'
     const permIDs = ['perm-id-not-exist']
+    const body = {id, appID, permIDs}
+
+    const url = '/wolf/role';
+    await mocha.put({url, headers, body, schema})
+  });
+
+  it('update failed, permID not match', async function() {
+    const schema = util.failSchema('ERR_PERMISSION_ID_NOT_FOUND', 'Permission ID not found')
+    const id = 'test-role-id'
+    const permIDs = permIDMaps[appID2]
     const body = {id, appID, permIDs}
 
     const url = '/wolf/role';

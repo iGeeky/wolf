@@ -52,7 +52,8 @@ describe('application', function() {
     await mocha.post({url, headers, body, schema})
   });
 
-  it('add, id exist', async function() {
+  it('add failed, id exist', async function() {
+    const schema = util.failSchema('ERR_APPLICATION_ID_EXIST', 'Application ID already exists')
     const name = 'test-application-name:' + (new Date().getTime())
     const description = 'application description'
     const secret = 'secret'
@@ -61,12 +62,12 @@ describe('application', function() {
     const accessTokenLifetime = 3600;
     const refreshTokenLifetime = 7200;
     const body = {id, name, description, secret, redirectUris, grants, accessTokenLifetime, refreshTokenLifetime}
-    const schema = util.failSchema('ERR_APPLICATION_ID_EXIST', 'Application ID already exists')
     const url = '/wolf/application';
     await mocha.post({url, headers, body, schema})
   });
 
-  it('add, name exist', async function() {
+  it('add failed, name exist', async function() {
+    const schema = util.failSchema('ERR_APPLICATION_NAME_EXIST', 'Application name already exists')
     const id = 'test-application-id:' + (new Date().getTime())
     const description = 'application description'
     const secret = 'secret'
@@ -75,7 +76,6 @@ describe('application', function() {
     const accessTokenLifetime = 3600;
     const refreshTokenLifetime = 7200;
     const body = {id, name, description, secret, redirectUris, grants, accessTokenLifetime, refreshTokenLifetime}
-    const schema = util.failSchema('ERR_APPLICATION_NAME_EXIST', 'Application name already exists')
     const url = '/wolf/application';
     await mocha.post({url, headers, body, schema})
   });
@@ -97,7 +97,8 @@ describe('application', function() {
     await mocha.get({url, headers, args, schema})
   });
 
-  it('update, name exists', async function() {
+  it('update failed, name exists', async function() {
+    const schema_name_exist = util.failSchema('ERR_APPLICATION_NAME_EXIST', 'Application name already exists')
     const description = 'application description2'
     const secret = 'secret'
     const redirectUris = ['http://localhost/path']
@@ -110,7 +111,6 @@ describe('application', function() {
     await mocha.post({url, headers, body, schema})
 
     body.name = name
-    const schema_name_exist = util.failSchema('ERR_APPLICATION_NAME_EXIST', 'Application name already exists')
     await mocha.put({url, headers, body, 'schema': schema_name_exist})
   });
 

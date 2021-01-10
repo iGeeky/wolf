@@ -57,10 +57,10 @@ class Role extends BasicService {
     }
     const values = this.getCheckedValues(fieldsMap)
 
-    await RoleModel.checkNotExist({id: values.id}, errors.ERR_ROLE_ID_EXIST)
+    await RoleModel.checkNotExist({appID: values.appID, id: values.id}, errors.ERR_ROLE_ID_EXIST)
     await RoleModel.checkNotExist({name: values.name}, errors.ERR_ROLE_NAME_EXIST)
     await this.checkAppIDsExist([values.appID])
-    await this.checkPermIDsExist(values.permIDs)
+    await this.checkPermIDsExist(values.appID, values.permIDs)
 
     values.createTime = util.unixtime();
     values.updateTime = util.unixtime();
@@ -79,12 +79,12 @@ class Role extends BasicService {
     const id = this.getRequiredArg('id')
     const values = this.getCheckedValues(fieldsMap)
 
-    await RoleModel.checkExist({ id }, errors.ERR_ROLE_ID_NOT_FOUND)
+    await this.checkAppIDsExist([appID])
+    await RoleModel.checkExist({ appID, id }, errors.ERR_ROLE_ID_NOT_FOUND)
     if (values.name) {
       await RoleModel.checkNotExist({'id': {[Op.ne]: id}, name: values.name}, errors.ERR_ROLE_NAME_EXIST)
     }
-    await this.checkAppIDsExist([appID])
-    await this.checkPermIDsExist(values.permIDs)
+    await this.checkPermIDsExist(appID, values.permIDs)
 
     values.updateTime = util.unixtime();
     const options = {where: {id, appID}}

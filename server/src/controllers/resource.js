@@ -4,6 +4,7 @@ const resourceCache = require('../util/resource-cache')
 const constant = require('../util/constant')
 const util = require('../util/util')
 const Op = require('sequelize').Op;
+const errors = require('../errors/errors')
 const _ = require('lodash')
 const resourceFields = ['id', 'appID', 'matchType', 'name', 'priority', 'action', 'permID', 'createTime'];
 
@@ -72,6 +73,10 @@ class Resource extends BasicService {
     }
 
     const values = this.getCheckedValues(fieldsMap)
+    await this.checkAppIDsExist([values.appID])
+    await ResourceModel.checkNotExist({appID: values.appID, matchType: values.matchType, action: values.action, name: values.name}, errors.ERR_RESOURCE_EXIST)
+    await this.checkPermIDExist(values.appID, values.permID)
+
     values.nameLen = values.name.length
     values.priority = getPriority(values)
     values.createTime = util.unixtime();
@@ -90,6 +95,10 @@ class Resource extends BasicService {
     }
     const id = this.getRequiredArg('id')
     const values = this.getCheckedValues(fieldsMap)
+    const existResource = await ResourceModel.checkExist({ id }, errors.ERR_RESOURCE_ID_NOT_FOUND)
+    await ResourceModel.checkNotExist({'id': {[Op.ne]: id}, appID: existResource.appID, matchType: values.matchType, action: values.action, name: values.name}, errors.ERR_RESOURCE_EXIST)
+    await this.checkPermIDExist(existResource.appID, values.permID)
+
     values.nameLen = values.name.length
     values.priority = getPriority(values)
     values.updateTime = util.unixtime();

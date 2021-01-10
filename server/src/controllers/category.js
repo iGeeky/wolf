@@ -4,6 +4,7 @@ const AccessDenyError = require('../errors/access-deny-error')
 const PermissionModel = require('../model/permission')
 const util = require('../util/util')
 const Op = require('sequelize').Op;
+const errors = require('../errors/errors')
 const _ = require('lodash')
 const categoryFields = ['id', 'appID', 'name', 'createTime'];
 
@@ -44,6 +45,10 @@ class Category extends BasicService {
       name: {type: 'string', required: true},
     }
     const values = this.getCheckedValues(fieldsMap)
+
+    await CategoryModel.checkNotExist({name: values.name}, errors.ERR_CATEGORY_NAME_EXIST)
+    await this.checkAppIDsExist([values.appID])
+
     values.createTime = util.unixtime();
     values.updateTime = util.unixtime();
     const category = await CategoryModel.create(values);
@@ -57,6 +62,10 @@ class Category extends BasicService {
     }
     const id = this.getRequiredIntArg('id')
     const values = this.getCheckedValues(fieldsMap)
+
+    await this.checkCategoryIDExist(id)
+    await CategoryModel.checkNotExist({'id': {[Op.ne]: id}, name: values.name}, errors.ERR_CATEGORY_NAME_EXIST)
+
     values.updateTime = util.unixtime();
     const options = {where: {id}}
     const {newValues: category} = await CategoryModel.mustUpdate(values, options)

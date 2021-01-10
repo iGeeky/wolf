@@ -11,9 +11,15 @@ exports.ERR_APPLICATION_NAME_EXIST = 'ERR_APPLICATION_NAME_EXIST'
 exports.ERR_USERNAME_EXIST = 'ERR_USERNAME_EXIST'
 exports.ERR_ROLE_ID_EXIST = 'ERR_ROLE_ID_EXIST'
 exports.ERR_ROLE_NAME_EXIST = 'ERR_ROLE_NAME_EXIST'
+exports.ERR_CATEGORY_NAME_EXIST = 'ERR_CATEGORY_NAME_EXIST'
+exports.ERR_PERMISSION_ID_EXIST = 'ERR_PERMISSION_ID_EXIST'
+exports.ERR_PERMISSION_NAME_EXIST = 'ERR_PERMISSION_NAME_EXIST',
+exports.ERR_RESOURCE_EXIST = 'ERR_RESOURCE_EXIST'
 exports.ERR_APPLICATION_ID_NOT_FOUND = 'ERR_APPLICATION_ID_NOT_FOUND'
 exports.ERR_PERMISSION_ID_NOT_FOUND = 'ERR_PERMISSION_ID_NOT_FOUND'
 exports.ERR_ROLE_ID_NOT_FOUND = 'ERR_ROLE_ID_NOT_FOUND'
+exports.ERR_CATEGORY_ID_NOT_FOUND = 'ERR_CATEGORY_ID_NOT_FOUND'
+exports.ERR_RESOURCE_ID_NOT_FOUND = 'ERR_RESOURCE_ID_NOT_FOUND'
 
 const msgs = {
   ERR_OBJECT_NOT_FOUND: 'Object not found',
@@ -29,9 +35,15 @@ const msgs = {
   ERR_USERNAME_EXIST: 'Username already exists',
   ERR_ROLE_ID_EXIST: 'Role ID already exists',
   ERR_ROLE_NAME_EXIST: 'Role name already exists',
+  ERR_CATEGORY_NAME_EXIST: 'Category name already exists',
+  ERR_PERMISSION_ID_EXIST: 'Permission ID already exists',
+  ERR_PERMISSION_NAME_EXIST: 'Permission name already exists',
+  ERR_RESOURCE_EXIST: 'Resource(appID+matchType+action+name) already exists',
   ERR_APPLICATION_ID_NOT_FOUND: 'Application ID not found',
   ERR_PERMISSION_ID_NOT_FOUND: 'Permission ID not found',
   ERR_ROLE_ID_NOT_FOUND: 'Role ID not found',
+  ERR_CATEGORY_ID_NOT_FOUND: 'Category ID not found',
+  ERR_RESOURCE_ID_NOT_FOUND: 'Resource ID not found',
 }
 
 function errmsg(reason) {

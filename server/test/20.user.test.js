@@ -63,9 +63,10 @@ describe('user', function() {
   let rootUserInfo = null;
   const username = 'test-user-username'
   const appIDs = ['test-appid-for-user-test']
+  const appIDs2 = ['test-appid-for-user-test', 'test-appid-for-user-test2']
 
   before(async function() {
-    for (let appID of appIDs) {
+    for (let appID of appIDs2) {
       const application = {id: appID, name: appID, description: ''}
       await util.addApplication(application, headers)
     }
@@ -294,9 +295,9 @@ describe('user', function() {
 
     it('set roles failed!, access deny', async function() {
       const schema = util.failSchema('ERR_ACCESS_DENIED');
-      const permIDs = ['PERM_OK', 'PERM_02']
-      const roleIDs = ['ROLE_01', 'ROLE_02']
-      const appID = 'not-exist-app-id'
+      const permIDs = []
+      const roleIDs = []
+      const appID = 'test-appid-for-user-test2'
       const body = {userID, appID, permIDs, roleIDs}
 
       const url = '/wolf/user-role/set';
@@ -345,7 +346,7 @@ describe('user', function() {
     const body = {username}
     const url = '/wolf/user';
     await mocha.delete({url, headers, body, schema})
-    for (let appID of appIDs) {
+    for (let appID of appIDs2) {
       await util.deleteApplication(appID, headers)
     }
   });
