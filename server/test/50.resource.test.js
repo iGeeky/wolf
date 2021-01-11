@@ -52,7 +52,15 @@ let resource = null;
 
 
 describe('resource', function() {
-  const appID = 'res-test-app-id'
+  const appID = 'test-app-id-for-resource'
+  const appIDs = [appID]
+
+  before(async function() {
+    for (let appID of appIDs) {
+      const application = {id: appID, name: appID, description: ''}
+      await util.addApplication(application, headers)
+    }
+  });
 
   /*
   * `Match Type`优先级从高到低, 依次是: 精确匹配, 后缀匹配, 前缀匹配.
@@ -80,11 +88,16 @@ describe('resource', function() {
     const name = '/default'
     const action = 'ALL';
     const permID = 'PERM_DEFAULT'
-    const body = {appID, matchType, name, action, permID}
+    await mocha.post({url: '/wolf/permission', headers, body: {id: permID, name: permID, appID}})
 
+    const body = {appID, matchType, name, action, permID}
     const url = '/wolf/resource';
     const res = await mocha.post({url, headers, body, schema})
     resource = res.body.data.resource;
+
+    // add second
+    body.name = '/default/02'
+    await mocha.post({url, headers, body, schema})
 
 
     for (let i=0; i < matchTypes.length; i++) {
@@ -95,13 +108,74 @@ describe('resource', function() {
         for (let k=0; k<names.length; k++) {
           const name = names[k];
           const permID = `PERM_${matchType}_${action}_${name}`.replace(/[\.\/]/, '_')
+          // add permission for test
+          await mocha.post({url: '/wolf/permission', headers, body: {id: permID, name: permID, appID}})
           const body = {appID, matchType, name, action, permID}
           await mocha.post({url, headers, body, schema})
         }
       }
     }
-
   });
+
+
+  it('add success, permission: ALLOW_ALL', async function() {
+    const schema = getAddResponseSchema()
+    const matchType = 'equal'
+    const name = '/allow_all'
+    const action = 'ALL';
+    const permID = 'ALLOW_ALL'
+    const body = {appID, matchType, name, action, permID}
+    const url = '/wolf/resource';
+    await mocha.post({url, headers, body, schema})
+  });
+
+  it('add success, permission: DENY_ALL', async function() {
+    const schema = getAddResponseSchema()
+    const matchType = 'equal'
+    const name = '/deny_all'
+    const action = 'ALL';
+    const permID = 'DENY_ALL'
+    const body = {appID, matchType, name, action, permID}
+    const url = '/wolf/resource';
+    await mocha.post({url, headers, body, schema})
+  });
+
+  it('add failed, appID not found', async function() {
+    const schema = util.failSchema('ERR_APPLICATION_ID_NOT_FOUND', 'Application ID not found')
+    const matchType = 'prefix'
+    const name = '/default'
+    const action = 'ALL';
+    const permID = 'PERM_02'
+    await mocha.post({url: '/wolf/permission', headers, body: {id: permID, name: permID, appID}})
+
+    const body = {appID: 'not-exist-app-id', matchType, name, action, permID}
+    const url = '/wolf/resource';
+    await mocha.post({url, headers, body, schema})
+  });
+
+  it('add failed, resource exists', async function() {
+    const schema = util.failSchema('ERR_RESOURCE_EXIST', 'Resource(appID+matchType+action+name) already exists')
+    const matchType = 'prefix'
+    const name = '/default'
+    const action = 'ALL';
+    const permID = 'PERM_DEFAULT'
+
+    const body = {appID, matchType, name, action, permID}
+    const url = '/wolf/resource';
+    await mocha.post({url, headers, body, schema})
+  });
+
+  it('add failed, permission id not found', async function() {
+    const schema = util.failSchema('ERR_PERMISSION_ID_NOT_FOUND', 'Permission ID not found')
+    const matchType = 'prefix'
+    const name = '/new-uri'
+    const action = 'ALL';
+    const permID = 'not-exist-perm-id'
+    const body = {appID, matchType, name, action, permID}
+    const url = '/wolf/resource';
+    await mocha.post({url, headers, body, schema})
+  });
+
 
   it('update', async function() {
     if (!resource) {
@@ -113,6 +187,42 @@ describe('resource', function() {
     const name = '/'
     const action = 'ALL';
     const permID = 'PERM_DEFAULT'
+    const body = {id, matchType, name, action, permID}
+    const url = '/wolf/resource';
+    await mocha.put({url, headers, body, schema})
+  });
+
+  it('update failed, id not found', async function() {
+    const schema = util.failSchema('ERR_RESOURCE_ID_NOT_FOUND', 'Resource ID not found')
+    const id = 99999999
+    const matchType = 'prefix'
+    const name = '/'
+    const action = 'ALL';
+    const permID = 'PERM_DEFAULT'
+    const body = {id, matchType, name, action, permID}
+    const url = '/wolf/resource';
+    await mocha.put({url, headers, body, schema})
+  });
+
+  it('update failed, resource exists', async function() {
+    const schema = util.failSchema('ERR_RESOURCE_EXIST', 'Resource(appID+matchType+action+name) already exists')
+    const id = resource.id;
+    const matchType = 'prefix'
+    const name = '/default/02'
+    const action = 'ALL';
+    const permID = 'PERM_DEFAULT'
+    const body = {id, matchType, name, action, permID}
+    const url = '/wolf/resource';
+    await mocha.put({url, headers, body, schema})
+  });
+
+  it('update failed, permission id not found', async function() {
+    const schema = util.failSchema('ERR_PERMISSION_ID_NOT_FOUND', 'Permission ID not found')
+    const id = resource.id;
+    const matchType = 'prefix'
+    const name = '/default/not/exist'
+    const action = 'ALL';
+    const permID = 'not-exist-perm-id'
     const body = {id, matchType, name, action, permID}
     const url = '/wolf/resource';
     await mocha.put({url, headers, body, schema})
@@ -138,8 +248,10 @@ describe('resource', function() {
     if (!appID) {
       this.skip();
     }
-    const url = '/wolf/resource/delete_by_app_id';
-    const body = {appID}
-    await mocha.post({url, headers, body})
+    for (let appID of appIDs) {
+      await mocha.post({url: '/wolf/resource/delete_by_app_id', headers, body: {appID}})
+      await util.deleteApplication(appID, headers)
+      await mocha.delete({url: '/wolf/permission/delete_by_app_id', headers, body: {appID}})
+    }
   });
 });

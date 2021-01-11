@@ -3,6 +3,8 @@ const TokenError = require('../errors/token-error')
 const RbacTokenError = require('../errors/rbac-token-error')
 const AccessDenyError = require('../errors/access-deny-error')
 const ArgsError = require('../errors/args-error')
+const DataExistError = require('../errors/data-exist-error')
+const DataNotFoundError = require('../errors/data-not-found-error')
 const BackendError = require('../errors/backend-error')
 const Sequelize = require('sequelize')
 const json = require('../util/ok-json')
@@ -26,6 +28,12 @@ module.exports = function() {
       } else if (err instanceof AccessDenyError) {
         ctx.status = 401
         ctx.body = json.fail('ERR_ACCESS_DENIED', err.message)
+      } else if (err instanceof DataExistError) {
+        ctx.status = 200
+        ctx.body = json.fail(err.code, err.message)
+      } else if (err instanceof DataNotFoundError) {
+        ctx.status = 200
+        ctx.body = json.fail(err.code, err.message)
       } else if (err instanceof Sequelize.UniqueConstraintError) {
         log4js.error('duplicate data err:', err.errors)
         ctx.status = 400

@@ -7,7 +7,7 @@
             "type": "dateFile",
             "encoding": "utf-8",
             "filename": "log/server-",
-            "maxLogSize": 50000000,
+            "maxLogSize": 512000000,
             "numBackups": 3,
             "pattern": "yyyy-MM-dd.log",
             "alwaysIncludePattern": true
@@ -16,8 +16,7 @@
     "categories": {
         "default": {
             "appenders": [
-                "server",
-                "console"
+                "server"
             ],
             "level": "info"
         }

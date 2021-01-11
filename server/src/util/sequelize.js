@@ -1,8 +1,11 @@
 const Sequelize = require('sequelize');
 const log4js = require('./log4js')
 const config = require('../../conf/config')
+const errors = require('../errors/errors')
 const BackendError = require('../errors/backend-error')
 const ArgsError = require('../errors/args-error')
+const DataExistError = require('../errors/data-exist-error')
+const DataNotFoundError = require('../errors/data-not-found-error')
 const _ = require('lodash');
 
 require('pg').defaults.parseInt8 = true
@@ -41,6 +44,33 @@ const mustUpdate = async function(values, options) {
 
   return {effects, newValues}
 };
+
+/**
+ * check data not exist, if exist, throw DataExistError
+ * @param {*} where
+ * @param {*} reason
+ */
+const checkNotExist = async function(where, reason) {
+  const existObject = await this.findOne({"where": where})
+  if (existObject) {
+    throw new DataExistError(reason, errors.errmsg(reason))
+  }
+  return existObject
+}
+
+/**
+ * check data exist, if not exist, throw DataNotFoundError
+ * @param {*} where
+ * @param {*} reason
+ */
+const checkExist = async function(where, reason) {
+  const existObject = await this.findOne({"where": where})
+  if (!existObject) {
+    throw new DataNotFoundError(reason, errors.errmsg(reason))
+  }
+  return existObject
+}
+
 
 const upsert = async function(values, options) {
   const obj = await this.findOne(options)
@@ -82,6 +112,8 @@ function addMethodToModel() {
     const NewModel = Reflect.apply(oldDefine, this, [modelName, attributes, options])
     NewModel.mustUpdate = mustUpdate;
     NewModel.upsert = upsert;
+    NewModel.checkNotExist = checkNotExist;
+    NewModel.checkExist = checkExist;
     if (options && options.deleteDefaultId) {
       NewModel.removeAttribute('id')
     }

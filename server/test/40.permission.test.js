@@ -35,15 +35,69 @@ function getListResponseSchema() {
 // const permission = null;
 
 describe('permission', function() {
-  const appID = 'test-application-id'
-  const appID2 = 'test-application-id2'
+  const appID = 'test-appid-for-permission-test1'
+  let category4appID = null;
+  const appID2 = 'test-appid-for-permission-test2'
   const name = 'test-permission-name'
+  const appIDs = [appID, appID2]
+
+  before(async function() {
+    for (let appID of appIDs) {
+      const application = {id: appID, name: appID, description: ''}
+      await util.addApplication(application, headers)
+    }
+
+    const body = {appID, name: 'category-for-permission-test'}
+    const url = '/wolf/category';
+    const res = await mocha.post({url, headers, body})
+    if (res.body.data && res.body.data.category) {
+      category4appID = res.body.data.category;
+    }
+  });
+
+
   it('add first', async function() {
     const schema = getAddResponseSchema();
     const id = 'test-permission-id'
     const description = 'test-permission-description'
-    const body = {id, name, description, appID, categoryID: 2}
+    const body = {id, name, description, appID, categoryID: category4appID.id}
+    const url = '/wolf/permission';
+    await mocha.post({url, headers, body, schema})
+  });
 
+  it('add failed, appID not found', async function() {
+    const schema = util.failSchema('ERR_APPLICATION_ID_NOT_FOUND', 'Application ID not found')
+    const id = 'test-permission-id-new'
+    const description = 'test-permission-description'
+    const body = {id, name, description, appID: 'not-exist-app-id', categoryID: category4appID.id}
+    const url = '/wolf/permission';
+    await mocha.post({url, headers, body, schema})
+  });
+
+  it('add failed, id exists', async function() {
+    const schema = util.failSchema('ERR_PERMISSION_ID_EXIST', 'Permission ID already exists')
+    const id = 'test-permission-id'
+    const description = 'test-permission-description'
+    const body = {id, name, description, appID, categoryID: category4appID.id}
+    const url = '/wolf/permission';
+    await mocha.post({url, headers, body, schema})
+  });
+
+  it('add failed, name exists', async function() {
+    const schema = util.failSchema('ERR_PERMISSION_NAME_EXIST', 'Permission name already exists')
+    const id = 'test-permission-id-new'
+    const description = 'test-permission-description'
+    const body = {id, name, description, appID, categoryID: category4appID.id}
+    const url = '/wolf/permission';
+    await mocha.post({url, headers, body, schema})
+  });
+
+  it('add failed, category id not found', async function() {
+    const schema = util.failSchema('ERR_CATEGORY_ID_NOT_FOUND', 'Category ID not found')
+    const id = 'test-permission-id-new'
+    const name = 'test-permission-name-new'
+    const description = 'test-permission-description'
+    const body = {id, name, description, appID, categoryID: 99999999}
     const url = '/wolf/permission';
     await mocha.post({url, headers, body, schema})
   });
@@ -52,8 +106,17 @@ describe('permission', function() {
     const schema = getAddResponseSchema();
     const id = 'test-permission-id'
     const description = 'test-permission-description'
-    const body = {id, name, description, appID: appID2, categoryID: 2}
+    const body = {id, name, description, appID: appID2, categoryID: category4appID.id}
+    const url = '/wolf/permission';
+    await mocha.post({url, headers, body, schema})
+  });
 
+  it('add third', async function() {
+    const schema = getAddResponseSchema();
+    const id = 'test-permission-id2'
+    const name = 'test-permission-name2'
+    const description = 'test-permission-description'
+    const body = {id, name, description, appID, categoryID: category4appID.id}
     const url = '/wolf/permission';
     await mocha.post({url, headers, body, schema})
   });
@@ -62,10 +125,44 @@ describe('permission', function() {
     const schema = getAddResponseSchema();
     const id = 'test-permission-id'
     const name = 'test-permission-name:updated'
-    const categoryId = 3;
     const description = 'test-permission-description:updated'
-    const body = {id, appID, name, description, categoryID: categoryId}
+    const body = {id, appID, name, description, categoryID: category4appID.id}
+    const url = '/wolf/permission';
+    await mocha.put({url, headers, body, schema})
+  });
 
+  it('update failed, appID not found', async function() {
+    const schema = util.failSchema('ERR_APPLICATION_ID_NOT_FOUND', 'Application ID not found')
+    const id = 'test-permission-id'
+    const name = 'test-permission-name-new'
+    const body = {id, appID: 'not-exist-app-id', name, categoryID: category4appID.id}
+    const url = '/wolf/permission';
+    await mocha.put({url, headers, body, schema})
+  });
+
+  it('update failed, id not found', async function() {
+    const schema = util.failSchema('ERR_PERMISSION_ID_NOT_FOUND', 'Permission ID not found')
+    const id = 'test-permission-id-not-exist'
+    const name = 'test-permission-name-new'
+    const body = {id, appID, name, categoryID: category4appID.id}
+    const url = '/wolf/permission';
+    await mocha.put({url, headers, body, schema})
+  });
+
+  it('update failed, name exists', async function() {
+    const schema = util.failSchema('ERR_PERMISSION_NAME_EXIST', 'Permission name already exists')
+    const id = 'test-permission-id'
+    const name = 'test-permission-name2'
+    const body = {id, appID, name, categoryID: category4appID.id}
+    const url = '/wolf/permission';
+    await mocha.put({url, headers, body, schema})
+  });
+
+  it('update failed, category id not found', async function() {
+    const schema = util.failSchema('ERR_CATEGORY_ID_NOT_FOUND', 'Category ID not found')
+    const id = 'test-permission-id'
+    const name = 'test-permission-name-new'
+    const body = {id, appID, name, categoryID: 99999999}
     const url = '/wolf/permission';
     await mocha.put({url, headers, body, schema})
   });
@@ -94,9 +191,10 @@ describe('permission', function() {
 
 
   after(async function() {
-    const url = '/wolf/permission';
-    const id = 'test-permission-id'
-    const body = {id, appID}
-    await mocha.delete({url, headers, body})
+    for (let appID of appIDs) {
+      await util.deleteApplication(appID, headers)
+      await mocha.delete({url: '/wolf/category/delete_by_app_id', headers, body: {appID}})
+      await mocha.delete({url: '/wolf/permission/delete_by_app_id', headers, body: {appID}})
+    }
   });
 });

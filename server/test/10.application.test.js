@@ -4,32 +4,7 @@ const util = require('./util/util')
 
 const headers = util.adminHeaders()
 
-function getAddResponseSchema(values) {
-  const applicationSchema = {
-    type: "object",
-    properties: {
-        id: {"type":"string"},
-        name: {"type":"string"},
-        description: {"type":"string"},
-        redirectUris: {"type":"array","items":{"type":"string"}},
-        grants: {"type":"array","items":{"type":"string"}},
-        accessTokenLifetime: {"type":"integer"},                                                                                                                                          refreshTokenLifetime: {"type":"integer"},
-        createTime: {"type":"integer"},
-        updateTime: {"type":"integer"}
-    },
-    required: ["id","name","description","redirectUris","grants","accessTokenLifetime","refreshTokenLifetime","createTime","updateTime"]
-  }
-
-  util.setDefaultOfSchema(applicationSchema, values, applicationSchema.required)
-  const schema = util.okSchema({
-    type: "object",
-    properties: {
-        application: applicationSchema
-    },
-    required: ["application"]
-  })
-  return schema
-}
+const getAddResponseSchema = util.getAddResponseSchema;
 
 function getListResponseSchema() {
   const schema = util.okSchema({
@@ -61,6 +36,8 @@ function getListResponseSchema() {
 describe('application', function() {
   const id = 'test-application-id'
   const name = 'test-application-name'
+  const id2 = 'test-application-id-2'
+  const name2 = 'test-application-name-2'
 
   it('add', async function() {
     const description = 'application description'
@@ -71,6 +48,34 @@ describe('application', function() {
     const refreshTokenLifetime = 7200;
     const body = {id, name, description, secret, redirectUris, grants, accessTokenLifetime, refreshTokenLifetime}
     const schema = getAddResponseSchema(body);
+    const url = '/wolf/application';
+    await mocha.post({url, headers, body, schema})
+  });
+
+  it('add failed, id exist', async function() {
+    const schema = util.failSchema('ERR_APPLICATION_ID_EXIST', 'Application ID already exists')
+    const name = 'test-application-name:' + (new Date().getTime())
+    const description = 'application description'
+    const secret = 'secret'
+    const redirectUris = ['http://localhost/path']
+    const grants = ['authorization_code', 'refresh_token']
+    const accessTokenLifetime = 3600;
+    const refreshTokenLifetime = 7200;
+    const body = {id, name, description, secret, redirectUris, grants, accessTokenLifetime, refreshTokenLifetime}
+    const url = '/wolf/application';
+    await mocha.post({url, headers, body, schema})
+  });
+
+  it('add failed, name exist', async function() {
+    const schema = util.failSchema('ERR_APPLICATION_NAME_EXIST', 'Application name already exists')
+    const id = 'test-application-id:' + (new Date().getTime())
+    const description = 'application description'
+    const secret = 'secret'
+    const redirectUris = ['http://localhost/path']
+    const grants = ['authorization_code', 'refresh_token']
+    const accessTokenLifetime = 3600;
+    const refreshTokenLifetime = 7200;
+    const body = {id, name, description, secret, redirectUris, grants, accessTokenLifetime, refreshTokenLifetime}
     const url = '/wolf/application';
     await mocha.post({url, headers, body, schema})
   });
@@ -89,7 +94,24 @@ describe('application', function() {
     const schema = util.okSchema(dataSchema);
     const args = {id}
     const url = '/wolf/application/secret'
-    await mocha.get({url, headers, args, schema, showSchema: true})
+    await mocha.get({url, headers, args, schema})
+  });
+
+  it('update failed, name exists', async function() {
+    const schema_name_exist = util.failSchema('ERR_APPLICATION_NAME_EXIST', 'Application name already exists')
+    const description = 'application description2'
+    const secret = 'secret'
+    const redirectUris = ['http://localhost/path']
+    const grants = ['authorization_code', 'refresh_token']
+    const accessTokenLifetime = 3600;
+    const refreshTokenLifetime = 7200;
+    const body = {'id': id2, 'name': name2, description, secret, redirectUris, grants, accessTokenLifetime, refreshTokenLifetime}
+    const schema = getAddResponseSchema(body);
+    const url = '/wolf/application';
+    await mocha.post({url, headers, body, schema})
+
+    body.name = name
+    await mocha.put({url, headers, body, 'schema': schema_name_exist})
   });
 
   it('update', async function() {
@@ -136,7 +158,7 @@ describe('application', function() {
     const schema = util.okSchema(dataSchema);
     const args = {id}
     const url = '/wolf/application/secret'
-    await mocha.get({url, headers, args, schema, showSchema: true})
+    await mocha.get({url, headers, args, schema})
   });
 
   it('get secret failed, not found', async function() {
@@ -224,7 +246,9 @@ describe('application', function() {
 
   after(async function() {
     const url = '/wolf/application';
-    const body = {id}
+    let body = {id}
+    await mocha.delete({url, headers, body})
+    body = {'id': id2}
     await mocha.delete({url, headers, body})
   });
 });

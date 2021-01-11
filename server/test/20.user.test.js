@@ -62,6 +62,16 @@ describe('user', function() {
   let id = null;
   let rootUserInfo = null;
   const username = 'test-user-username'
+  const appIDs = ['test-appid-for-user-test']
+  const appIDs2 = ['test-appid-for-user-test', 'test-appid-for-user-test2']
+
+  before(async function() {
+    for (let appID of appIDs2) {
+      const application = {id: appID, name: appID, description: ''}
+      await util.addApplication(application, headers)
+    }
+  });
+
   it('login failed, not found', async function() {
     const schema = util.failSchema('ERR_USER_NOT_FOUND');
     const username = 'user-not-found'
@@ -105,11 +115,20 @@ describe('user', function() {
     const nickname = 'test-user-nickname'
     const email = 'test001@company.com'
     const tel = '13012341234'
-    const appIds = ['ROOT', 'TEST']
-    const body = {username, nickname, email, tel, appIDs: appIds, password: util.defPassword()}
+    const body = {username, nickname, email, tel, appIDs, password: util.defPassword()}
     const url = '/wolf/user';
     const res = await mocha.post({url, headers, body, schema})
     id = res.body.data.userInfo.id
+  });
+
+  it('add failed, username exists', async function() {
+    const schema = util.failSchema('ERR_USERNAME_EXIST', 'Username already exists')
+    const nickname = 'test-user-nickname'
+    const email = 'test001@company.com'
+    const tel = '13012341234'
+    const body = {username, nickname, email, tel, appIDs, password: util.defPassword()}
+    const url = '/wolf/user';
+    await mocha.post({url, headers, body, schema})
   });
 
   it('update', async function() {
@@ -120,19 +139,40 @@ describe('user', function() {
     const nickname = 'test-user-nickname: updated'
     const email = 'test001.update.@company.com'
     const tel = '13012341234'
-    const appIds = ['ROOT', 'TEST']
-    const body = {id, username, nickname, email, tel, appIDs: appIds, password: util.defPassword()}
+    const body = {id, username, nickname, email, tel, appIDs, password: util.defPassword()}
     const url = '/wolf/user';
     await mocha.put({url, headers, body, schema})
   });
+
+  it('update failed, username exists', async function() {
+    if (!id) {
+      this.skip()
+    }
+    const schema = getAddResponseSchema();
+    const usernameTmp = 'test-user-username:' + (new Date().getTime())
+    const nickname = 'test-user-nickname'
+    const email = 'test001@company.com'
+    const tel = '13012341234'
+    const body = {username: usernameTmp, nickname, email, tel, appIDs, password: util.defPassword()}
+    const url = '/wolf/user';
+    const res = await mocha.post({url, headers, body, schema})
+    const tmpId = res.body.data.userInfo.id
+
+    const body2 = {id: tmpId, username, nickname}
+    const schema_name_exist = util.failSchema('ERR_USERNAME_EXIST', 'Username already exists')
+    await mocha.put({url, headers, body: body2, schema: schema_name_exist})
+
+    const body3 = {username: usernameTmp}
+    await mocha.delete({url, headers, body: body3})
+  });
+
 
   it('update failed, user not found', async function() {
     const schema = util.failSchema('ERR_USER_NOT_FOUND')
     const nickname = 'test-user-nickname: updated'
     const email = 'test001.update.@company.com'
     const tel = '13012341234'
-    const appIds = ['ROOT', 'TEST']
-    const body = {id: 999999999999, username, nickname, email, tel, appIDs: appIds}
+    const body = {id: 999999999999, username, nickname, email, tel, appIDs}
     const url = '/wolf/user';
     await mocha.put({url, headers, body, status: 400, schema})
   });
@@ -182,7 +222,6 @@ describe('user', function() {
       const nickname = username
       const email = username + '@company.com'
       const tel = '13011003300'
-      const appIDs = ['test-app-id']
       const manager = 'admin'
       const body = {username, nickname, email, tel, appIDs, manager, password}
       const url = '/wolf/user';
@@ -256,9 +295,9 @@ describe('user', function() {
 
     it('set roles failed!, access deny', async function() {
       const schema = util.failSchema('ERR_ACCESS_DENIED');
-      const permIDs = ['PERM_OK', 'PERM_02']
-      const roleIDs = ['ROLE_01', 'ROLE_02']
-      const appID = 'not-exist-app-id'
+      const permIDs = []
+      const roleIDs = []
+      const appID = 'test-appid-for-user-test2'
       const body = {userID, appID, permIDs, roleIDs}
 
       const url = '/wolf/user-role/set';
@@ -307,6 +346,9 @@ describe('user', function() {
     const body = {username}
     const url = '/wolf/user';
     await mocha.delete({url, headers, body, schema})
+    for (let appID of appIDs2) {
+      await util.deleteApplication(appID, headers)
+    }
   });
 });
 

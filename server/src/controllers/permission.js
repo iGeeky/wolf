@@ -6,6 +6,7 @@ const RoleModel = require('../model/role')
 const AccessDenyError = require('../errors/access-deny-error')
 const util = require('../util/util')
 const Op = require('sequelize').Op;
+const errors = require('../errors/errors')
 const _ = require('lodash')
 const permissionFields = ['id', 'appID', 'name', 'description', 'categoryID', 'createTime'];
 
@@ -50,7 +51,14 @@ class Permission extends BasicService {
       categoryID: {type: 'integer'},
     }
     const values = this.getCheckedValues(fieldsMap)
-    // values.status = 0;
+
+    await this.checkAppIDsExist([values.appID])
+    await PermissionModel.checkNotExist({appID: values.appID, id: values.id}, errors.ERR_PERMISSION_ID_EXIST)
+    await PermissionModel.checkNotExist({appID: values.appID, name: values.name}, errors.ERR_PERMISSION_NAME_EXIST)
+    if (values.categoryID) {
+      await this.checkCategoryIDExist(values.categoryID)
+    }
+
     values.createTime = util.unixtime();
     values.updateTime = util.unixtime();
     const permission = await PermissionModel.create(values);
@@ -67,6 +75,16 @@ class Permission extends BasicService {
     const appID = this.getRequiredArg('appID')
     const id = this.getRequiredArg('id')
     const values = this.getCheckedValues(fieldsMap)
+
+    await this.checkAppIDsExist([appID])
+    await PermissionModel.checkExist({appID, id}, errors.ERR_PERMISSION_ID_NOT_FOUND)
+    if (values.name) {
+      await PermissionModel.checkNotExist({appID, 'id': {[Op.ne]: id}, name: values.name}, errors.ERR_PERMISSION_NAME_EXIST)
+    }
+    if (values.categoryID) {
+      await this.checkCategoryIDExist(values.categoryID)
+    }
+
     values.updateTime = util.unixtime();
     const options = {where: {id, appID}}
     const {newValues: permission} = await PermissionModel.mustUpdate(values, options)

@@ -47,6 +47,10 @@ class UserRole extends BasicService {
     }
 
     const values = this.getCheckedValues(fieldsMap)
+    await this.checkAppIDsExist([values.appID])
+    await this.checkPermIDsExist(values.appID, values.permIDs)
+    await this.checkRoleIDsExist(values.appID, values.roleIDs)
+
     values.createTime = util.unixtime();
     values.updateTime = util.unixtime();
 

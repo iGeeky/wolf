@@ -5,7 +5,9 @@ const errors = require('../errors/errors')
 const UserModel = require('../model/user')
 const UserRoleModel = require('../model/user-role')
 const RoleModel = require('../model/role');
+const CategoryModel = require('../model/category')
 const PermissionModel = require('../model/permission')
+const ApplicationModel = require('../model/application')
 const tokenUtil = require('../util/token-util')
 const Op = require('sequelize').Op;
 const _ = require('lodash')
@@ -17,6 +19,7 @@ class BasicService extends Service {
     this.ObjectModel = ObjectModel;
   }
 
+  // for console
   async checkExist() {
     const value = this.getRequiredObjectArg('value')
     const exclude = this.getObjectArg('exclude')
@@ -32,6 +35,50 @@ class BasicService extends Service {
       exist = true;
     }
     return this.success({exist})
+  }
+
+  async checkAppIDsExist(appIDs) {
+    if (!appIDs) {
+      return
+    }
+    for (let id of appIDs) {
+      await ApplicationModel.checkExist({id}, errors.ERR_APPLICATION_ID_NOT_FOUND)
+    }
+  }
+
+  async checkPermIDsExist(appID, permIDs) {
+    if (!permIDs) {
+      return
+    }
+    for (let id of permIDs) {
+      await PermissionModel.checkExist({appID, id}, errors.ERR_PERMISSION_ID_NOT_FOUND)
+    }
+  }
+
+  async checkRoleIDsExist(appID, roleIDs) {
+    if (!roleIDs) {
+      return
+    }
+    for (let id of roleIDs) {
+      await RoleModel.checkExist({appID, id}, errors.ERR_ROLE_ID_NOT_FOUND)
+    }
+  }
+
+  async checkPermIDExist(appID, permID) {
+    if (!permID) {
+      return
+    }
+    if (permID === 'ALLOW_ALL' || permID === 'DENY_ALL') {
+      return
+    }
+    await PermissionModel.checkExist({appID, id: permID}, errors.ERR_PERMISSION_ID_NOT_FOUND)
+  }
+
+  async checkCategoryIDExist(categoryID) {
+    if (!categoryID) {
+      return
+    }
+    await CategoryModel.checkExist({ id: categoryID }, errors.ERR_CATEGORY_ID_NOT_FOUND)
   }
 
   async deleteByPk(idFieldName) {
