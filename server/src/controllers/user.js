@@ -113,6 +113,10 @@ class User extends BasicService {
   }
 
   async info() {
+    if (this.ctx.method !== 'GET') {
+      this.fail(404, errors.ERR_METHOD_INVALID)
+      return
+    }
     const userInfo = this.ctx.userInfo
     let applications = await this.userApplications(userInfo);
     userInfo.appIDs = userInfo.appIDs || []
@@ -122,6 +126,10 @@ class User extends BasicService {
   }
 
   async list() {
+    if (this.ctx.method !== 'GET') {
+      this.fail(404, errors.ERR_METHOD_INVALID)
+      return
+    }
     const limit = this.getIntArg('limit', 10)
     const page = this.getIntArg('page', 1)
     const offset = (page-1) * limit
@@ -221,6 +229,10 @@ class User extends BasicService {
   }
 
   async resetPwd() {
+    if (this.ctx.method !== 'PUT') {
+      this.fail(404, errors.ERR_METHOD_INVALID)
+      return
+    }
     const id = this.getRequiredIntArg('id')
     const values = {}
     const password = util.randomString(12)

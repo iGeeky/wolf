@@ -22,6 +22,10 @@ class Role extends BasicService {
   }
 
   async list() {
+    if (this.ctx.method !== 'GET') {
+      this.fail(404, errors.ERR_METHOD_INVALID)
+      return
+    }
     const limit = this.getIntArg('limit', 10)
     const page = this.getIntArg('page', 1)
     const offset = (page-1) * limit

@@ -20,6 +20,7 @@ exports.ERR_PERMISSION_ID_NOT_FOUND = 'ERR_PERMISSION_ID_NOT_FOUND'
 exports.ERR_ROLE_ID_NOT_FOUND = 'ERR_ROLE_ID_NOT_FOUND'
 exports.ERR_CATEGORY_ID_NOT_FOUND = 'ERR_CATEGORY_ID_NOT_FOUND'
 exports.ERR_RESOURCE_ID_NOT_FOUND = 'ERR_RESOURCE_ID_NOT_FOUND'
+exports.ERR_METHOD_INVALID = 'ERR_METHOD_INVALID'
 
 const msgs = {
   ERR_OBJECT_NOT_FOUND: 'Object not found',
@@ -44,6 +45,7 @@ const msgs = {
   ERR_ROLE_ID_NOT_FOUND: 'Role ID not found',
   ERR_CATEGORY_ID_NOT_FOUND: 'Category ID not found',
   ERR_RESOURCE_ID_NOT_FOUND: 'Resource ID not found',
+  ERR_METHOD_INVALID: 'HTTP Request Method is Invalid',
 }
 
 function errmsg(reason) {
