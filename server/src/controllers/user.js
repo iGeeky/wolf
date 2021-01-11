@@ -210,6 +210,8 @@ class User extends BasicService {
       await UserModel.checkNotExist({'id': {[Op.ne]: id}, username: values.username}, errors.ERR_USERNAME_EXIST)
     }
 
+    await this.checkAppIDsExist(values.appIDs)
+
     values.updateTime = util.unixtime();
     const options = {where: {id}}
     let {effects, newValues: userInfo} = await UserModel.mustUpdate(values, options)
