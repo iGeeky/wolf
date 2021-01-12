@@ -1,7 +1,6 @@
 const BasicService = require('./basic-service')
 const AccessLogModel = require('../model/access-log')
 const Op = require('sequelize').Op;
-const errors = require('../errors/errors')
 
 class AccessLog extends BasicService {
   constructor(ctx) {
@@ -9,10 +8,7 @@ class AccessLog extends BasicService {
   }
 
   async list() {
-    if (this.ctx.method !== 'GET') {
-      this.fail(404, errors.ERR_METHOD_INVALID)
-      return
-    }
+    this.checkMethod('GET')
     const limit = this.getIntArg('limit', 10)
     const page = this.getIntArg('page', 1)
     const offset = (page-1) * limit

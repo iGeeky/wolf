@@ -5,7 +5,6 @@ const constant = require('../util/constant')
 const util = require('../util/util')
 const userCache = require('../util/user-cache')
 const userRoleFields = ['userID', 'appID', 'permIDs', 'roleIDs', 'createTime'];
-const errors = require('../errors/errors')
 
 function getDefaultUserRole(userId, appId) {
   const userRole = {userID: userId, appID: appId, permIDs: [], roleIDs: [], createTime: 0}
@@ -40,10 +39,7 @@ class UserRole extends BasicService {
   }
 
   async set() {
-    if (this.ctx.method !== 'POST') {
-      this.fail(404, errors.ERR_METHOD_INVALID)
-      return
-    }
+    this.checkMethod('POST')
     const fieldsMap = {
       userID: {type: 'integer', required: true},
       appID: {type: 'string', required: true},
