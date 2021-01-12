@@ -23,7 +23,7 @@ const errors = {
   ERR_NEW_PASSWORD_REQUIRED: 'New password is required',
   ERR_REPEATED_PASSWORD_INCORRECT: 'The password you entered repeatedly is incorrect.',
   ERR_OLD_PASSWORD_INCORRECT: 'Old password is incorrect.',
-  ERR_USER_DISABLED: 'User is disabled.'
+  ERR_USER_DISABLED: 'User is disabled.',
   ERR_USER_APPIDS: 'User is not associated with the app.'
 }
 
