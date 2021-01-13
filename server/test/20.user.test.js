@@ -128,7 +128,7 @@ describe('user', function() {
     const tel = '13012341234'
     const body = {username, nickname, email, tel, appIDs, password: util.defPassword()}
     const url = '/wolf/user';
-    await mocha.post({url, headers, body, schema})
+    await mocha.post({url, headers, body, status: 400, schema})
   });
 
   it('update', async function() {
@@ -163,7 +163,7 @@ describe('user', function() {
     await mocha.put({url, headers, body: body2, schema: schema_name_exist})
 
     const body3 = {username: usernameTmp}
-    await mocha.delete({url, headers, body: body3})
+    await mocha.delete({url, headers, body: body3, status: 400})
   });
 
 

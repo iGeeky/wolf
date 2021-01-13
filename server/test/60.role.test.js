@@ -92,7 +92,7 @@ describe('role', function() {
     const body = {id, name, description, appID, permIDs}
 
     const url = '/wolf/role';
-    await mocha.post({url, headers, body, schema})
+    await mocha.post({url, headers, body, status: 400, schema})
   });
 
   it('add failed, name exists', async function() {
@@ -104,7 +104,7 @@ describe('role', function() {
     const body = {id, name, description, appID, permIDs}
 
     const url = '/wolf/role';
-    await mocha.post({url, headers, body, schema})
+    await mocha.post({url, headers, body, status: 400, schema})
   });
 
   it('add failed, appID not found', async function() {
@@ -116,7 +116,7 @@ describe('role', function() {
     const body = {id, name, description, appID: 'not-exist-app-id', permIDs}
 
     const url = '/wolf/role';
-    await mocha.post({url, headers, body, schema})
+    await mocha.post({url, headers, body, status: 400, schema})
   });
 
   it('add failed, permID not found', async function() {
@@ -128,7 +128,7 @@ describe('role', function() {
     const body = {id, name, description, appID, permIDs}
 
     const url = '/wolf/role';
-    await mocha.post({url, headers, body, schema})
+    await mocha.post({url, headers, body, status: 400, schema})
   });
 
   it('add failed, permID not match', async function() {
@@ -140,7 +140,7 @@ describe('role', function() {
     const body = {id, name, description, appID, permIDs}
 
     const url = '/wolf/role';
-    await mocha.post({url, headers, body, schema})
+    await mocha.post({url, headers, body, status: 400, schema})
   });
 
   it('update first', async function() {
@@ -163,7 +163,7 @@ describe('role', function() {
     const body = {id, appID, name, description, permIDs}
 
     const url = '/wolf/role';
-    await mocha.put({url, headers, body, schema})
+    await mocha.put({url, headers, body, status: 400, schema})
   });
 
   it('update failed, name exists', async function() {
@@ -173,7 +173,7 @@ describe('role', function() {
     const body = {id, appID, name}
 
     const url = '/wolf/role';
-    await mocha.put({url, headers, body, schema})
+    await mocha.put({url, headers, body, status: 400, schema})
   });
 
   it('update failed, appID not found', async function() {
@@ -182,7 +182,7 @@ describe('role', function() {
     const body = {id, appID: 'not-exist-app-id'}
 
     const url = '/wolf/role';
-    await mocha.put({url, headers, body, schema})
+    await mocha.put({url, headers, body, status: 400, schema})
   });
 
   it('update failed, permID not found', async function() {
@@ -192,7 +192,7 @@ describe('role', function() {
     const body = {id, appID, permIDs}
 
     const url = '/wolf/role';
-    await mocha.put({url, headers, body, schema})
+    await mocha.put({url, headers, body, status: 400, schema})
   });
 
   it('update failed, permID not match', async function() {
@@ -202,7 +202,7 @@ describe('role', function() {
     const body = {id, appID, permIDs}
 
     const url = '/wolf/role';
-    await mocha.put({url, headers, body, schema})
+    await mocha.put({url, headers, body, status: 400, schema})
   });
 
   it('delete second', async function() {

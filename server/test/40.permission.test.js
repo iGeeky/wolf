@@ -71,7 +71,7 @@ describe('permission', function() {
     const description = 'test-permission-description'
     const body = {id, name, description, appID: 'not-exist-app-id', categoryID: category4appID.id}
     const url = '/wolf/permission';
-    await mocha.post({url, headers, body, schema})
+    await mocha.post({url, headers, body, status: 400, schema})
   });
 
   it('add failed, id exists', async function() {
@@ -80,7 +80,7 @@ describe('permission', function() {
     const description = 'test-permission-description'
     const body = {id, name, description, appID, categoryID: category4appID.id}
     const url = '/wolf/permission';
-    await mocha.post({url, headers, body, schema})
+    await mocha.post({url, headers, body, status: 400, schema})
   });
 
   it('add failed, name exists', async function() {
@@ -89,7 +89,7 @@ describe('permission', function() {
     const description = 'test-permission-description'
     const body = {id, name, description, appID, categoryID: category4appID.id}
     const url = '/wolf/permission';
-    await mocha.post({url, headers, body, schema})
+    await mocha.post({url, headers, body, status: 400, schema})
   });
 
   it('add failed, category id not found', async function() {
@@ -99,7 +99,7 @@ describe('permission', function() {
     const description = 'test-permission-description'
     const body = {id, name, description, appID, categoryID: 99999999}
     const url = '/wolf/permission';
-    await mocha.post({url, headers, body, schema})
+    await mocha.post({url, headers, body, status: 400, schema})
   });
 
   it('add second', async function() {
@@ -137,7 +137,7 @@ describe('permission', function() {
     const name = 'test-permission-name-new'
     const body = {id, appID: 'not-exist-app-id', name, categoryID: category4appID.id}
     const url = '/wolf/permission';
-    await mocha.put({url, headers, body, schema})
+    await mocha.put({url, headers, body, status: 400, schema})
   });
 
   it('update failed, id not found', async function() {
@@ -146,7 +146,7 @@ describe('permission', function() {
     const name = 'test-permission-name-new'
     const body = {id, appID, name, categoryID: category4appID.id}
     const url = '/wolf/permission';
-    await mocha.put({url, headers, body, schema})
+    await mocha.put({url, headers, body, status: 400, schema})
   });
 
   it('update failed, name exists', async function() {
@@ -155,7 +155,7 @@ describe('permission', function() {
     const name = 'test-permission-name2'
     const body = {id, appID, name, categoryID: category4appID.id}
     const url = '/wolf/permission';
-    await mocha.put({url, headers, body, schema})
+    await mocha.put({url, headers, body, status: 400, schema})
   });
 
   it('update failed, category id not found', async function() {
@@ -164,7 +164,7 @@ describe('permission', function() {
     const name = 'test-permission-name-new'
     const body = {id, appID, name, categoryID: 99999999}
     const url = '/wolf/permission';
-    await mocha.put({url, headers, body, schema})
+    await mocha.put({url, headers, body, status: 400, schema})
   });
 
   it('delete second', async function() {

@@ -150,7 +150,7 @@ describe('resource', function() {
 
     const body = {appID: 'not-exist-app-id', matchType, name, action, permID}
     const url = '/wolf/resource';
-    await mocha.post({url, headers, body, schema})
+    await mocha.post({url, headers, body, status: 400, schema})
   });
 
   it('add failed, resource exists', async function() {
@@ -162,7 +162,7 @@ describe('resource', function() {
 
     const body = {appID, matchType, name, action, permID}
     const url = '/wolf/resource';
-    await mocha.post({url, headers, body, schema})
+    await mocha.post({url, headers, body, status: 400, schema})
   });
 
   it('add failed, permission id not found', async function() {
@@ -173,7 +173,7 @@ describe('resource', function() {
     const permID = 'not-exist-perm-id'
     const body = {appID, matchType, name, action, permID}
     const url = '/wolf/resource';
-    await mocha.post({url, headers, body, schema})
+    await mocha.post({url, headers, body, status: 400, schema})
   });
 
 
@@ -201,7 +201,7 @@ describe('resource', function() {
     const permID = 'PERM_DEFAULT'
     const body = {id, matchType, name, action, permID}
     const url = '/wolf/resource';
-    await mocha.put({url, headers, body, schema})
+    await mocha.put({url, headers, body, status: 400, schema})
   });
 
   it('update failed, resource exists', async function() {
@@ -213,7 +213,7 @@ describe('resource', function() {
     const permID = 'PERM_DEFAULT'
     const body = {id, matchType, name, action, permID}
     const url = '/wolf/resource';
-    await mocha.put({url, headers, body, schema})
+    await mocha.put({url, headers, body, status: 400, schema})
   });
 
   it('update failed, permission id not found', async function() {
@@ -225,7 +225,7 @@ describe('resource', function() {
     const permID = 'not-exist-perm-id'
     const body = {id, matchType, name, action, permID}
     const url = '/wolf/resource';
-    await mocha.put({url, headers, body, schema})
+    await mocha.put({url, headers, body, status: 400, schema})
   });
 
   it('list', async function() {

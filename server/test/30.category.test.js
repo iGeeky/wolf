@@ -78,7 +78,7 @@ describe('category', function() {
     const body = {appID, name}
 
     const url = '/wolf/category';
-    await mocha.post({url, headers, body, schema})
+    await mocha.post({url, headers, body, status: 400, schema})
   });
 
   it('add failed, appID not found', async function() {
@@ -86,7 +86,7 @@ describe('category', function() {
     const body = {appID: 'not-exist-app-id', name: 'test-category-name-new'}
 
     const url = '/wolf/category';
-    await mocha.post({url, headers, body, schema})
+    await mocha.post({url, headers, body, status: 400, schema})
   });
 
   it('update', async function() {
@@ -112,7 +112,7 @@ describe('category', function() {
     const body = {id, name}
 
     const url = '/wolf/category';
-    await mocha.put({url, headers, body, schema})
+    await mocha.put({url, headers, body, status: 400, schema})
   });
 
   it('update failed, name exists', async function() {
@@ -124,7 +124,7 @@ describe('category', function() {
     const body = {id, name: name2}
 
     const url = '/wolf/category';
-    await mocha.put({url, headers, body, schema})
+    await mocha.put({url, headers, body, status: 400, schema})
   });
 
 

@@ -73,7 +73,7 @@ describe('user-role', function() {
     const schema = util.failSchema('ERR_APPLICATION_ID_NOT_FOUND', 'Application ID not found')
     const body = {userID, appID: 'not-exist-app-id', permIDs: permIDs.slice(0,2), roleIDs: roleIDs.slice(0,2)}
     const url = '/wolf/user-role/set';
-    await mocha.post({url, headers, body, schema})
+    await mocha.post({url, headers, body, status: 400, schema})
   });
 
   it('set failed, permission id not found', async function() {
@@ -82,7 +82,7 @@ describe('user-role', function() {
     permIDs1.push('not-exist-perm-id')
     const body = {userID, appID, permIDs: permIDs1}
     const url = '/wolf/user-role/set';
-    await mocha.post({url, headers, body, schema})
+    await mocha.post({url, headers, body, status: 400, schema})
   });
 
   it('set failed, role id not found', async function() {
@@ -91,7 +91,7 @@ describe('user-role', function() {
     roleIDs2.push('not-exist-role-id')
     const body = {userID, appID, roleIDs: roleIDs2}
     const url = '/wolf/user-role/set';
-    await mocha.post({url, headers, body, schema})
+    await mocha.post({url, headers, body, status: 400, schema})
   });
 
   it('set-update', async function() {
