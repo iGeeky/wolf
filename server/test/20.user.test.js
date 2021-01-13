@@ -160,10 +160,10 @@ describe('user', function() {
 
     const body2 = {id: tmpId, username, nickname}
     const schema_name_exist = util.failSchema('ERR_USERNAME_EXIST', 'Username already exists')
-    await mocha.put({url, headers, body: body2, schema: schema_name_exist})
+    await mocha.put({url, headers, body: body2, status: 400, schema: schema_name_exist})
 
     const body3 = {username: usernameTmp}
-    await mocha.delete({url, headers, body: body3, status: 400})
+    await mocha.delete({url, headers, body: body3})
   });
 
 
