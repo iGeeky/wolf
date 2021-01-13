@@ -30,10 +30,10 @@ module.exports = function() {
         ctx.status = 401
         ctx.body = json.fail('ERR_ACCESS_DENIED', err.message)
       } else if (err instanceof DataExistError) {
-        ctx.status = 200
+        ctx.status = 400
         ctx.body = json.fail(err.code, err.message)
       } else if (err instanceof DataNotFoundError) {
-        ctx.status = 200
+        ctx.status = 400
         ctx.body = json.fail(err.code, err.message)
       } else if (err instanceof Sequelize.UniqueConstraintError) {
         log4js.error('duplicate data err:', err.errors)

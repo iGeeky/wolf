@@ -90,6 +90,20 @@ describe('rbac', function() {
       await mocha.post({url, headers, body, schema})
     });
 
+    it('login failed, appId not exist', async function() {
+      const schema = util.failSchema('ERR_APPID_NOT_FOUND')
+      const url = '/wolf/rbac/login.rest'
+      const body = {username: 'unit-user', password, appid: 'not-exist-appid'}
+      await mocha.post({url, headers, body, schema})
+    });
+
+    it('login failed, user addIDs not include', async function() {
+      const schema = util.failSchema('ERR_USER_APPIDS')
+      const url = '/wolf/rbac/login.rest'
+      const body = {username: 'unit-user', password, appid: data.applications[1].id}
+      await mocha.post({url, headers, body, schema})
+    });
+
     it('login failed, password missing', async function() {
       const schema = util.failSchema('ERR_PASSWORD_MISSING')
       const url = '/wolf/rbac/login'

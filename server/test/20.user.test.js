@@ -177,6 +177,12 @@ describe('user', function() {
     await mocha.put({url, headers, body, status: 400, schema})
   });
 
+  it('update failed, appId not found', async function() {
+    const schema = util.failSchema('ERR_APPLICATION_ID_NOT_FOUND')
+    const body = {id, appIDs:['not-exist-appid']}
+    const url = '/wolf/user';
+    await mocha.put({url, headers, body, status: 400, schema})
+  });
 
   it('delete by username failed, not found', async function() {
     const schema = util.failSchema('ERR_USER_NOT_FOUND');

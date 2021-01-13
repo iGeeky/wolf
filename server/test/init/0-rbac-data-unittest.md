@@ -1,6 +1,7 @@
 # application
 
 * unittest app-for-unit-test
+* unittest2 app-for-unit-test2
 
 # user
 
