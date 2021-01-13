@@ -308,7 +308,7 @@ describe('user', function() {
       const schema = util.okSchema()
       const body = { id: userID }
       const url = '/wolf/user/reset_pwd';
-      const res = await mocha.post({url, headers: util.adminHeaders(), body, schema})
+      const res = await mocha.put({url, headers: util.adminHeaders(), body, schema})
       newPassword = res.body.data.password
     });
 
