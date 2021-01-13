@@ -244,6 +244,13 @@ describe('resource', function() {
     const res = await mocha.get({url, headers, args, schema})
   });
 
+  it('list all', async function() {
+    const schema = getListResponseSchema()
+    const url = '/wolf/resource/list_all'
+    const args = {appID}
+    await mocha.get({url, headers, args, schema})
+  });
+
   after(async function() {
     if (!appID) {
       this.skip();

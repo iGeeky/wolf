@@ -64,6 +64,20 @@ class Resource extends BasicService {
     this.success(data)
   }
 
+  async listAll() {
+    this.checkMethod('GET')
+    const appId = this.getRequiredArg('appID')
+    const where = {appID: appId}
+    const options = {where}
+    const resources = await ResourceModel.findAll(options)
+    resources.forEach((resource, i) => {
+      resources[i] = util.filterFieldWhite(resource.toJSON(), resourceFields)
+    });
+    const total = resources.length;
+    const data = {resources, total}
+    this.success(data)
+  }
+
   async post() {
     const fieldsMap = {
       appID: {type: 'string', required: true},

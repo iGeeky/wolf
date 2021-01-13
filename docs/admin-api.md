@@ -940,6 +940,61 @@ curl http://127.0.0.1:10080/wolf/user/list \
 }
 ```
 
+### List of all users
+
+Search all users, no pagination.
+
+#### Method: GET
+#### URL: /wolf/user/list_all
+#### `Header` parameters: Requires a token of [`Console` login](#Login), passed through the `x-rbac-token` request header.
+#### `Query` parameters
+
+None
+
+#### Response Body
+
+* data:
+
+Field | Type | Required | Description
+-------|-------|------|-----
+userInfos | [UserInfo](#UserInfo)[] | Yes | user list
+total | integer | Yes | Total number of records
+
+#### example
+
+* Request
+
+```json
+curl http://127.0.0.1:10080/wolf/user/list_all \
+-H "x-rbac-token: $WOLF_TOKEN"
+```
+
+* Response
+
+```json
+{
+  "ok": true,
+  "reason": "",
+  "data": {
+    "userInfos": [
+     {
+        "id": 697,
+        "username": "admin",
+        "nickname": "administrator",
+        "email": null,
+        "appIDs": [
+          "openresty",
+          "restful"
+        ],
+        "manager": "admin",
+        "createTime": 1578401859
+      },
+      ...
+    ],
+    "total": 6
+  }
+}
+```
 
 ### Reset user password
 
@@ -1237,6 +1292,62 @@ curl http://127.0.0.1:10080/wolf/role/list?appID=restful \
 }
 ```
 
+### List of all roles
+
+Search all roles under the specified application, no pagination.
+
+#### Method: GET
+#### URL: /wolf/role/list_all
+#### `Header` parameters: Requires a token of [`Console` login](#Login), passed through the `x-rbac-token` request header.
+#### `Query` parameters
+
+Field | Type | Required | Description
+-------|-------|------|-----
+appID | string | Yes | Application ID
+
+#### Response Body
+
+* data:
+
+Field | Type | Required | Description
+-------|-------|------|-----
+roles | [Role](#Role)[] | Yes | Role list
+total | integer | Yes | Total number of records
+
+#### example
+
+* Request
+
+```json
+curl http://127.0.0.1:10080/wolf/role/list_all?appID=restful \
+-H "x-rbac-token: $WOLF_TOKEN"
+```
+
+* Response
+
+```json
+{
+  "ok": true,
+  "reason": "",
+  "data": {
+    "roles": [
+      {
+        "id": "test-role",
+        "name": "role for test",
+        "description": "description of role",
+        "appID": "restful",
+        "permIDs": [
+          "PERM_YYY"
+        ],
+        "createTime": 1588583707,
+        "updateTime": 1588586200
+      },
+      ...
+    ],
+    "total": 5
+  }
+}
+```
 
 ### Delete Role
 
@@ -1474,6 +1585,62 @@ curl http://127.0.0.1:10080/wolf/permission/list?appID=restful \
 }
 ```
 
+### List of all permissions
+
+Search all permissions under the specified application, no pagination.
+
+#### Method: GET
+#### URL: /wolf/permission/list_all
+#### `Header` parameters: Requires a token of [`Console` login](#Login), passed through the `x-rbac-token` request header.
+#### `Query` parameters
+
+Field | Type | Required | Description
+-------|-------|------|-----
+appID | string | Yes | Application ID
+
+#### Response Body
+
+* data:
+
+Field | Type | Required | Description
+-------|-------|------|-----
+permissions | [Permission](#Permission)[] | Yes | List of permissions
+total | integer | Yes | Total number of records
+
+#### example
+
+* Request
+
+```json
+curl http://127.0.0.1:10080/wolf/permission/list_all?appID=restful \
+-H "x-rbac-token: $WOLF_TOKEN"
+```
+
+* Response
+
+```json
+
+  "ok": true,
+  "reason": "",
+  "data": {
+    "permissions": [
+      {
+        "id": "test-permission",
+        "appID": "restful",
+        "name": "permission for test2",
+        "description": "description of permission2",
+        "categoryID": 2,
+        "createTime": 1588658062,
+        "updateTime": 1588658246,
+        "category_id": 2,
+        "category": null
+      },
+      ...
+    ],
+    "total": 2
+  }
+}
+```
 
 ### Delete Permission
 
@@ -1841,6 +2008,57 @@ curl http://127.0.0.1:10080/wolf/category/list?appID=restful \
 }
 ```
 
+### List of all categorys
+
+Search all categorys under the specified application, no pagination.
+
+#### Method: GET
+#### URL: /wolf/category/list_all
+#### `Header` parameters: Requires a token of [`Console` login](#Login), passed through the `x-rbac-token` request header.
+#### `Query` parameters
+
+Field | Type | Required | Description
+-------|-------|------|-----
+appID | string | Yes | Application ID
+
+#### Response Body
+
+* data:
+
+Field | Type | Required | Description
+-------|-------|------|-----
+categorys | [Category](#Category)[] | Yes | List of categories
+total | integer | Yes | Total number of records
+
+#### example
+
+* Request
+
+```json
+curl http://127.0.0.1:10080/wolf/category/list_all?appID=restful \
+-H "x-rbac-token: $WOLF_TOKEN"
+```
+
+* Response
+
+```json
+{
+  "ok": true,
+  "reason": "",
+  "data": {
+    "categorys": [
+      {
+        "id": 744,
+        "appID": "restful",
+        "name": "category for test2",
+        "createTime": 1588659229,
+        "updateTime": 1588659461
+      }
+    ],
+    "total": 1
+  }
+}
+```
 
 ### Delete Category
 
@@ -2080,6 +2298,61 @@ curl http://127.0.0.1:10080/wolf/resource/list?appID=restful \
 }
 ```
 
+### List of all resources
+
+Search all resources under the specified application, no pagination.
+
+#### Method: GET
+#### URL: /wolf/resource/list_all
+#### `Header` parameters: Requires a token of [`Console` login](#Login), passed through the `x-rbac-token` request header.
+#### `Query` parameters
+
+Field | Type | Required | Description
+-------|-------|------|-----
+appID | string | Yes | Application ID
+
+#### Response Body
+
+* data:
+
+Field | Type | Required | Description
+-------|-------|------|-----
+resources | [Resource](#Resource)[] | Yes | Resource list
+total | integer | Yes | Total number of records
+
+#### example
+
+* Request
+
+```json
+curl http://127.0.0.1:10080/wolf/resource/list_all?appID=restful \
+-H "x-rbac-token: $WOLF_TOKEN"
+```
+
+* Response
+
+```json
+{
+  "ok": true,
+  "reason": "",
+  "data": {
+    "resources": [
+      {
+        "id": 8512,
+        "appID": "restful",
+        "matchType": "equal",
+        "name": "/path/to/resource",
+        "priority": 11483,
+        "action": "ALL",
+        "permID": "PERM_YYY",
+        "createTime": 1588660594
+      },
+      ...
+    ],
+    "total": 3
+  }
+}
+```
 
 ### Delete Resource
 

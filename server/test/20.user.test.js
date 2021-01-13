@@ -215,6 +215,13 @@ describe('user', function() {
     await mocha.get({url, headers, args, schema})
   });
 
+  it('list all', async function() {
+    const schema = getListResponseSchema()
+    const url = '/wolf/user/list_all'
+    const args = {}
+    await mocha.get({url, headers, args, schema})
+  });
+
   describe('admin test', function() {
     let userInfo = null;
     const headers = Object.assign({}, util.adminHeaders())

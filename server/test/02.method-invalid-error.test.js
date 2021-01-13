@@ -37,9 +37,21 @@ describe('method-invalid-error', function() {
     await mocha.post({url, headers, status: 404, schema})
   });
 
+  it('category.listAll', async function() {
+    const schema = util.failSchema('ERR_METHOD_INVALID');
+    const url = '/wolf/category/list_all';
+    await mocha.post({url, headers, status: 404, schema})
+  });
+
   it('permission.list', async function() {
     const schema = util.failSchema('ERR_METHOD_INVALID');
     const url = '/wolf/permission/list';
+    await mocha.post({url, headers, status: 404, schema})
+  });
+
+  it('permission.listAll', async function() {
+    const schema = util.failSchema('ERR_METHOD_INVALID');
+    const url = '/wolf/permission/list_all';
     await mocha.post({url, headers, status: 404, schema})
   });
 
@@ -49,9 +61,21 @@ describe('method-invalid-error', function() {
     await mocha.post({url, headers, status: 404, schema})
   });
 
+  it('resource.listAll', async function() {
+    const schema = util.failSchema('ERR_METHOD_INVALID');   
+    const url = '/wolf/resource/list_all';
+    await mocha.post({url, headers, status: 404, schema})
+  });
+
   it('role.list', async function() {
     const schema = util.failSchema('ERR_METHOD_INVALID');   
     const url = '/wolf/role/list';
+    await mocha.post({url, headers, status: 404, schema})
+  });
+
+  it('role.listAll', async function() {
+    const schema = util.failSchema('ERR_METHOD_INVALID');   
+    const url = '/wolf/role/list_all';
     await mocha.post({url, headers, status: 404, schema})
   });
 
@@ -70,6 +94,12 @@ describe('method-invalid-error', function() {
   it('user.list', async function() {
     const schema = util.failSchema('ERR_METHOD_INVALID');
     const url = '/wolf/user/list';
+    await mocha.post({url, headers, status: 404, schema})
+  });
+
+  it('user.listAll', async function() {
+    const schema = util.failSchema('ERR_METHOD_INVALID');
+    const url = '/wolf/user/list_all';
     await mocha.post({url, headers, status: 404, schema})
   });
 

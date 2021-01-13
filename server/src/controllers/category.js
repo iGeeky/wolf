@@ -40,6 +40,20 @@ class Category extends BasicService {
     this.success(data)
   }
 
+  async listAll() {
+    this.checkMethod('GET')
+    const appId = this.getRequiredArg('appID')
+    const where = {appID: appId}
+    const options = {where}
+    const categorys = await CategoryModel.findAll(options)
+    categorys.forEach((category, i) => {
+      categorys[i] = util.filterFieldWhite(category.toJSON(), categoryFields)
+    });
+    const total = categorys.length;
+    const data = {categorys, total}
+    this.success(data)
+  }
+
   async post() {
     const fieldsMap = {
       appID: {type: 'string', required: true},

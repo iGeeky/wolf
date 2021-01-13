@@ -155,6 +155,20 @@ class User extends BasicService {
     this.success(data)
   }
 
+  async listAll() {
+    this.checkMethod('GET')
+    const options = {}
+    const userInfos = await UserModel.findAll(options)
+    userInfos.forEach((userInfo, i) => {
+      userInfo = util.filterFieldWhite(userInfo.toJSON(), userFields)
+      userInfo.appIDs = userInfo.appIDs || []
+      userInfos[i] = userInfo;
+    });
+    const total = userInfos.length;
+    const data = {userInfos, total}
+    this.success(data)
+  }
+
   async post() {
     const fieldsMap = {
       username: {type: 'string', required: true},

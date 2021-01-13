@@ -939,6 +939,61 @@ curl http://127.0.0.1:10080/wolf/user/list \
 }
 ```
 
+### 所有用户列表
+
+查询所有用户, 不分页.
+
+#### 请求方法: GET
+#### 请求URL: /wolf/user/list_all
+#### `Header` 参数: 需要 [`Console`登录](#Login)的token, 通过 `x-rbac-token` 请求头传递.
+#### `Query`参数
+
+无
+
+#### `Response Body` 响应
+
+* data:
+
+字段 | 类型 | 必填项 |说明
+-------|-------|------|-----
+userInfos | [UserInfo](#UserInfo)[] | 是 | 用户列表.
+total | integer | 是 | 总记录数
+
+#### 示例
+
+* 请求
+
+```json
+curl http://127.0.0.1:10080/wolf/user/list_all \
+-H "x-rbac-token: $WOLF_TOKEN"
+```
+
+* 响应
+
+```json
+{
+  "ok": true,
+  "reason": "",
+  "data": {
+    "userInfos": [
+     {
+        "id": 697,
+        "username": "admin",
+        "nickname": "administrator",
+        "email": null,
+        "appIDs": [
+          "openresty",
+          "restful"
+        ],
+        "manager": "admin",
+        "createTime": 1578401859
+      },
+      ...
+    ],
+    "total": 6
+  }
+}
+```
 
 ### 重置用户密码
 
@@ -1236,6 +1291,62 @@ curl http://127.0.0.1:10080/wolf/role/list?appID=restful \
 }
 ```
 
+### 所有角色列表
+
+查询指定应用下的所有角色, 不分页.
+
+#### 请求方法: GET
+#### 请求URL: /wolf/role/list_all
+#### `Header` 参数: 需要 [`Console`登录](#Login)的token, 通过 `x-rbac-token` 请求头传递.
+#### `Query`参数
+
+字段 | 类型 | 必填项 |说明
+-------|-------|------|-----
+appID | string | 是 | 应用ID
+
+#### `Response Body` 响应
+
+* data:
+
+字段 | 类型 | 必填项 |说明
+-------|-------|------|-----
+roles | [Role](#Role)[] | 是 | 角色列表.
+total | integer | 是 | 总记录数
+
+#### 示例
+
+* 请求
+
+```json
+curl http://127.0.0.1:10080/wolf/role/list_all?appID=restful \
+-H "x-rbac-token: $WOLF_TOKEN"
+```
+
+* 响应
+
+```json
+{
+  "ok": true,
+  "reason": "",
+  "data": {
+    "roles": [
+      {
+        "id": "test-role",
+        "name": "role for test",
+        "description": "description of role",
+        "appID": "restful",
+        "permIDs": [
+          "PERM_YYY"
+        ],
+        "createTime": 1588583707,
+        "updateTime": 1588586200
+      },
+      ...
+    ],
+    "total": 5
+  }
+}
+```
 
 ### 删除角色
 
@@ -1473,6 +1584,62 @@ curl http://127.0.0.1:10080/wolf/permission/list?appID=restful \
 }
 ```
 
+### 所有权限列表
+
+查询指定应用下的所有权限, 不分页.
+
+#### 请求方法: GET
+#### 请求URL: /wolf/permission/list_all
+#### `Header` 参数: 需要 [`Console`登录](#Login)的token, 通过 `x-rbac-token` 请求头传递.
+#### `Query`参数
+
+字段 | 类型 | 必填项 |说明
+-------|-------|------|-----
+appID | string | 是 | 应用ID
+
+#### `Response Body` 响应
+
+* data:
+
+字段 | 类型 | 必填项 |说明
+-------|-------|------|-----
+permissions | [Permission](#Permission)[] | 是 | 权限列表.
+total | integer | 是 | 总记录数
+
+#### 示例
+
+* 请求
+
+```json
+curl http://127.0.0.1:10080/wolf/permission/list_all?appID=restful \
+-H "x-rbac-token: $WOLF_TOKEN"
+```
+
+* 响应
+
+```json
+
+  "ok": true,
+  "reason": "",
+  "data": {
+    "permissions": [
+      {
+        "id": "test-permission",
+        "appID": "restful",
+        "name": "permission for test2",
+        "description": "description of permission2",
+        "categoryID": 2,
+        "createTime": 1588658062,
+        "updateTime": 1588658246,
+        "category_id": 2,
+        "category": null
+      },
+      ...
+    ],
+    "total": 2
+  }
+}
+```
 
 ### 删除权限
 
@@ -1841,6 +2008,57 @@ curl http://127.0.0.1:10080/wolf/category/list?appID=restful \
 }
 ```
 
+### 所有分类列表
+
+查询指定应用下的所有分类, 不分页.
+
+#### 请求方法: GET
+#### 请求URL: /wolf/category/list_all
+#### `Header` 参数: 需要 [`Console`登录](#Login)的token, 通过 `x-rbac-token` 请求头传递.
+#### `Query`参数
+
+字段 | 类型 | 必填项 |说明
+-------|-------|------|-----
+appID | string | 是 | 应用ID
+
+#### `Response Body` 响应
+
+* data:
+
+字段 | 类型 | 必填项 |说明
+-------|-------|------|-----
+categorys | [Category](#Category)[] | 是 | 分类列表.
+total | integer | 是 | 总记录数
+
+#### 示例
+
+* 请求
+
+```json
+curl http://127.0.0.1:10080/wolf/category/list_all?appID=restful \
+-H "x-rbac-token: $WOLF_TOKEN"
+```
+
+* 响应
+
+```json
+{
+  "ok": true,
+  "reason": "",
+  "data": {
+    "categorys": [
+      {
+        "id": 744,
+        "appID": "restful",
+        "name": "category for test2",
+        "createTime": 1588659229,
+        "updateTime": 1588659461
+      }
+    ],
+    "total": 1
+  }
+}
+```
 
 ### 删除分类
 
@@ -2079,6 +2297,61 @@ curl http://127.0.0.1:10080/wolf/resource/list?appID=restful \
 }
 ```
 
+### 所有资源列表
+
+查询指定应用下的所有资源, 不分页.
+
+#### 请求方法: GET
+#### 请求URL: /wolf/resource/list_all
+#### `Header` 参数: 需要 [`Console`登录](#Login)的token, 通过 `x-rbac-token` 请求头传递.
+#### `Query`参数
+
+字段 | 类型 | 必填项 |说明
+-------|-------|------|-----
+appID | string | 是 | 应用ID
+
+#### `Response Body` 响应
+
+* data:
+
+字段 | 类型 | 必填项 |说明
+-------|-------|------|-----
+resources | [Resource](#Resource)[] | 是 | 资源列表.
+total | integer | 是 | 总记录数
+
+#### 示例
+
+* 请求
+
+```json
+curl http://127.0.0.1:10080/wolf/resource/list_all?appID=restful \
+-H "x-rbac-token: $WOLF_TOKEN"
+```
+
+* 响应
+
+```json
+{
+  "ok": true,
+  "reason": "",
+  "data": {
+    "resources": [
+      {
+        "id": 8512,
+        "appID": "restful",
+        "matchType": "equal",
+        "name": "/path/to/resource",
+        "priority": 11483,
+        "action": "ALL",
+        "permID": "PERM_YYY",
+        "createTime": 1588660594
+      },
+      ...
+    ],
+    "total": 3
+  }
+}
+```
 
 ### 删除资源
 
