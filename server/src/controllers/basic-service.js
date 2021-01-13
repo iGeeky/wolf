@@ -8,6 +8,7 @@ const RoleModel = require('../model/role');
 const CategoryModel = require('../model/category')
 const PermissionModel = require('../model/permission')
 const ApplicationModel = require('../model/application')
+const MethodInvalidError = require('../errors/method-invalid-error')
 const tokenUtil = require('../util/token-util')
 const Op = require('sequelize').Op;
 const _ = require('lodash')
@@ -35,6 +36,14 @@ class BasicService extends Service {
       exist = true;
     }
     return this.success({exist})
+  }
+
+  // for REST
+  checkMethod(method) {
+    if (this.ctx.method !== method) {
+      throw new MethodInvalidError(errors.errmsg(errors.ERR_METHOD_INVALID))
+      return
+    }
   }
 
   async checkAppIDsExist(appIDs) {

@@ -17,6 +17,7 @@ class Permission extends BasicService {
   }
 
   async list() {
+    this.checkMethod('GET')
     const limit = this.getIntArg('limit', 10)
     const page = this.getIntArg('page', 1)
     const offset = (page-1) * limit

@@ -39,6 +39,7 @@ class UserRole extends BasicService {
   }
 
   async set() {
+    this.checkMethod('POST')
     const fieldsMap = {
       userID: {type: 'integer', required: true},
       appID: {type: 'string', required: true},

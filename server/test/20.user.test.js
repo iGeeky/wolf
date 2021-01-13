@@ -128,7 +128,7 @@ describe('user', function() {
     const tel = '13012341234'
     const body = {username, nickname, email, tel, appIDs, password: util.defPassword()}
     const url = '/wolf/user';
-    await mocha.post({url, headers, body, schema})
+    await mocha.post({url, headers, body, status: 400, schema})
   });
 
   it('update', async function() {
@@ -160,7 +160,7 @@ describe('user', function() {
 
     const body2 = {id: tmpId, username, nickname}
     const schema_name_exist = util.failSchema('ERR_USERNAME_EXIST', 'Username already exists')
-    await mocha.put({url, headers, body: body2, schema: schema_name_exist})
+    await mocha.put({url, headers, body: body2, status: 400, schema: schema_name_exist})
 
     const body3 = {username: usernameTmp}
     await mocha.delete({url, headers, body: body3})
@@ -177,6 +177,12 @@ describe('user', function() {
     await mocha.put({url, headers, body, status: 400, schema})
   });
 
+  it('update failed, appId not found', async function() {
+    const schema = util.failSchema('ERR_APPLICATION_ID_NOT_FOUND')
+    const body = {id, appIDs:['not-exist-appid']}
+    const url = '/wolf/user';
+    await mocha.put({url, headers, body, status: 400, schema})
+  });
 
   it('delete by username failed, not found', async function() {
     const schema = util.failSchema('ERR_USER_NOT_FOUND');
@@ -308,7 +314,7 @@ describe('user', function() {
       const schema = util.okSchema()
       const body = { id: userID }
       const url = '/wolf/user/reset_pwd';
-      const res = await mocha.post({url, headers: util.adminHeaders(), body, schema})
+      const res = await mocha.put({url, headers: util.adminHeaders(), body, schema})
       newPassword = res.body.data.password
     });
 

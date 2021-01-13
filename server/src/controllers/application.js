@@ -85,6 +85,7 @@ class Application extends BasicService {
   }
 
   async secret() {
+    this.checkMethod('GET')
     const id = this.getRequiredArg('id')
     const application = await ApplicationModel.findByPk(id)
     if (!application) {
@@ -100,6 +101,7 @@ class Application extends BasicService {
   }
 
   async list() {
+    this.checkMethod('GET')
     const limit = this.getIntArg('limit', 10)
     const page = this.getIntArg('page', 1)
     const offset = (page-1) * limit
@@ -129,6 +131,7 @@ class Application extends BasicService {
   }
 
   async listAll() {
+    this.checkMethod('GET')
     const options = {}
     const applications = await ApplicationModel.findAll(options)
     applications.forEach((application, i) => {

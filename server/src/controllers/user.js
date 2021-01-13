@@ -113,6 +113,7 @@ class User extends BasicService {
   }
 
   async info() {
+    this.checkMethod('GET')
     const userInfo = this.ctx.userInfo
     let applications = await this.userApplications(userInfo);
     userInfo.appIDs = userInfo.appIDs || []
@@ -122,6 +123,7 @@ class User extends BasicService {
   }
 
   async list() {
+    this.checkMethod('GET')
     const limit = this.getIntArg('limit', 10)
     const page = this.getIntArg('page', 1)
     const offset = (page-1) * limit
@@ -210,6 +212,8 @@ class User extends BasicService {
       await UserModel.checkNotExist({'id': {[Op.ne]: id}, username: values.username}, errors.ERR_USERNAME_EXIST)
     }
 
+    await this.checkAppIDsExist(values.appIDs)
+
     values.updateTime = util.unixtime();
     const options = {where: {id}}
     let {effects, newValues: userInfo} = await UserModel.mustUpdate(values, options)
@@ -219,6 +223,7 @@ class User extends BasicService {
   }
 
   async resetPwd() {
+    this.checkMethod('PUT')
     const id = this.getRequiredIntArg('id')
     const values = {}
     const password = util.randomString(12)

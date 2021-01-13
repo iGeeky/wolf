@@ -63,7 +63,7 @@ describe('application', function() {
     const refreshTokenLifetime = 7200;
     const body = {id, name, description, secret, redirectUris, grants, accessTokenLifetime, refreshTokenLifetime}
     const url = '/wolf/application';
-    await mocha.post({url, headers, body, schema})
+    await mocha.post({url, headers, body, status: 400, schema})
   });
 
   it('add failed, name exist', async function() {
@@ -77,7 +77,7 @@ describe('application', function() {
     const refreshTokenLifetime = 7200;
     const body = {id, name, description, secret, redirectUris, grants, accessTokenLifetime, refreshTokenLifetime}
     const url = '/wolf/application';
-    await mocha.post({url, headers, body, schema})
+    await mocha.post({url, headers, body, status: 400, schema})
   });
 
   it('get secret', async function(){
@@ -111,7 +111,7 @@ describe('application', function() {
     await mocha.post({url, headers, body, schema})
 
     body.name = name
-    await mocha.put({url, headers, body, 'schema': schema_name_exist})
+    await mocha.put({url, headers, body, status: 400, 'schema': schema_name_exist})
   });
 
   it('update', async function() {

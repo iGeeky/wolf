@@ -14,6 +14,7 @@ const userFields = ['id', 'username', 'nickname', 'email', 'appIDs',
 const errors = {
   ERR_USERNAME_MISSING: 'Username missing!',
   ERR_PASSWORD_MISSING: 'Password missing!',
+  ERR_APPID_NOT_FOUND: 'Appid not found!',
   ERR_USER_NOT_FOUND: 'User not found!',
   ERR_PASSWORD_ERROR: 'Password error!',
   ERR_APPID_MISSING: 'Appid missing!',
@@ -22,7 +23,8 @@ const errors = {
   ERR_NEW_PASSWORD_REQUIRED: 'New password is required',
   ERR_REPEATED_PASSWORD_INCORRECT: 'The password you entered repeatedly is incorrect.',
   ERR_OLD_PASSWORD_INCORRECT: 'Old password is incorrect.',
-  ERR_USER_DISABLED: 'User is disabled.'
+  ERR_USER_DISABLED: 'User is disabled.',
+  ERR_USER_APPIDS: 'User is not associated with the app.'
 }
 
 class Rbac extends RbacPub {
@@ -90,6 +92,12 @@ class Rbac extends RbacPub {
       return {ok: false, reason: 'ERR_APPID_MISSING'}
     }
 
+    const application = await ApplicationModel.findByPk(appid)
+    if (!application) { // app not exist
+      this.log4js.warn(`application id [%s] not found`, username)
+      return {ok: false, reason: 'ERR_APPID_NOT_FOUND'}
+    }
+
     let userInfo = await UserModel.findOne({where: {username}})
     if (!userInfo) { // user not exist
       this.log4js.warn('rbac user [%s] login failed! user not exist', username)
@@ -105,6 +113,11 @@ class Rbac extends RbacPub {
     if (userInfo.status === constant.UserStatus.Disabled) {
       this.log4js.warn('user [%s] login failed! disabled', username)
       return {ok: false, reason: 'ERR_USER_DISABLED'}
+    }
+
+    if (!userInfo.appIDs.includes(appid)) {
+      this.log4js.warn('user [%s] login failed! user is not associated with the app', username)
+      return {ok: false, reason: 'ERR_USER_APPIDS'}
     }
 
     userCache.flushUserCacheByID(userInfo.id, appid)
