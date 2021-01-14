@@ -31,7 +31,7 @@ export async function resetPwd(id) {
   const data = { id }
   return await request({
     url: '/user/reset_pwd',
-    method: 'post',
+    method: 'put',
     data,
   })
 }

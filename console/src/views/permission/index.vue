@@ -284,6 +284,9 @@ export default {
       const isEdit = this.dialogType === 'edit'
 
       if (isEdit) {
+        if (this.permission.categoryID === '') {
+          this.permission.categoryID = null
+        }
         const res = await updatePermission(this.permission.id, this.permission)
         if (!res.ok) {
           return
