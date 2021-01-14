@@ -50,7 +50,8 @@ class Permission extends BasicService {
     const options = {where, include: ['category']}
     const permissions = await PermissionModel.findAll(options)
     permissions.forEach((permission, i) => {
-      permissions[i] = util.filterFieldWhite(permission.toJSON(), permissionFields)
+      permission = permission.toJSON()
+      permissions[i] = permission;
     });
     const total = permissions.length;
     const data = {permissions, total}
