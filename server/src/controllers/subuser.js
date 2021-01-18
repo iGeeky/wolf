@@ -14,7 +14,7 @@ class SubUser extends BasicService {
     this.checkMethod('GET')
     let where = {}
     let options = {}
-    const username = this.getRequiredIntArg('username')
+    const username = this.getRequiredArg('username')
     const appID = this.getRequiredArg('appID')
 
     where = {username}
