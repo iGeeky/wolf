@@ -1,4 +1,5 @@
 const BasicService = require('./basic-service')
+const UserModel = require('../model/user')
 const UserRoleModel = require('../model/user-role')
 const RoleModel = require('../model/role')
 const PermissionModel = require('../model/permission')
@@ -13,8 +14,14 @@ class SubUser extends BasicService {
     this.checkMethod('GET')
     let where = {}
     let options = {}
-    const userID = this.getRequiredIntArg('userID')
+    const username = this.getRequiredIntArg('username')
     const appID = this.getRequiredArg('appID')
+
+    where = {username}
+    options = {where}
+    const user_info = await UserModel.findOne(options)
+    const userID = user_info.id
+
     where = {userID, appID}
     options = {where}
     const userRole = await UserRoleModel.findOne(options)
