@@ -59,7 +59,7 @@ class Role extends BasicService {
     const values = this.getCheckedValues(fieldsMap)
 
     await RoleModel.checkNotExist({appID: values.appID, id: values.id}, errors.ERR_ROLE_ID_EXIST)
-    await RoleModel.checkNotExist({name: values.name}, errors.ERR_ROLE_NAME_EXIST)
+    await RoleModel.checkNotExist({appID: values.appID, name: values.name}, errors.ERR_ROLE_NAME_EXIST)
     await this.checkAppIDsExist([values.appID])
     await this.checkPermIDsExist(values.appID, values.permIDs)
 
@@ -83,7 +83,7 @@ class Role extends BasicService {
     await this.checkAppIDsExist([appID])
     await RoleModel.checkExist({ appID, id }, errors.ERR_ROLE_ID_NOT_FOUND)
     if (values.name) {
-      await RoleModel.checkNotExist({'id': {[Op.ne]: id}, name: values.name}, errors.ERR_ROLE_NAME_EXIST)
+      await RoleModel.checkNotExist({'id': {[Op.ne]: id}, appID: appID, name: values.name}, errors.ERR_ROLE_NAME_EXIST)
     }
     await this.checkPermIDsExist(appID, values.permIDs)
 

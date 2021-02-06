@@ -45,10 +45,9 @@
 		* changes_all
 * un_cn_getting_start cn-getting-start
 	* permission
-		* 
-	* role
 		* INDEX
 		* INDEX_CN
+	* role
 * un_suffix_match components-resources
 	* permission
 		* COMPONENTS

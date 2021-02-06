@@ -34,10 +34,9 @@
 		* changes_all
 * or_cn_getting_start cn-getting-start
 	* permission
-		* 
-	* role
 		* INDEX
 		* INDEX_CN
+	* role
 * or_suffix_match components-resources
 	* permission
 		* COMPONENTS

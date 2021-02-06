@@ -83,6 +83,18 @@ describe('role', function() {
     await mocha.post({url, headers, body, schema})
   });
 
+  it('add third', async function() {
+    const schema = getAddResponseSchema();
+    const id = 'test-role-id3'
+    const name = 'test-role-name3'
+    const description = 'test-role-description'
+    const permIDs = permIDMaps[appID2]
+    const body = {id, name, description, appID: appID2, permIDs}
+
+    const url = '/wolf/role';
+    await mocha.post({url, headers, body, schema})
+  });
+
 
   it('add failed, id exists', async function() {
     const schema = util.failSchema('ERR_ROLE_ID_EXIST', 'Role ID already exists')
@@ -146,7 +158,7 @@ describe('role', function() {
   it('update first', async function() {
     const schema = getAddResponseSchema();
     const id = 'test-role-id'
-    name += ':updated'
+    name = 'test-role-name2'
     const description = 'test-role-description:updated'
     const permIDs = permIDMaps[appID]
     const body = {id, appID, name, description, permIDs}
@@ -168,9 +180,9 @@ describe('role', function() {
 
   it('update failed, name exists', async function() {
     const schema = util.failSchema('ERR_ROLE_NAME_EXIST', 'Role name already exists')
-    const id = 'test-role-id'
-    const name = 'test-role-name2'
-    const body = {id, appID, name}
+    const id = 'test-role-id2'
+    const name = 'test-role-name3'
+    const body = {id, appID: appID2, name}
 
     const url = '/wolf/role';
     await mocha.put({url, headers, body, status: 400, schema})
@@ -205,7 +217,7 @@ describe('role', function() {
     await mocha.put({url, headers, body, status: 400, schema})
   });
 
-  it('delete second', async function() {
+  it('delete second,third', async function() {
     const dataSchema = {
       type: "object",
       properties: {
@@ -232,6 +244,8 @@ describe('role', function() {
     const id = 'test-role-id'
     const body = {id, appID}
     await mocha.delete({url, headers, body})
+
+    await mocha.delete({url, headers, body: {id: 'test-role-id3', appID: appID2}})    
 
     for (let appID of appIDs) {
       await util.deleteApplication(appID, headers)

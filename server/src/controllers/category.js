@@ -47,7 +47,7 @@ class Category extends BasicService {
     }
     const values = this.getCheckedValues(fieldsMap)
 
-    await CategoryModel.checkNotExist({name: values.name}, errors.ERR_CATEGORY_NAME_EXIST)
+    await CategoryModel.checkNotExist({appID: values.appID, name: values.name}, errors.ERR_CATEGORY_NAME_EXIST)
     await this.checkAppIDsExist([values.appID])
 
     values.createTime = util.unixtime();
