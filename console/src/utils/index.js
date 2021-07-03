@@ -42,6 +42,10 @@ export function parseTime(time, cFormat) {
   return time_str
 }
 
+export function format(str, argObject) {
+  return str.replace(/\${(.*?)}/g, (x, g) => argObject[g])
+}
+
 /**
  * @param {number} time
  * @param {string} option

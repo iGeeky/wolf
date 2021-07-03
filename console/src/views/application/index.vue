@@ -4,7 +4,7 @@
     <div class="filter-container">
       <el-input
         v-model="listQuery.key"
-        placeholder="App ID or App Name"
+        :placeholder="$t('wolf.appSearchPrompt')"
         style="width: 200px;"
         class="filter-item"
         maxlength="32"
@@ -12,43 +12,42 @@
         @keyup.enter.native="handleFilter"
       />
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        Search
+        {{ $t('wolf.search') }}
       </el-button>
-      <el-button class="filter-item" type="primary" @click="handleAdd">New Application</el-button>
+      <el-button class="filter-item" type="primary" @click="handleAdd">{{ $t('wolf.appNewApplication') }}</el-button>
     </div>
 
     <el-table :data="applications" style="margin-top:30px; " border>
-      <el-table-column align="center" label="ID" min-width="15" show-overflow-tooltip>
+      <el-table-column align="center" :label="$t('wolf.titleId')" min-width="15" show-overflow-tooltip>
         <template slot-scope="scope">
           {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Name" min-width="20" show-overflow-tooltip>
+      <el-table-column align="center" :label="$t('wolf.titleName')" min-width="20" show-overflow-tooltip>
         <template slot-scope="scope">
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Description" min-width="40" show-overflow-tooltip>
+      <el-table-column align="center" :label="$t('wolf.titleDescription')" min-width="40" show-overflow-tooltip>
         <template slot-scope="scope">
           {{ scope.row.description }}
         </template>
       </el-table-column>
-      <!-- <el-table-column align="center" label="Create Time" min-width="18" show-overflow-tooltip prop="createTime" :formatter="unixtimeFormat" /> -->
 
-      <el-table-column align="center" label="Redirect Uris" min-width="40" show-overflow-tooltip prop="redirectUris" :formatter="redirectUrisFormat" />
-      <el-table-column align="center" label="AccessToken Lifetime" min-width="20" show-overflow-tooltip prop="accessTokenLifetime" :formatter="lifetimeFormat" />
-      <el-table-column align="center" label="RefreshToken Lifetime" min-width="20" show-overflow-tooltip prop="refreshTokenLifetime" :formatter="lifetimeFormat" />
-      <el-table-column align="center" label="Diagram" min-width="10">
+      <el-table-column align="center" :label="$t('wolf.appTitleRedirectUris')" min-width="40" show-overflow-tooltip prop="redirectUris" :formatter="redirectUrisFormat" />
+      <el-table-column align="center" :label="$t('wolf.appTitleAccessTokenLifetime')" min-width="20" show-overflow-tooltip prop="accessTokenLifetime" :formatter="lifetimeFormat" />
+      <el-table-column align="center" :label="$t('wolf.appTitleRefreshTokenLifetime')" min-width="20" show-overflow-tooltip prop="refreshTokenLifetime" :formatter="lifetimeFormat" />
+      <el-table-column align="center" :label="$t('wolf.appTitleDiagram')" min-width="10">
         <template slot-scope="scope">
-          <el-button type="primary" size="small" @click="handleDiagram(scope)">Show</el-button>
+          <el-button type="primary" size="small" @click="handleDiagram(scope)">{{ $t('wolf.btnShow') }}</el-button>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="Create Time" min-width="20" show-overflow-tooltip prop="createTime" :formatter="unixtimeFormat" />
-      <el-table-column align="center" label="Operations" min-width="20">
+      <el-table-column align="center" :label="$t('wolf.titleCreateTime')" min-width="20" show-overflow-tooltip prop="createTime" :formatter="unixtimeFormat" />
+      <el-table-column align="center" :label="$t('wolf.titleOperations')" min-width="20">
         <template slot-scope="scope">
-          <el-button type="primary" size="small" @click="handleEdit(scope)">Edit</el-button>
-          <el-button type="danger" size="small" @click="handleDelete(scope)">Delete</el-button>
+          <el-button type="primary" size="small" @click="handleEdit(scope)">{{ $t('wolf.btnEdit') }}</el-button>
+          <el-button type="danger" size="small" @click="handleDelete(scope)">{{ $t('wolf.btnDelete') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -56,52 +55,52 @@
       <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="listApplications" />
     </div>
 
-    <el-dialog :visible.sync="dialogVisible" :title="dialogType==='edit'?'Edit Application':'New Application'" custom-class="application-edit-dialog">
+    <el-dialog :visible.sync="dialogVisible" :title="dialogType==='edit'?$t('wolf.appEditApplication'):$t('wolf.appNewApplication')" custom-class="application-edit-dialog">
       <el-form ref="application" :model="application" :rules="rules" label-width="150px" label-position="left">
-        <el-form-item label="App ID" prop="id">
+        <el-form-item :label="$t('wolf.newAppAppIDLabel')" prop="id">
           <el-input
             v-model="application.id"
-            placeholder="Application ID"
+            :placeholder="$t('wolf.newAppAppIDPrompt')"
             :readonly="dialogType==='edit'"
             minlength="3"
             maxlength="32"
             show-word-limit
           />
         </el-form-item>
-        <el-form-item label="App Name" prop="name">
+        <el-form-item :label="$t('wolf.newAppAppNameLabel')" prop="name">
           <el-input
             v-model="application.name"
-            placeholder="Application Name"
+            :placeholder="$t('wolf.newAppAppNamePrompt')"
             minlength="5"
             maxlength="64"
             show-word-limit
           />
         </el-form-item>
-        <el-form-item label="Description" prop="description">
+        <el-form-item :label="$t('wolf.newAppDescriptionLabel')" prop="description">
           <el-input
             v-model="application.description"
-            placeholder="Description"
+            :placeholder="$t('wolf.newAppDescriptionPrompt')"
             maxlength="256"
             show-word-limit
           />
         </el-form-item>
-        <el-form-item label="App Secret" prop="secret">
+        <el-form-item :label="$t('wolf.newAppAppSecretLabel')" prop="secret">
           <el-input
             v-model="application.secret"
-            placeholder="Application secret"
+            :placeholder="$t('wolf.newAppAppSecretPrompt')"
             maxlength="64"
             :readonly="true"
             show-word-limit
           >
-            <el-button v-if="showBtnShow" slot="append" @click="showSecret(application.id);">Show</el-button>
+            <el-button v-if="showBtnShow" slot="append" @click="showSecret(application.id);">{{ $t('wolf.btnShow') }}</el-button>
             <el-button
               v-if="showBtnReset"
               slot="append"
               @click="resetSecret();"
-            >Reset</el-button>
+            >{{ $t('wolf.btnReset') }}</el-button>
           </el-input>
         </el-form-item>
-        <el-form-item label="Redirect Uris" prop="redirectUris" class="redirect-uris-item">
+        <el-form-item :label="$t('wolf.newAppRedirectUrisLabel')" prop="redirectUris" class="redirect-uris-item">
           <el-tag
             v-for="redirectUri in application.redirectUris"
             :key="redirectUri"
@@ -116,7 +115,7 @@
             v-if="redirectUriInputVisible"
             ref="saveRedirectUriInput"
             v-model="redirectUriInputValue"
-            placeholder="Redirect Url"
+            :placeholder="$t('wolf.newAppRedirectUrisPrompt')"
             maxlength="256"
             show-word-limit
             class="input-new-redirect-uri"
@@ -124,21 +123,21 @@
             @keyup.enter.native="handleRedirectUriInputConfirm"
             @blur="handleRedirectUriInputConfirm"
           />
-          <el-button v-else class="button-new-redirect-uri" size="small" @click="showRedirectUriInput">+ New Redirect Uri</el-button>
+          <el-button v-else class="button-new-redirect-uri" size="small" @click="showRedirectUriInput">{{ $t('wolf.newAppRedirectUrisBtnPrompt') }}</el-button>
         </el-form-item>
-        <el-form-item label="AccessToken Lifetime" prop="accessTokenLifetime" label-width="200px" class="lifetime-item">
+        <el-form-item :label="$t('wolf.newAppAccessTokenLifetimeLabel')" prop="accessTokenLifetime" label-width="200px" class="lifetime-item">
           <el-input
             v-model="application.accessTokenLifetime"
-            placeholder="Access token lifetime in seconds"
+            :placeholder="$t('wolf.newAppAccessTokenLifetimePrompt')"
             maxlength="10"
             type="number"
           />
           <el-tag size="medium">{{ accessTokenLifetimePrompt }}</el-tag>
         </el-form-item>
-        <el-form-item label="RefreshToken Lifetime" prop="refreshTokenLifetime" label-width="200px" class="lifetime-item">
+        <el-form-item :label="$t('wolf.newAppRefreshTokenLifetimeLabel')" prop="refreshTokenLifetime" label-width="200px" class="lifetime-item">
           <el-input
             v-model="application.refreshTokenLifetime"
-            placeholder="Refresh token lifetime in seconds"
+            :placeholder="$t('wolf.newAppRefreshTokenLifetimePrompt')"
             maxlength="10"
             type="number"
           />
@@ -146,14 +145,14 @@
         </el-form-item>
       </el-form>
       <div style="text-align:right;">
-        <el-button type="danger" @click="dialogVisible=false">Cancel</el-button>
-        <el-button type="primary" @click="validateAndSubmit('application');">Confirm</el-button>
+        <el-button type="danger" @click="dialogVisible=false">{{ $t('wolf.btnCancel') }}</el-button>
+        <el-button type="primary" @click="validateAndSubmit('application');">{{ $t('wolf.btnConfirm') }}</el-button>
       </div>
     </el-dialog>
 
     <el-dialog
       id="diagram"
-      title="Application Diagram"
+      :title="$t('wolf.appDiagramTitle')"
       :visible.sync="diagramDialogVisible"
       custom-class="diagram-dialog"
       center
@@ -170,6 +169,7 @@ import { lifetimeFormatter } from '@/utils/formatter'
 import { listApplications, addApplication, deleteApplication, updateApplication, checkAppIdExist, checkAppNameExist, applicationDiagram, getSecret } from '@/api/application'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import RbacDiagram from '@/components/RbacDiagram'
+import i18n from '@/i18n/i18n'
 
 const defaultApplication = {
   id: '',
@@ -213,13 +213,13 @@ export default {
       redirectUriInputValue: '',
       rules: {
         id: [
-          { required: true, message: 'Please Input Application ID', trigger: ['blur', 'change'] },
-          { min: 2, max: 32, message: 'Length must be between 2 and 32 characters', trigger: ['blur', 'change'] },
-          { pattern: /^[a-zA-Z0-9_-]*$/, message: 'App ID can only contain letters(a-zA-Z), numbers(0-9), underline(_)', trigger: ['blur', 'change'] },
+          { required: true, message: i18n.t('wolf.appRulesMessageIDRequired'), trigger: ['blur', 'change'] },
+          { min: 2, max: 32, message: i18n.t('wolf.appRulesMessageLength'), trigger: ['blur', 'change'] },
+          { pattern: /^[a-zA-Z0-9_-]*$/, message: i18n.t('wolf.appRulesMessageFormat'), trigger: ['blur', 'change'] },
           { validator: this.validateAppId, trigger: ['blur', 'change'] },
         ],
         name: [
-          { required: true, message: 'Please Input Application Name', trigger: ['blur', 'change'] },
+          { required: true, message: i18n.t('wolf.appRulesMessageNameRequired'), trigger: ['blur', 'change'] },
           { validator: this.validateAppName, trigger: ['blur', 'change'] },
         ],
         redirectUris: [
@@ -256,9 +256,12 @@ export default {
     },
 
     resetSecret() {
-      this.$confirm('Confirm to reset the secret?', 'Warning', {
-        confirmButtonText: 'Confirm',
-        cancelButtonText: 'Cancel',
+      const prompt = i18n.t('wolf.appPromptConfirmResetSecret')
+      const textConfirm = i18n.t('wolf.btnConfirm')
+      const textCancel = i18n.t('wolf.btnCancel')
+      this.$confirm(prompt, 'Warning', {
+        confirmButtonText: textConfirm,
+        cancelButtonText: textCancel,
         type: 'warning',
       })
         .then(async() => {
@@ -309,7 +312,7 @@ export default {
 
       const res = await checkAppIdExist(value)
       if (res.ok && res.exist) {
-        callback(new Error(`App ID '${value}' already exists`))
+        callback(new Error(i18n.t('wolf.appPromptAppIDExist')))
       } else {
         callback()
       }
@@ -318,7 +321,7 @@ export default {
     async validateAppName(rule, value, callback) {
       const res = await checkAppNameExist(value, this.application.id)
       if (res.ok && res.exist) {
-        callback(new Error(`App Name '${value}' already exists`))
+        callback(new Error(i18n.t('wolf.appPromptAppNameExist')))
       } else {
         callback()
       }
@@ -360,9 +363,12 @@ export default {
       this.diagramDialogVisible = true
     },
     handleDelete({ $index, row }) {
-      this.$confirm('Confirm to remove the application?', 'Warning', {
-        confirmButtonText: 'Confirm',
-        cancelButtonText: 'Cancel',
+      const prompt = i18n.t('wolf.appPromptConfirmRemoveApplication')
+      const textConfirm = i18n.t('wolf.btnConfirm')
+      const textCancel = i18n.t('wolf.btnCancel')
+      this.$confirm(prompt, 'Warning', {
+        confirmButtonText: textConfirm,
+        cancelButtonText: textCancel,
         type: 'warning',
       })
         .then(async() => {
@@ -371,7 +377,7 @@ export default {
             this.listApplications()
             this.$message({
               type: 'success',
-              message: 'Delete succed!',
+              message: i18n.t('wolf.appPromptRemoveSuccess'),
             })
             await this.$store.dispatch('user/getInfo')
           }
@@ -400,15 +406,13 @@ export default {
           return
         }
         this.listApplications()
-        const { name } = this.application
+        // const { name } = this.application
         this.dialogVisible = false
         await this.$store.dispatch('user/getInfo')
         this.$notify({
           title: 'Success',
           dangerouslyUseHTMLString: true,
-          message: `
-            <div>Alter application '${name}' success.</div>
-          `,
+          message: i18n.t('wolf.appPromptUpdateSuccess'),
           type: 'success',
         })
       } else {
@@ -418,13 +422,13 @@ export default {
         }
         this.listApplications()
 
-        const { name } = this.application
+        // const { name } = this.application
         this.dialogVisible = false
         await this.$store.dispatch('user/getInfo')
         this.$notify({
           title: 'Success',
           dangerouslyUseHTMLString: true,
-          message: `<div>Application '${name}' added.</div>`,
+          message: i18n.t('wolf.appPromptAddSuccess'),
           type: 'success',
         })
       }

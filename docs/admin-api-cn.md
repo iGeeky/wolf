@@ -97,7 +97,7 @@ description | string | 否 | 应用描述
 secret | string | 否 | 应用的secret, OAuth2登录时使用
 redirectUris | string[] | 否 | OAuth2登录跳转地址.
 accessTokenLifetime | integer | 否 | OAuth2的AccessToken存活时间, 单位是秒.
-refreshTokenLifetime | integer | 否 | OAuth2的RefreshToken存储时间, 单位是秒.
+refreshTokenLifetime | integer | 否 | OAuth2的RefreshToken存活时间, 单位是秒.
 createTime | integer | 是 | 应用创建时间
 updateTime | integer | 是 | 应用修改时间
 
@@ -345,7 +345,7 @@ description | string | 否 | 应用说明
 secret | string | 否 | 应用的secret, OAuth2登录时使用
 redirectUris | string[] | 否 | OAuth2登录回调.
 accessTokenLifetime | integer | 否 | OAuth2的AccessToken存活时间, 单位是秒, 如果为0, 使用系统默认设置: 7天.
-refreshTokenLifetime | integer | 否 | OAuth2的RefreshToken存储时间, 单位是秒, 如果为0, 使用系统默认设置: 30天.
+refreshTokenLifetime | integer | 否 | OAuth2的RefreshToken存活时间, 单位是秒, 如果为0, 使用系统默认设置: 30天.
 
 #### `Response Body` 响应
 

@@ -8,7 +8,7 @@
       filterable
       default-first-option
       remote
-      placeholder="Search rbac module"
+      :placeholder="$t('wolf.headerSearchPlaceHolder')"
       class="header-search-select"
       @change="change"
     >

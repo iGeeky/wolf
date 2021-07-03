@@ -5,10 +5,12 @@
     <breadcrumb id="breadcrumb-container" class="breadcrumb-container" />
 
     <div class="right-menu">
-      <template v-if="device!=='mobile'">
+      <!-- v-if="device!=='mobile'" -->
+      <template>
+        <lang-changer class="right-menu-item" />
         <search id="header-search" class="right-menu-item" />
         <div class="right-menu-item hover-effect">
-          Current App:
+          {{ $t('wolf.currentApp') }}:
         </div>
         <current-app class="current-app right-menu-item hover-effect" />
         <screenfull id="screenfull" class="right-menu-item hover-effect" />
@@ -25,18 +27,18 @@
             <el-dropdown-item>Profile ({{ name }})</el-dropdown-item>
           </router-link>
           -->
-          <el-dropdown-item>User: {{ name }}</el-dropdown-item>
+          <el-dropdown-item>{{ $t('wolf.user') }}: {{ name }}</el-dropdown-item>
           <router-link to="/">
-            <el-dropdown-item>Dashboard</el-dropdown-item>
+            <el-dropdown-item>{{ $t('wolf.dashboard') }}</el-dropdown-item>
           </router-link>
           <a target="_blank" href="https://github.com/iGeeky/wolf/">
             <el-dropdown-item>Github</el-dropdown-item>
           </a>
-          <a target="_blank" href="https://github.com/iGeeky/wolf/docs">
-            <el-dropdown-item>Docs</el-dropdown-item>
+          <a target="_blank" href="https://github.com/iGeeky/wolf/tree/master/docs">
+            <el-dropdown-item>{{ $t('wolf.docs') }}</el-dropdown-item>
           </a>
           <el-dropdown-item divided>
-            <span style="display:block;" @click="logout">Log Out</span>
+            <span style="display:block;" @click="logout">{{ $t('wolf.logout') }}</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -51,6 +53,7 @@ import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 import Screenfull from '@/components/Screenfull'
 import Search from '@/components/HeaderSearch'
+import LangChanger from '@/components/LangChanger'
 
 export default {
   components: {
@@ -59,6 +62,7 @@ export default {
     Hamburger,
     Screenfull,
     Search,
+    LangChanger,
   },
   computed: {
     ...mapGetters([

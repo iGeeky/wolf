@@ -34,7 +34,7 @@ function checkCurrentApp(applications, rootState, dispatch) {
     const applicationExist = _.find(applications, { 'id': currentApp })
     if (!applicationExist) {
       dispatch('currentApp/setCurrentApp', applications[0].id, { root: true })
-      console.log('>>>>>> currentApp reset to %s.', applications[0])
+      // console.log('>>>>>> currentApp reset to %s.', applications[0])
     }
   }
 }

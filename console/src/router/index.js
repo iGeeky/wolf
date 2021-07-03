@@ -5,6 +5,7 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
+import i18n from '../i18n/i18n'
 
 /* Router Modules */
 // import componentsRouter from './modules/components'
@@ -78,7 +79,7 @@ export const constantRoutes = [
         path: 'dashboard',
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
-        meta: { title: 'Dashboard', icon: 'dashboard', affix: true },
+        meta: { title: i18n.t('wolf.dashboard'), icon: 'dashboard', affix: true },
       },
     ],
   },
@@ -112,7 +113,7 @@ export const asyncRoutes = [
         component: () => import('@/views/application/index'),
         name: 'ApplicationList',
         meta: {
-          title: 'Application',
+          title: i18n.t('wolf.application'),
           icon: 'component',
           // roles: ['admin'], // or you can only set roles in sub nav
         },
@@ -128,7 +129,7 @@ export const asyncRoutes = [
         component: () => import('@/views/user/index'),
         name: 'UserList',
         meta: {
-          title: 'User',
+          title: i18n.t('wolf.user'),
           icon: 'user',
           // roles: ['admin'], // or you can only set roles in sub nav
         },
@@ -144,7 +145,7 @@ export const asyncRoutes = [
         component: () => import('@/views/role/index'),
         name: 'RoleList',
         meta: {
-          title: 'Role',
+          title: i18n.t('wolf.role'),
           icon: 'role',
         },
       },
@@ -158,7 +159,7 @@ export const asyncRoutes = [
     alwaysShow: true, // will always show the root menu
     name: 'Permission',
     meta: {
-      title: 'Permission',
+      title: i18n.t('wolf.permission'),
       icon: 'permission',
       collapse: true,
     },
@@ -168,7 +169,7 @@ export const asyncRoutes = [
         component: () => import('@/views/category/index'),
         name: 'Category',
         meta: {
-          title: 'Category',
+          title: i18n.t('wolf.category'),
         },
       },
       {
@@ -176,7 +177,7 @@ export const asyncRoutes = [
         component: () => import('@/views/permission/index'),
         name: 'PermissionList',
         meta: {
-          title: 'Permission',
+          title: i18n.t('wolf.permission'),
         },
       },
     ],
@@ -190,7 +191,7 @@ export const asyncRoutes = [
         component: () => import('@/views/resource/index'),
         name: 'ResourceList',
         meta: {
-          title: 'Resource',
+          title: i18n.t('wolf.resource'),
           icon: 'resource',
         },
       },
@@ -205,7 +206,7 @@ export const asyncRoutes = [
         component: () => import('@/views/access-log/index'),
         name: 'AuditLog',
         meta: {
-          title: 'Audit log',
+          title: i18n.t('wolf.auditLog'),
           icon: 'audit',
         },
       },
