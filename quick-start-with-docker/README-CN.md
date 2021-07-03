@@ -80,7 +80,7 @@ log  init-password
 
 #### 访问管理后台(Console)
 
-* 地址: http://127.0.0.1:10080
+* 地址: http://127.0.0.1:12180
 * 用户: root
 * 密码: wolf-123456
 
@@ -88,7 +88,7 @@ log  init-password
 
 #### 访问restful-demo应用(由wolf-agent代理,并添加了rbac)
 
-* 地址: http://127.0.0.1:10084
+* 地址: http://127.0.0.1:12184
 
 **用户名及密码: 请使用上面保存的rbac用户信息来登陆,测试. 包含3个账号: app-man, user-role-perm-man, log **
 
@@ -103,7 +103,7 @@ log  init-password
 
 #### 访问OpenResty应用(由wolf-agent代理,并添加了rbac)
 
-* 地址: http://127.0.0.1:10082
+* 地址: http://127.0.0.1:12182
 
 **用户名及密码: 请使用上面保存的rbac用户信息来登陆,测试.**
 

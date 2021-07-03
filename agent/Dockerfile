@@ -4,5 +4,5 @@ RUN apk add --update \
     && rm -rf /var/cache/apk/*
 COPY ./ /opt/wolf/agent
 WORKDIR /opt/wolf/agent
-EXPOSE 10082
+EXPOSE 12182
 ENTRYPOINT ["sh", "./entrypoint.sh"]

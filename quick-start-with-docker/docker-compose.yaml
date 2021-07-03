@@ -15,7 +15,7 @@ services:
     image: igeeky/wolf-server
     restart: always
     ports:
-      - "10080:10080"
+      - "12180:12180"
     depends_on:
       - database
     environment:
@@ -30,12 +30,12 @@ services:
     image: igeeky/wolf-agent
     restart: always
     ports:
-     - "10082:10082"
+     - "12182:12182"
     depends_on:
       - server
     environment:
       BACKEND_URL: http://openresty.org
-      RBAC_SERVER_URL: http://server:10080
+      RBAC_SERVER_URL: http://server:12180
       RBAC_APP_ID: openresty
   restful-demo:
     container_name: restful-demo
@@ -48,13 +48,13 @@ services:
     image: igeeky/wolf-agent
     restart: always
     ports:
-     - "10084:10084"
+     - "12184:12184"
     depends_on:
       - server
       - restful-demo
     environment:
       BACKEND_URL: http://restful-demo:10090
-      RBAC_SERVER_URL: http://server:10080
+      RBAC_SERVER_URL: http://server:12180
       RBAC_APP_ID: restful-demo
-      AGENT_PORT: 10084
+      AGENT_PORT: 12184
       EXTENSION_CONFIG: include /opt/wolf/agent/conf/no-permission-demo.conf;

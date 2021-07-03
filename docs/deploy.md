@@ -143,7 +143,7 @@ npm run start
 
 **If you start successfully, you should see a similar output:**
 
-> listen at 0.0.0.0:10080 success!
+> listen at 0.0.0.0:12180 success!
 >
 > # The following are some initialized system account output information
 
@@ -163,8 +163,8 @@ cnpm run dev
  DONE  Compiled successfully in 1000ms    
 
   App running at:
-  - Local:   http://localhost:10088/
-  - Network: http://192.168.x.x:10088/
+  - Local:   http://localhost:12188/
+  - Network: http://192.168.x.x:12188/
 ```
 
 Once the Console has been successfully started, it is now accessible using the root account. The password is `123456` or the one you specify when starting the server with the variable `RBAC_ROOT_PASSWORD`.
@@ -189,7 +189,7 @@ lua_package_path "/opt/wolf/agent/lua/?.lua;;";
 
 server {
     # Apply external address, port. If you need to configure the domain name, you need to configure it here as well.
-    listen   10082;
+    listen   12182;
     server_name localhost;
 
   	# If it is a restful interface, you need to customize the json format that is returned without permissions. This needs to be coordinated with the front-end.
@@ -209,7 +209,7 @@ server {
         proxy_set_header REMOTE-HOST $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     		# rbac server address. If the server is not local, please change the IP address to the actual address.
-        proxy_pass   http://127.0.0.1:10080;
+        proxy_pass   http://127.0.0.1:12180;
     }
 
     # Clear the content-length of response
@@ -230,7 +230,7 @@ server {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 
         # The real address and port of the APP that requires privileged access control
-        proxy_pass http://127.0.0.1:10084;
+        proxy_pass http://127.0.0.1:12184;
     }
 }
 ```
@@ -246,4 +246,4 @@ path/to/nginx/sbin/nginx -t
 path/to/nginx/sbin/nginx 
 ```
 
-Once started, you can access the application at: `http://127.0.0.1:10082`. You will need to enter a username and password to access the application.
+Once started, you can access the application at: `http://127.0.0.1:12182`. You will need to enter a username and password to access the application.

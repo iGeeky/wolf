@@ -142,7 +142,7 @@ npm run start
 
 **如果启动成功, 应该能看到类似输出:**
 
-> listen at 0.0.0.0:10080 success!
+> listen at 0.0.0.0:12180 success!
 >
 > # 后面是一些初始化系统账号的输出信息
 
@@ -162,8 +162,8 @@ cnpm run dev
  DONE  Compiled successfully in 1000ms    
 
   App running at:
-  - Local:   http://localhost:10088/
-  - Network: http://192.168.x.x:10088/
+  - Local:   http://localhost:12188/
+  - Network: http://192.168.x.x:12188/
 ```
 
 Console启动成功后, 可使用root账号进行访问了. 密码是`123456`或你在启动服务器时通过`RBAC_ROOT_PASSWORD`变量指定的.
@@ -192,7 +192,7 @@ lua_package_path "/opt/wolf/agent/lua/?.lua;;";
 
 server {
     # 应用对外地址,端口. 如果需要配置域名, 也需要在这儿配置好.
-    listen   10082;
+    listen   12182;
     server_name localhost;
 
   	# 如果是restful接口, 需要定制配置没有权限时, 返回的json格式. 这里需要跟前端协调好.
@@ -212,7 +212,7 @@ server {
         proxy_set_header REMOTE-HOST $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     		# rbac server地址. 如果服务器不在本机, 请修改IP地址为实际地址.
-        proxy_pass   http://127.0.0.1:10080;
+        proxy_pass   http://127.0.0.1:12180;
     }
 
     # Clear the content-length of response
@@ -233,7 +233,7 @@ server {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 
         # 需要进行权限访问控制的APP的真实地址及端口
-        proxy_pass http://127.0.0.1:10084;
+        proxy_pass http://127.0.0.1:12184;
     }
 }
 ```
@@ -249,4 +249,4 @@ path/to/nginx/sbin/nginx -t
 path/to/nginx/sbin/nginx 
 ```
 
-启动成功后, 可以通过地址: `http://127.0.0.1:10082` 访问应用. 这时应该是需要输入用户名及密码才能正常访问.
+启动成功后, 可以通过地址: `http://127.0.0.1:12182` 访问应用. 这时应该是需要输入用户名及密码才能正常访问.

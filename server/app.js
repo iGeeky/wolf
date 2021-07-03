@@ -42,7 +42,7 @@ try {
   app.use(staticServer(path.join(__dirname, 'html')))
   app.use(router.routes())
   app.use(router.allowedMethods())
-  const port = parseInt(process.env.PORT, 10) || 10080
+  const port = parseInt(process.env.PORT, 10) || 12180
   instance = app.listen(port)
   log4js.info('listen at 0.0.0.0:%s success!', port)
 } catch (ex) {

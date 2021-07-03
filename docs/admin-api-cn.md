@@ -214,7 +214,7 @@ applications | [SimpleApplication](#SimpleApplication)[] | 是 | 用户的应用
 * 请求
 
 ```json
-curl http://127.0.0.1:10080/wolf/user/login \
+curl http://127.0.0.1:12180/wolf/user/login \
 -H "Content-Type: application/json" \
 -d '{ "username": "root", "password": "password"}'
 ```
@@ -292,13 +292,13 @@ application | [Application](#Application) | 是 | 新添加的应用信息
 * 请求
 
 ```json
-curl http://127.0.0.1:10080/wolf/application \
+curl http://127.0.0.1:12180/wolf/application \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -d '{
     "id": "test-app", "name": "application for test", "description": "description of application",
     "secret": "d41d8cd98f00b204e9800998ecf8427e",
-    "redirectUris": ["http://127.0.0.1:10080/callback"],
+    "redirectUris": ["http://127.0.0.1:12180/callback"],
     "accessTokenLifetime": 604801,
     "refreshTokenLifetime": 2592001
 }'
@@ -316,7 +316,7 @@ curl http://127.0.0.1:10080/wolf/application \
       "name": "application for test",
       "description": "description of application",
       "redirectUris": [
-        "http://127.0.0.1:10080/callback"
+        "http://127.0.0.1:12180/callback"
       ],
       "grants": null,
       "accessTokenLifetime": 604801,
@@ -360,14 +360,14 @@ application | [Application](#Application) | 是 | 修改后的应用信息
 * 请求
 
 ```json
-curl http://127.0.0.1:10080/wolf/application \
+curl http://127.0.0.1:12180/wolf/application \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -X PUT \
 -d '{
     "id": "test-app", "name": "test-application", "description": "description of application",
     "secret": "d41d8cd98f00b204e9800998ecf8427e",
-    "redirectUris": ["http://127.0.0.1:10080/callback2"],
+    "redirectUris": ["http://127.0.0.1:12180/callback2"],
     "accessTokenLifetime": 604802,
     "refreshTokenLifetime": 2592002
 }'
@@ -385,7 +385,7 @@ curl http://127.0.0.1:10080/wolf/application \
       "name": "test-application",
       "description": "description of application",
       "redirectUris": [
-        "http://127.0.0.1:10080/callback2"
+        "http://127.0.0.1:12180/callback2"
       ],
       "grants": null,
       "accessTokenLifetime": 604802,
@@ -426,7 +426,7 @@ application | [Application](#Application) | 是 | 查询的应用信息
 * 请求
 
 ```json
-curl "http://127.0.0.1:10080/wolf/application/get?id=test-app" \
+curl "http://127.0.0.1:12180/wolf/application/get?id=test-app" \
 -H "x-rbac-token: $WOLF_TOKEN"
 ```
 
@@ -442,7 +442,7 @@ curl "http://127.0.0.1:10080/wolf/application/get?id=test-app" \
       "name": "test-application",
       "description": "description of application",
       "redirectUris": [
-        "http://127.0.0.1:10080/callback2"
+        "http://127.0.0.1:12180/callback2"
       ],
       "grants": null,
       "accessTokenLifetime": 604802,
@@ -483,7 +483,7 @@ secret | string | 是 | 应用secret.
 * 请求
 
 ```json
-curl "http://127.0.0.1:10080/wolf/application/secret?id=test-app" \
+curl "http://127.0.0.1:12180/wolf/application/secret?id=test-app" \
 -H "x-rbac-token: $WOLF_TOKEN"
 ```
 
@@ -529,7 +529,7 @@ total | integer | 是 | 总记录数
 * 请求
 
 ```json
-curl http://127.0.0.1:10080/wolf/application/list \
+curl http://127.0.0.1:12180/wolf/application/list \
 -H "x-rbac-token: $WOLF_TOKEN"
 ```
 
@@ -546,7 +546,7 @@ curl http://127.0.0.1:10080/wolf/application/list \
         "name": "restful测试",
         "description": "restful",
         "redirectUris": [
-          "http://localhost:10080/wolf/oauth2/client_app"
+          "http://localhost:12180/wolf/oauth2/client_app"
         ],
         "grants": null,
         "accessTokenLifetime": 3600,
@@ -587,7 +587,7 @@ total | integer | 是 | 总记录数
 * 请求
 
 ```json
-curl http://127.0.0.1:10080/wolf/application/list_all \
+curl http://127.0.0.1:12180/wolf/application/list_all \
 -H "x-rbac-token: $WOLF_TOKEN"
 ```
 
@@ -604,7 +604,7 @@ curl http://127.0.0.1:10080/wolf/application/list_all \
         "name": "restful测试",
         "description": "restful",
         "redirectUris": [
-          "http://localhost:10080/wolf/oauth2/client_app"
+          "http://localhost:12180/wolf/oauth2/client_app"
         ],
         "grants": null,
         "accessTokenLifetime": 3600,
@@ -648,7 +648,7 @@ count | integer | 是 | 删除数量, 通常是1.
 * 请求
 
 ```json
-curl http://127.0.0.1:10080/wolf/application \
+curl http://127.0.0.1:12180/wolf/application \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -X DELETE \
@@ -706,7 +706,7 @@ password | string | 是 | 新添加的用户的密码
 * 请求
 
 ```json
-curl http://127.0.0.1:10080/wolf/user \
+curl http://127.0.0.1:12180/wolf/user \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -d '{
@@ -779,7 +779,7 @@ userInfo | [UserInfo](#UserInfo) | 是 | 修改后的用户信息
 * 请求
 
 ```json
-curl http://127.0.0.1:10080/wolf/user \
+curl http://127.0.0.1:12180/wolf/user \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -X PUT \
@@ -843,7 +843,7 @@ applications | [SimpleApplication](#SimpleApplication)[] | 否 | 用户关联的
 * 请求
 
 ```json
-curl "http://127.0.0.1:10080/wolf/user/info" \
+curl "http://127.0.0.1:12180/wolf/user/info" \
 -H "x-rbac-token: $WOLF_TOKEN"
 ```
 
@@ -908,7 +908,7 @@ total | integer | 是 | 总记录数
 * 请求
 
 ```json
-curl http://127.0.0.1:10080/wolf/user/list \
+curl http://127.0.0.1:12180/wolf/user/list \
 -H "x-rbac-token: $WOLF_TOKEN"
 ```
 
@@ -970,7 +970,7 @@ password | string | 是 | 重置后的密码
 * 请求
 
 ```json
-curl http://127.0.0.1:10080/wolf/user/reset_pwd \
+curl http://127.0.0.1:12180/wolf/user/reset_pwd \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -X PUT \
@@ -1024,7 +1024,7 @@ count | integer | 是 | 删除数量, 通常是1.
 * 请求
 
 ```json
-curl http://127.0.0.1:10080/wolf/user \
+curl http://127.0.0.1:12180/wolf/user \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -X DELETE \
@@ -1077,7 +1077,7 @@ role | [Role](#Role) | 是 | 新添加的角色信息
 * 请求
 
 ```json
-curl http://127.0.0.1:10080/wolf/role \
+curl http://127.0.0.1:12180/wolf/role \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -d '{
@@ -1140,7 +1140,7 @@ role | [Role](#Role) | 是 | 修改后的角色信息
 * 请求
 
 ```json
-curl http://127.0.0.1:10080/wolf/role \
+curl http://127.0.0.1:12180/wolf/role \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -X PUT \
@@ -1206,7 +1206,7 @@ total | integer | 是 | 总记录数
 * 请求
 
 ```json
-curl http://127.0.0.1:10080/wolf/role/list?appID=restful \
+curl http://127.0.0.1:12180/wolf/role/list?appID=restful \
 -H "x-rbac-token: $WOLF_TOKEN"
 ```
 
@@ -1264,7 +1264,7 @@ count | integer | 是 | 删除数量, 通常是1.
 * 请求
 
 ```json
-curl http://127.0.0.1:10080/wolf/role \
+curl http://127.0.0.1:12180/wolf/role \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -X DELETE \
@@ -1319,7 +1319,7 @@ permission | [Permission](#Permission) | 是 | 新添加的权限信息
 * 请求
 
 ```json
-curl http://127.0.0.1:10080/wolf/permission \
+curl http://127.0.0.1:12180/wolf/permission \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -d '{
@@ -1380,7 +1380,7 @@ permission | [Permission](#Permission) | 是 | 修改后的权限信息
 * 请求
 
 ```json
-curl http://127.0.0.1:10080/wolf/permission \
+curl http://127.0.0.1:12180/wolf/permission \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -X PUT \
@@ -1443,7 +1443,7 @@ total | integer | 是 | 总记录数
 * 请求
 
 ```json
-curl http://127.0.0.1:10080/wolf/permission/list?appID=restful \
+curl http://127.0.0.1:12180/wolf/permission/list?appID=restful \
 -H "x-rbac-token: $WOLF_TOKEN"
 ```
 
@@ -1504,7 +1504,7 @@ count | integer | 是 | 删除数量, 通常是1.
 * 请求
 
 ```json
-curl http://127.0.0.1:10080/wolf/permission \
+curl http://127.0.0.1:12180/wolf/permission \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -X DELETE \
@@ -1550,7 +1550,7 @@ appID | string | Yes | 需要查询角色与权限的应用ID.
 * 请求
 
 ```json
-curl "http://127.0.0.1:10080/wolf/user-role?userID=1&appID=restful" \
+curl "http://127.0.0.1:12180/wolf/user-role?userID=1&appID=restful" \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN"
 ```
@@ -1599,7 +1599,7 @@ roleIDs | string[] | Yes | 要设置的角色列表
 * 请求
 
 ```json
-curl http://127.0.0.1:10080/wolf/user-role/set \
+curl http://127.0.0.1:12180/wolf/user-role/set \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -d '{
@@ -1651,7 +1651,7 @@ appID | string | Yes | 需要清除角色与权限的应用ID.
 * 请求
 
 ```json
-curl http://127.0.0.1:10080/wolf/user-role \
+curl http://127.0.0.1:12180/wolf/user-role \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -X DELETE \
@@ -1703,7 +1703,7 @@ category | [Category](#Category) | 是 | 新添加的分类信息
 * 请求
 
 ```json
-curl http://127.0.0.1:10080/wolf/category \
+curl http://127.0.0.1:12180/wolf/category \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -d '{
@@ -1757,7 +1757,7 @@ category | [Category](#Category) | 是 | 修改后的分类信息
 * 请求
 
 ```json
-curl http://127.0.0.1:10080/wolf/category \
+curl http://127.0.0.1:12180/wolf/category \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -X PUT \
@@ -1816,7 +1816,7 @@ total | integer | 是 | 总记录数
 * 请求
 
 ```json
-curl http://127.0.0.1:10080/wolf/category/list?appID=restful \
+curl http://127.0.0.1:12180/wolf/category/list?appID=restful \
 -H "x-rbac-token: $WOLF_TOKEN"
 ```
 
@@ -1868,7 +1868,7 @@ count | integer | 是 | 删除数量, 通常是1.
 * 请求
 
 ```json
-curl http://127.0.0.1:10080/wolf/category \
+curl http://127.0.0.1:12180/wolf/category \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -X DELETE \
@@ -1921,7 +1921,7 @@ resource | [Resource](#Resource) | 是 | 新添加的资源信息
 * 请求
 
 ```json
-curl http://127.0.0.1:10080/wolf/resource \
+curl http://127.0.0.1:12180/wolf/resource \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -d '{
@@ -1984,7 +1984,7 @@ resource | [Resource](#Resource) | 是 | 修改后的资源信息
 * 请求
 
 ```json
-curl http://127.0.0.1:10080/wolf/resource \
+curl http://127.0.0.1:12180/wolf/resource \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -X PUT \
@@ -2050,7 +2050,7 @@ total | integer | 是 | 总记录数
 * 请求
 
 ```json
-curl http://127.0.0.1:10080/wolf/resource/list?appID=restful \
+curl http://127.0.0.1:12180/wolf/resource/list?appID=restful \
 -H "x-rbac-token: $WOLF_TOKEN"
 ```
 
@@ -2106,7 +2106,7 @@ count | integer | 是 | 删除数量, 通常是1.
 * 请求
 
 ```json
-curl http://127.0.0.1:10080/wolf/resource \
+curl http://127.0.0.1:12180/wolf/resource \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -X DELETE \
@@ -2167,7 +2167,7 @@ total | integer | 是 | 总记录数
 * 请求
 
 ```json
-curl http://127.0.0.1:10080/wolf/access-log/list?appID=restful \
+curl http://127.0.0.1:12180/wolf/access-log/list?appID=restful \
 -H "x-rbac-token: $WOLF_TOKEN"
 ```
 
@@ -2229,7 +2229,7 @@ return_to | string | 否 | 设置登录成功后, 跳转的地址. 默认为 `/`
 * 请求
 
 ```
-http://127.0.0.1:10080/wolf/rbac/login?return_to=%2Fwolf%2Foauth2%2Flogin_status&appid=restful
+http://127.0.0.1:12180/wolf/rbac/login?return_to=%2Fwolf%2Foauth2%2Flogin_status&appid=restful
 ```
 
 * 响应页面
@@ -2277,7 +2277,7 @@ token | string | 是 | 登录token
 * 请求
 
 ```json
-curl http://127.0.0.1:10080/wolf/rbac/login.rest \
+curl http://127.0.0.1:12180/wolf/rbac/login.rest \
 -H "Content-Type: application/json" \
 -X POST \
 -d '{
@@ -2341,7 +2341,7 @@ return_to | string | 否 | 设置登录成功后, 跳转的地址. 默认为 `/`
 * 请求
 
 ```shell
-curl 'http://127.0.0.1:10080/wolf/rbac/login.submit' \
+curl 'http://127.0.0.1:12180/wolf/rbac/login.submit' \
 -H 'Content-Type: application/x-www-form-urlencoded' \
 -d 'return_to=%2F&appid=restful&username=root&password=123456'
 ```
@@ -2382,7 +2382,7 @@ userInfo | [UserInfo](#UserInfo) | 是 | 用户信息
 * 请求
 
 ```json
-curl http://127.0.0.1:10080/wolf/rbac/user_info \
+curl http://127.0.0.1:12180/wolf/rbac/user_info \
 -H "Cookie: x-rbac-token=$RBAC_TOKEN"
 ```
 
@@ -2432,7 +2432,7 @@ curl http://127.0.0.1:10080/wolf/rbac/user_info \
 * 请求
 
 ```json
-curl http://127.0.0.1:10080/wolf/rbac/logout \
+curl http://127.0.0.1:12180/wolf/rbac/logout \
 -H "Cookie: x-rbac-token=$RBAC_TOKEN"
 ```
 
@@ -2479,7 +2479,7 @@ newPassword | string | 是 | 新密码
 * 请求
 
 ```json
-curl http://127.0.0.1:10080/wolf/rbac/change_pwd \
+curl http://127.0.0.1:12180/wolf/rbac/change_pwd \
 -H "Cookie: x-rbac-token=$RBAC_TOKEN" \
 -H "Content-Type: application/json" \
 -X POST \
@@ -2536,7 +2536,7 @@ userInfo | [UserInfo](#UserInfo) | 是 | 当前用户信息
 * 请求
 
 ```json
-curl http://127.0.0.1:10080/wolf/rbac/access_check \
+curl http://127.0.0.1:12180/wolf/rbac/access_check \
 -H "Cookie: x-rbac-token=$RBAC_TOKEN" \
 -H "Content-Type: application/json" \
 -X POST \

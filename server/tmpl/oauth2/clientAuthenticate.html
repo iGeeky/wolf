@@ -11,11 +11,11 @@
   <p>For this example, the following parameters will be included in the request query parameters:</p>
   <ul>
     <li>client_id: <%= client_id %></li>
-    <li>redirect_uri: http://localhost:10080/wolf/oauth2/client_app</li>
+    <li>redirect_uri: http://localhost:12180/wolf/oauth2/client_app</li>
     <li>response_type: code</li>
     <li>grant_type: authorization_code</li>
     <li>state: myState</li>
   </ul>
-  <a href="http://localhost:10080/wolf/oauth2/authorize?grant_type=authorization_code&response_type=code&client_id=<%= client_id %>&redirect_uri=http://localhost:10080/wolf/oauth2/client_app&state=myState" class='btn btn-primary'>Login with Oauth Server</a>
+  <a href="http://localhost:12180/wolf/oauth2/authorize?grant_type=authorization_code&response_type=code&client_id=<%= client_id %>&redirect_uri=http://localhost:12180/wolf/oauth2/client_app&state=myState" class='btn btn-primary'>Login with Oauth Server</a>
 </body>
 </html>

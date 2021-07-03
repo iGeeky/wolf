@@ -76,7 +76,7 @@ redirect_uri | string | 是 | 重定向uri, 需要在`Application`中已经设�
 * 请求
 
 ```json
-curl -v 'http://127.0.0.1:10080/wolf/oauth2/authorize?grant_type=authorization_code&response_type=code&client_id=test&redirect_uri=http://localhost:10080/wolf/oauth2/client_app&state=myState' \
+curl -v 'http://127.0.0.1:12180/wolf/oauth2/authorize?grant_type=authorization_code&response_type=code&client_id=test&redirect_uri=http://localhost:12180/wolf/oauth2/client_app&state=myState' \
 -H "Cookie: x-rbac-token=$RBAC_TOKEN"
 ```
 
@@ -87,7 +87,7 @@ curl -v 'http://127.0.0.1:10080/wolf/oauth2/authorize?grant_type=authorization_c
 < Vary: Origin
 < Access-Control-Allow-Origin: *
 < Content-Type: application/json; charset=utf-8
-< location: http://localhost:10080/wolf/oauth2/client_app?code=a5d610512e7f367a4cc628db0f30da0fcfcbbaae&state=myState
+< location: http://localhost:12180/wolf/oauth2/client_app?code=a5d610512e7f367a4cc628db0f30da0fcfcbbaae&state=myState
 < Content-Length: 2
 < Date: Sun, 10 May 2020 14:03:04 GMT
 < Connection: keep-alive
@@ -132,7 +132,7 @@ expires_in | integer | 是 | access_token的过期时间(秒)
 * 请求
 
 ```json
-curl 'http://127.0.0.1:10080/wolf/oauth2/token' \
+curl 'http://127.0.0.1:12180/wolf/oauth2/token' \
 -H "Content-Type: application/x-www-form-urlencoded" \
 -X POST \
 -d "grant_type=authorization_code&client_id=test&client_secret=yghS6isJ3PtPBz2pr8v8XN7OmR5QbuYNNuraDDgs&code=a5d610512e7f367a4cc628db0f30da0fcfcbbaae"
@@ -200,7 +200,7 @@ expires_in | integer | 是 | access_token的过期时间(秒)
 * 请求
 
 ```json
-curl 'http://127.0.0.1:10080/wolf/oauth2/token' \
+curl 'http://127.0.0.1:12180/wolf/oauth2/token' \
 -H "Content-Type: application/x-www-form-urlencoded" \
 -X POST \
 -d "grant_type=password&client_id=test&client_secret=yghS6isJ3PtPBz2pr8v8XN7OmR5QbuYNNuraDDgs&username=admin&password=123456"
@@ -265,7 +265,7 @@ expires_in | integer | 是 | access_token的过期时间(秒)
 * 请求
 
 ```json
-curl 'http://127.0.0.1:10080/wolf/oauth2/token' \
+curl 'http://127.0.0.1:12180/wolf/oauth2/token' \
 -H "Content-Type: application/x-www-form-urlencoded" \
 -X POST \
 -d "grant_type=client_credentials&client_id=test&client_secret=yghS6isJ3PtPBz2pr8v8XN7OmR5QbuYNNuraDDgs"
@@ -330,7 +330,7 @@ expires_in | integer | 是 | access_token的过期时间(秒)
 * 请求
 
 ```json
-curl 'http://127.0.0.1:10080/wolf/oauth2/token' \
+curl 'http://127.0.0.1:12180/wolf/oauth2/token' \
 -H "Content-Type: application/x-www-form-urlencoded" \
 -X POST \
 -d "grant_type=refresh_token&client_id=test&client_secret=yghS6isJ3PtPBz2pr8v8XN7OmR5QbuYNNuraDDgs&refresh_token=936733dfe080db0706047aafd5b5c3aaf0c90070"
@@ -345,7 +345,7 @@ curl 'http://127.0.0.1:10080/wolf/oauth2/token' \
   "data": {
     "client_id": "test",
     "user_id": "JcAsVxT58qNNlEv-Ga3vXgj40L",
-    "access_token": "581ba8dd111478bf100806a2e37e0d5435e36a1b",
+    "access_token": "581ba8dd111478bf121806a2e37e0d5435e36a1b",
     "refresh_token": "29f9a8cb8b4d4246e8a67750a7e88f3db53fad92",
     "token_type": "Bearer",
     "expires_in": 604799
@@ -381,8 +381,8 @@ userInfo | [UserInfo](./admin-api-cn.md#UserInfo) | 是 | 用户基本信息
 * 请求
 
 ```json
-curl 'http://127.0.0.1:10080/wolf/oauth2/user_info' \
--H "Authorization: Bearer 581ba8dd111478bf100806a2e37e0d5435e36a1b"
+curl 'http://127.0.0.1:12180/wolf/oauth2/user_info' \
+-H "Authorization: Bearer 581ba8dd111478bf121806a2e37e0d5435e36a1b"
 ```
 
 * 响应
@@ -432,7 +432,7 @@ curl 'http://127.0.0.1:10080/wolf/oauth2/user_info' \
 * 请求
 
 ```json
-curl 'http://127.0.0.1:10080/wolf/oauth2/login_status' \
+curl 'http://127.0.0.1:12180/wolf/oauth2/login_status' \
 -H "Cookie: x-rbac-token=$RBAC_TOKEN"
 ```
 
@@ -479,8 +479,8 @@ userInfo | [UserInfo](#UserInfo) | 是 | 当前用户信息
 * 请求
 
 ```json
-curl 'http://127.0.0.1:10080/wolf/oauth2/access_check' \
--H "Authorization: Bearer 581ba8dd111478bf100806a2e37e0d5435e36a1b" \
+curl 'http://127.0.0.1:12180/wolf/oauth2/access_check' \
+-H "Authorization: Bearer 581ba8dd111478bf121806a2e37e0d5435e36a1b" \
 -H "Content-Type: application/x-www-form-urlencoded" \
 -d 'action=GET&resName=/path/to/resource'
 ```

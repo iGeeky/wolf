@@ -12,8 +12,8 @@ const name = defaultSettings.title || 'wolf console' // page title
 // use administrator privileges to execute the command line.
 // For example, Mac: sudo npm run
 // You can change the port by the following method:
-// port = 10088 npm run dev OR npm run dev --port = 10088
-const port = process.env.port || 10088 // dev port
+// port = 12188 npm run dev OR npm run dev --port = 12188
+const port = process.env.port || 12188 // dev port
 
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {

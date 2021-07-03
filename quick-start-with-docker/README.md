@@ -75,7 +75,7 @@ log  JIp2V5w8Mt8K
 
 #### Access The Console
 
-*  URL: http://127.0.0.1:10080
+*  URL: http://127.0.0.1:12180
 * USER: root
 *  PWD: wolf-123456
 
@@ -83,7 +83,7 @@ log  JIp2V5w8Mt8K
 
 #### Access Application restful-demo(proxies by wolf-agent. With rbac)
 
-*  URL: http://127.0.0.1:10084
+*  URL: http://127.0.0.1:12184
 
 **USER AND PASSWORD: Use the account and password you saved above**
 
@@ -97,7 +97,7 @@ No need to log in, you can directly access.
 
 #### Access Application OpenResty(proxies by wolf-agent. With rbac)
 
-* URL: http://127.0.0.1:10082
+* URL: http://127.0.0.1:12182
 
 **USER AND PASSWORD: Use the account and password you saved above**
 

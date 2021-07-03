@@ -213,7 +213,7 @@ applications | [SimpleApplication](#SimpleApplication)[] | Yes | User's applicat
 * Request
 
 ```json
-curl http://127.0.0.1:10080/wolf/user/login \
+curl http://127.0.0.1:12180/wolf/user/login \
 -H "Content-Type: application/json" \
 -d '{ "username": "root", "password": "password"}'
 ```
@@ -292,13 +292,13 @@ application | [Application](#Application) | Yes | Newly added application inform
 * Request
 
 ```json
-curl http://127.0.0.1:10080/wolf/application \
+curl http://127.0.0.1:12180/wolf/application \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -d '{
     "id": "test-app", "name": "application for test", "description": "description of application",
     "secret": "d41d8cd98f00b204e9800998ecf8427e",
-    "redirectUris": ["http://127.0.0.1:10080/callback"],
+    "redirectUris": ["http://127.0.0.1:12180/callback"],
     "accessTokenLifetime": 604801,
     "refreshTokenLifetime": 2592001
 }'
@@ -316,7 +316,7 @@ curl http://127.0.0.1:10080/wolf/application \
       "name": "application for test",
       "description": "description of application",
       "redirectUris": [
-        "http://127.0.0.1:10080/callback"
+        "http://127.0.0.1:12180/callback"
       ],
       "grants": null,
       "accessTokenLifetime": 604801,
@@ -360,14 +360,14 @@ application | [Application](#Application) | Yes | Modified application informati
 * Request
 
 ```json
-curl http://127.0.0.1:10080/wolf/application \
+curl http://127.0.0.1:12180/wolf/application \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -X PUT \
 -d '{
     "id": "test-app", "name": "test-application", "description": "description of application",
     "secret": "d41d8cd98f00b204e9800998ecf8427e",
-    "redirectUris": ["http://127.0.0.1:10080/callback2"],
+    "redirectUris": ["http://127.0.0.1:12180/callback2"],
     "accessTokenLifetime": 604802,
     "refreshTokenLifetime": 2592002
 }'
@@ -385,7 +385,7 @@ curl http://127.0.0.1:10080/wolf/application \
       "name": "test-application",
       "description": "description of application",
       "redirectUris": [
-        "http://127.0.0.1:10080/callback2"
+        "http://127.0.0.1:12180/callback2"
       ],
       "grants": null,
       "accessTokenLifetime": 604802,
@@ -426,7 +426,7 @@ application | [Application](#Application) | Yes | Application information querie
 * Request
 
 ```json
-curl "http://127.0.0.1:10080/wolf/application/get?id=test-app" \
+curl "http://127.0.0.1:12180/wolf/application/get?id=test-app" \
 -H "x-rbac-token: $WOLF_TOKEN"
 ```
 
@@ -442,7 +442,7 @@ curl "http://127.0.0.1:10080/wolf/application/get?id=test-app" \
       "name": "test-application",
       "description": "description of application",
       "redirectUris": [
-        "http://127.0.0.1:10080/callback2"
+        "http://127.0.0.1:12180/callback2"
       ],
       "grants": null,
       "accessTokenLifetime": 604802,
@@ -483,7 +483,7 @@ secret | string | Yes | Secret of application
 * Request
 
 ```json
-curl "http://127.0.0.1:10080/wolf/application/secret?id=test-app" \
+curl "http://127.0.0.1:12180/wolf/application/secret?id=test-app" \
 -H "x-rbac-token: $WOLF_TOKEN"
 ```
 
@@ -529,7 +529,7 @@ total | integer | Yes | Total number of records
 * Request
 
 ```json
-curl http://127.0.0.1:10080/wolf/application/list \
+curl http://127.0.0.1:12180/wolf/application/list \
 -H "x-rbac-token: $WOLF_TOKEN"
 ```
 
@@ -546,7 +546,7 @@ curl http://127.0.0.1:10080/wolf/application/list \
         "name": "restful app",
         "description": "restful",
         "redirectUris": [
-          "http://localhost:10080/wolf/oauth2/client_app"
+          "http://localhost:12180/wolf/oauth2/client_app"
         ],
         "grants": null,
         "accessTokenLifetime": 3600,
@@ -587,7 +587,7 @@ total | integer | Yes | Total number of records
 * Request
 
 ```json
-curl http://127.0.0.1:10080/wolf/application/list_all \
+curl http://127.0.0.1:12180/wolf/application/list_all \
 -H "x-rbac-token: $WOLF_TOKEN"
 ```
 
@@ -604,7 +604,7 @@ curl http://127.0.0.1:10080/wolf/application/list_all \
         "name": "restful app",
         "description": "restful",
         "redirectUris": [
-          "http://localhost:10080/wolf/oauth2/client_app"
+          "http://localhost:12180/wolf/oauth2/client_app"
         ],
         "grants": null,
         "accessTokenLifetime": 3600,
@@ -648,7 +648,7 @@ count | integer | Yes | Number of deletions, usually 1.
 * Request
 
 ```json
-curl http://127.0.0.1:10080/wolf/application \
+curl http://127.0.0.1:12180/wolf/application \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -X DELETE \
@@ -706,7 +706,7 @@ password | string | Yes | Password for newly added users
 * Request
 
 ```json
-curl http://127.0.0.1:10080/wolf/user \
+curl http://127.0.0.1:12180/wolf/user \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -d '{
@@ -780,7 +780,7 @@ userInfo | [UserInfo](#UserInfo) | Yes | Modified user information
 * Request
 
 ```json
-curl http://127.0.0.1:10080/wolf/user \
+curl http://127.0.0.1:12180/wolf/user \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -X PUT \
@@ -844,7 +844,7 @@ applications | [SimpleApplication](#SimpleApplication)[] | No | User Associated 
 * Request
 
 ```json
-curl "http://127.0.0.1:10080/wolf/user/info" \
+curl "http://127.0.0.1:12180/wolf/user/info" \
 -H "x-rbac-token: $WOLF_TOKEN"
 ```
 
@@ -909,7 +909,7 @@ total | integer | Yes | Total number of records
 * Request
 
 ```json
-curl http://127.0.0.1:10080/wolf/user/list \
+curl http://127.0.0.1:12180/wolf/user/list \
 -H "x-rbac-token: $WOLF_TOKEN"
 ```
 
@@ -971,7 +971,7 @@ password | string | Yes | Password to reset.
 * Request
 
 ```json
-curl http://127.0.0.1:10080/wolf/user/reset_pwd \
+curl http://127.0.0.1:12180/wolf/user/reset_pwd \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -X PUT \
@@ -1025,7 +1025,7 @@ count | integer | Yes | Number of deletions, usually 1.
 * Request
 
 ```json
-curl http://127.0.0.1:10080/wolf/user \
+curl http://127.0.0.1:12180/wolf/user \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -X DELETE \
@@ -1078,7 +1078,7 @@ role | [Role](#Role) | Yes | Newly added role information
 * Request
 
 ```json
-curl http://127.0.0.1:10080/wolf/role \
+curl http://127.0.0.1:12180/wolf/role \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -d '{
@@ -1141,7 +1141,7 @@ role | [Role](#Role) | Yes | Modified role information
 * Request
 
 ```json
-curl http://127.0.0.1:10080/wolf/role \
+curl http://127.0.0.1:12180/wolf/role \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -X PUT \
@@ -1207,7 +1207,7 @@ total | integer | Yes | Total number of records
 * Request
 
 ```json
-curl http://127.0.0.1:10080/wolf/role/list?appID=restful \
+curl http://127.0.0.1:12180/wolf/role/list?appID=restful \
 -H "x-rbac-token: $WOLF_TOKEN"
 ```
 
@@ -1265,7 +1265,7 @@ count | integer | Yes | Number of deletions, usually 1.
 * Request
 
 ```json
-curl http://127.0.0.1:10080/wolf/role \
+curl http://127.0.0.1:12180/wolf/role \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -X DELETE \
@@ -1320,7 +1320,7 @@ permission | [Permission](#Permission) | Yes | New permission information added
 * Request
 
 ```json
-curl http://127.0.0.1:10080/wolf/permission \
+curl http://127.0.0.1:12180/wolf/permission \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -d '{
@@ -1381,7 +1381,7 @@ permission | [Permission](#Permission) | Yes | Modified permission information
 * Request
 
 ```json
-curl http://127.0.0.1:10080/wolf/permission \
+curl http://127.0.0.1:12180/wolf/permission \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -X PUT \
@@ -1444,7 +1444,7 @@ total | integer | Yes | Total number of records
 * Request
 
 ```json
-curl http://127.0.0.1:10080/wolf/permission/list?appID=restful \
+curl http://127.0.0.1:12180/wolf/permission/list?appID=restful \
 -H "x-rbac-token: $WOLF_TOKEN"
 ```
 
@@ -1505,7 +1505,7 @@ count | integer | Yes | Number of deletions, usually 1.
 * Request
 
 ```json
-curl http://127.0.0.1:10080/wolf/permission \
+curl http://127.0.0.1:12180/wolf/permission \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -X DELETE \
@@ -1550,7 +1550,7 @@ appID | string | Yes | ApplicationID for which roles and permissions need to be 
 * Request
 
 ```json
-curl "http://127.0.0.1:10080/wolf/user-role?userID=1&appID=restful" \
+curl "http://127.0.0.1:12180/wolf/user-role?userID=1&appID=restful" \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN"
 ```
@@ -1598,7 +1598,7 @@ roleIDs | string[] | Yes | List of role IDs to be set
 * Request
 
 ```json
-curl http://127.0.0.1:10080/wolf/user-role/set \
+curl http://127.0.0.1:12180/wolf/user-role/set \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -d '{
@@ -1650,7 +1650,7 @@ appID | string | Yes | ApplicationID for which roles and permissions need to be 
 * Request
 
 ```json
-curl http://127.0.0.1:10080/wolf/user-role \
+curl http://127.0.0.1:12180/wolf/user-role \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -X DELETE \
@@ -1703,7 +1703,7 @@ category | [Category](#Category) | Yes | Newly added categories
 * Request
 
 ```json
-curl http://127.0.0.1:10080/wolf/category \
+curl http://127.0.0.1:12180/wolf/category \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -d '{
@@ -1757,7 +1757,7 @@ category | [Category](#Category) | Yes | Modified categories
 * Request
 
 ```json
-curl http://127.0.0.1:10080/wolf/category \
+curl http://127.0.0.1:12180/wolf/category \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -X PUT \
@@ -1816,7 +1816,7 @@ total | integer | Yes | Total number of records
 * Request
 
 ```json
-curl http://127.0.0.1:10080/wolf/category/list?appID=restful \
+curl http://127.0.0.1:12180/wolf/category/list?appID=restful \
 -H "x-rbac-token: $WOLF_TOKEN"
 ```
 
@@ -1868,7 +1868,7 @@ count | integer | Yes | Number of deletions, usually 1.
 * Request
 
 ```json
-curl http://127.0.0.1:10080/wolf/category \
+curl http://127.0.0.1:12180/wolf/category \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -X DELETE \
@@ -1921,7 +1921,7 @@ resource | [Resource](#Resource) | Yes | Newly added resource information
 * Request
 
 ```json
-curl http://127.0.0.1:10080/wolf/resource \
+curl http://127.0.0.1:12180/wolf/resource \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -d '{
@@ -1985,7 +1985,7 @@ resource | [Resource](#Resource) | Yes | Modified resource information
 * Request
 
 ```json
-curl http://127.0.0.1:10080/wolf/resource \
+curl http://127.0.0.1:12180/wolf/resource \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -X PUT \
@@ -2051,7 +2051,7 @@ total | integer | Yes | Total number of records
 * Request
 
 ```json
-curl http://127.0.0.1:10080/wolf/resource/list?appID=restful \
+curl http://127.0.0.1:12180/wolf/resource/list?appID=restful \
 -H "x-rbac-token: $WOLF_TOKEN"
 ```
 
@@ -2107,7 +2107,7 @@ count | integer | Yes | Number of deletions, usually 1.
 * Request
 
 ```json
-curl http://127.0.0.1:10080/wolf/resource \
+curl http://127.0.0.1:12180/wolf/resource \
 -H "Content-Type: application/json" \
 -H "x-rbac-token: $WOLF_TOKEN" \
 -X DELETE \
@@ -2168,7 +2168,7 @@ total | integer | Yes | Total number of records
 * Request
 
 ```json
-curl http://127.0.0.1:10080/wolf/access-log/list?appID=restful \
+curl http://127.0.0.1:12180/wolf/access-log/list?appID=restful \
 -H "x-rbac-token: $WOLF_TOKEN"
 ```
 
@@ -2231,7 +2231,7 @@ Login page HTML.
 * Request
 
 ```
-http://127.0.0.1:10080/wolf/rbac/login?return_to=%2Fwolf%2Foauth2%2Flogin_status&appid=restful
+http://127.0.0.1:12180/wolf/rbac/login?return_to=%2Fwolf%2Foauth2%2Flogin_status&appid=restful
 ```
 
 * Response Page
@@ -2279,7 +2279,7 @@ token | string | Yes | Login token
 * Request
 
 ```json
-curl http://127.0.0.1:10080/wolf/rbac/login.rest \
+curl http://127.0.0.1:12180/wolf/rbac/login.rest \
 -H "Content-Type: application/json" \
 -X POST \
 -d '{
@@ -2343,7 +2343,7 @@ And set the token to a cookie with key `x-rbac-token`.
 * Request
 
 ```shell
-curl 'http://127.0.0.1:10080/wolf/rbac/login.submit' \
+curl 'http://127.0.0.1:12180/wolf/rbac/login.submit' \
 -H 'Content-Type: application/x-www-form-urlencoded' \
 -d 'return_to=%2F&appid=restful&username=root&password=123456'
 ```
@@ -2384,7 +2384,7 @@ userInfo | [UserInfo](#UserInfo) | Yes | user information
 * Request
 
 ```json
-curl http://127.0.0.1:10080/wolf/rbac/user_info \
+curl http://127.0.0.1:12180/wolf/rbac/user_info \
 -H "Cookie: x-rbac-token=$RBAC_TOKEN"
 ```
 
@@ -2434,7 +2434,7 @@ After the operation, the server will set the `x-rbac-token` in the cookie to log
 * Request
 
 ```json
-curl http://127.0.0.1:10080/wolf/rbac/logout \
+curl http://127.0.0.1:12180/wolf/rbac/logout \
 -H "Cookie: x-rbac-token=$RBAC_TOKEN"
 ```
 
@@ -2481,7 +2481,7 @@ None
 * Request
 
 ```json
-curl http://127.0.0.1:10080/wolf/rbac/change_pwd \
+curl http://127.0.0.1:12180/wolf/rbac/change_pwd \
 -H "Cookie: x-rbac-token=$RBAC_TOKEN" \
 -H "Content-Type: application/json" \
 -X POST \
@@ -2538,7 +2538,7 @@ userInfo | [UserInfo](#UserInfo) | Yes | Current User Information
 * Request
 
 ```json
-curl http://127.0.0.1:10080/wolf/rbac/access_check \
+curl http://127.0.0.1:12180/wolf/rbac/access_check \
 -H "Cookie: x-rbac-token=$RBAC_TOKEN" \
 -H "Content-Type: application/json" \
 -X POST \

@@ -8,7 +8,7 @@ const argv = require('minimist')(process.argv.slice(2));
 let request = null;
 let server = null;
 
-// --server 'http://127.0.0.1:10080'
+// --server 'http://127.0.0.1:12180'
 if (argv.server) { // remote mode. access by chai-http
   const chaiHttp = require('chai-http')
   chai.use(chaiHttp);
