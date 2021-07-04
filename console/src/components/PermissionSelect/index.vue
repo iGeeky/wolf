@@ -1,7 +1,7 @@
 <template>
   <el-select
     v-model="permIDs"
-    placeholder="Change Permission"
+    :placeholder="$t('wolf.promptChangePermission')"
     size="small"
     style="display: block"
     :multiple="multiple"

@@ -57,37 +57,37 @@
 
     <el-dialog :visible.sync="dialogVisible" :title="dialogType==='edit'?$t('wolf.appEditApplication'):$t('wolf.appNewApplication')" custom-class="application-edit-dialog">
       <el-form ref="application" :model="application" :rules="rules" label-width="150px" label-position="left">
-        <el-form-item :label="$t('wolf.newAppAppIDLabel')" prop="id">
+        <el-form-item :label="$t('wolf.newAppLabelAppID')" prop="id">
           <el-input
             v-model="application.id"
-            :placeholder="$t('wolf.newAppAppIDPrompt')"
+            :placeholder="$t('wolf.newAppPromptAppID')"
             :readonly="dialogType==='edit'"
             minlength="3"
             maxlength="32"
             show-word-limit
           />
         </el-form-item>
-        <el-form-item :label="$t('wolf.newAppAppNameLabel')" prop="name">
+        <el-form-item :label="$t('wolf.newAppLabelAppName')" prop="name">
           <el-input
             v-model="application.name"
-            :placeholder="$t('wolf.newAppAppNamePrompt')"
+            :placeholder="$t('wolf.newAppPromptAppName')"
             minlength="5"
             maxlength="64"
             show-word-limit
           />
         </el-form-item>
-        <el-form-item :label="$t('wolf.newAppDescriptionLabel')" prop="description">
+        <el-form-item :label="$t('wolf.newAppLabelDescription')" prop="description">
           <el-input
             v-model="application.description"
-            :placeholder="$t('wolf.newAppDescriptionPrompt')"
+            :placeholder="$t('wolf.newAppPromptDescription')"
             maxlength="256"
             show-word-limit
           />
         </el-form-item>
-        <el-form-item :label="$t('wolf.newAppAppSecretLabel')" prop="secret">
+        <el-form-item :label="$t('wolf.newAppLabelAppSecret')" prop="secret">
           <el-input
             v-model="application.secret"
-            :placeholder="$t('wolf.newAppAppSecretPrompt')"
+            :placeholder="$t('wolf.newAppPromptAppSecret')"
             maxlength="64"
             :readonly="true"
             show-word-limit
@@ -100,7 +100,7 @@
             >{{ $t('wolf.btnReset') }}</el-button>
           </el-input>
         </el-form-item>
-        <el-form-item :label="$t('wolf.newAppRedirectUrisLabel')" prop="redirectUris" class="redirect-uris-item">
+        <el-form-item :label="$t('wolf.newAppLabelRedirectUris')" prop="redirectUris" class="redirect-uris-item">
           <el-tag
             v-for="redirectUri in application.redirectUris"
             :key="redirectUri"
@@ -115,7 +115,7 @@
             v-if="redirectUriInputVisible"
             ref="saveRedirectUriInput"
             v-model="redirectUriInputValue"
-            :placeholder="$t('wolf.newAppRedirectUrisPrompt')"
+            :placeholder="$t('wolf.newAppPromptRedirectUris')"
             maxlength="256"
             show-word-limit
             class="input-new-redirect-uri"
@@ -123,21 +123,21 @@
             @keyup.enter.native="handleRedirectUriInputConfirm"
             @blur="handleRedirectUriInputConfirm"
           />
-          <el-button v-else class="button-new-redirect-uri" size="small" @click="showRedirectUriInput">{{ $t('wolf.newAppRedirectUrisBtnPrompt') }}</el-button>
+          <el-button v-else class="button-new-redirect-uri" size="small" @click="showRedirectUriInput">{{ $t('wolf.newAppPromptRedirectUrisBtn') }}</el-button>
         </el-form-item>
-        <el-form-item :label="$t('wolf.newAppAccessTokenLifetimeLabel')" prop="accessTokenLifetime" label-width="200px" class="lifetime-item">
+        <el-form-item :label="$t('wolf.newAppLabelAccessTokenLifetime')" prop="accessTokenLifetime" label-width="200px" class="lifetime-item">
           <el-input
             v-model="application.accessTokenLifetime"
-            :placeholder="$t('wolf.newAppAccessTokenLifetimePrompt')"
+            :placeholder="$t('wolf.newAppPromptAccessTokenLifetime')"
             maxlength="10"
             type="number"
           />
           <el-tag size="medium">{{ accessTokenLifetimePrompt }}</el-tag>
         </el-form-item>
-        <el-form-item :label="$t('wolf.newAppRefreshTokenLifetimeLabel')" prop="refreshTokenLifetime" label-width="200px" class="lifetime-item">
+        <el-form-item :label="$t('wolf.newAppLabelRefreshTokenLifetime')" prop="refreshTokenLifetime" label-width="200px" class="lifetime-item">
           <el-input
             v-model="application.refreshTokenLifetime"
-            :placeholder="$t('wolf.newAppRefreshTokenLifetimePrompt')"
+            :placeholder="$t('wolf.newAppPromptRefreshTokenLifetime')"
             maxlength="10"
             type="number"
           />
@@ -214,8 +214,8 @@ export default {
       rules: {
         id: [
           { required: true, message: i18n.t('wolf.appRulesMessageIDRequired'), trigger: ['blur', 'change'] },
-          { min: 2, max: 32, message: i18n.t('wolf.appRulesMessageLength'), trigger: ['blur', 'change'] },
-          { pattern: /^[a-zA-Z0-9_-]*$/, message: i18n.t('wolf.appRulesMessageFormat'), trigger: ['blur', 'change'] },
+          { min: 2, max: 32, message: i18n.t('wolf.appRulesMessageIDLength'), trigger: ['blur', 'change'] },
+          { pattern: /^[a-zA-Z0-9_-]*$/, message: i18n.t('wolf.appRulesMessageIDFormat'), trigger: ['blur', 'change'] },
           { validator: this.validateAppId, trigger: ['blur', 'change'] },
         ],
         name: [

@@ -1,7 +1,7 @@
 <template>
   <el-select
     v-model="roleIDs"
-    placeholder="Change Role"
+    :placeholder="$t('wolf.promptChangeRole')"
     size="small"
     style="display: block"
     multiple
