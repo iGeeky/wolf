@@ -152,6 +152,25 @@ const en = {
     'rolePromptUpdateSuccess': '<div>Alter Role success.</div>',
     'rolePromptAddSuccess': '<div>Role added.</div>',
 
+    'categorySearchPrompt': 'Category Name',
+    'categoryNewCategory': 'New Category',
+    'categoryEditCategory': 'Edit Category',
+    'categoryTitleApp': 'App',
+    'newCategoryLabelID': 'Category ID',
+    'newCategoryPromptID': 'Category ID',
+    'newCategoryLabelName': 'Name',
+    'newCategoryPromptName': 'Category Name',
+    'newCategoryLabelAppID': 'App',
+    'newCategoryPromptAppID': 'Change App',
+
+    'categoryRulesMessageNameRequired': 'Please Input Category Name',
+
+    'categoryPromptNameExist': 'Category Name already exists',
+    'categoryPromptConfirmRemoveCategory': 'Confirm to remove the category?',
+    'categoryPromptRemoveSuccess': 'Delete succed!',
+    'categoryPromptUpdateSuccess': '<div>Alter Category success.</div>',
+    'categoryPromptAddSuccess': '<div>Category added.</div>',
+
   },
   ...enLocale,
 }

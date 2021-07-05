@@ -151,6 +151,26 @@ const zhcn = {
     'rolePromptRemoveSuccess': '角色已经删除!',
     'rolePromptUpdateSuccess': '<div>角色已经修改.</div>',
     'rolePromptAddSuccess': '<div>角色已经添加.</div>',
+
+    'categorySearchPrompt': '权限分类名称',
+    'categoryNewCategory': '新分类',
+    'categoryEditCategory': '编辑分类',
+    'categoryTitleApp': '所属应用',
+    'newCategoryLabelID': '分类ID',
+    'newCategoryPromptID': '分类ID',
+    'newCategoryLabelName': '名称',
+    'newCategoryPromptName': '分类名称',
+    'newCategoryLabelAppID': '应用',
+    'newCategoryPromptAppID': '修改所属应用',
+
+    'categoryRulesMessageNameRequired': '请输入分类名称',
+
+    'categoryPromptNameExist': '分类名称已经存在',
+    'categoryPromptConfirmRemoveCategory': '确定要删除分类吗?',
+    'categoryPromptRemoveSuccess': '分类已经删除!',
+    'categoryPromptUpdateSuccess': '<div>分类已经修改.</div>',
+    'categoryPromptAddSuccess': '<div>分类已经添加.</div>',
+
   },
   ...zhLocale,
 }

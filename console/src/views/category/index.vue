@@ -2,11 +2,11 @@
   <div class="app-container">
 
     <div class="filter-container">
-      <div class="filter-item">App:</div>
+      <div class="filter-item">{{ $t('wolf.app') }}:</div>
       <current-app class="current-app filter-item" />
       <el-input
         v-model="listQuery.key"
-        placeholder="Category Name"
+        :placeholder="$t('wolf.categorySearchPrompt')"
         style="width: 200px;"
         class="filter-item"
         maxlength="32"
@@ -14,9 +14,9 @@
         @keyup.enter.native="handleFilter"
       />
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        Search
+        {{ $t('wolf.search') }}
       </el-button>
-      <el-button class="filter-item" type="primary" @click="handleAdd">New Category</el-button>
+      <el-button class="filter-item" type="primary" @click="handleAdd">{{ $t('wolf.categoryNewCategory') }}</el-button>
     </div>
 
     <el-table :data="categorys" style="margin-top:30px; " border>
@@ -25,21 +25,21 @@
           {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Name" min-width="20" show-overflow-tooltip>
+      <el-table-column align="center" :label="$t('wolf.titleName')" min-width="20" show-overflow-tooltip>
         <template slot-scope="scope">
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="App" min-width="20" show-overflow-tooltip>
+      <el-table-column align="center" :label="$t('wolf.categoryTitleApp')" min-width="20" show-overflow-tooltip>
         <template slot-scope="scope">
           {{ scope.row.appID }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Create Time" min-width="20" show-overflow-tooltip prop="createTime" :formatter="unixtimeFormat" />
-      <el-table-column align="center" label="Operations" min-width="20" show-overflow-tooltip>
+      <el-table-column align="center" :label="$t('wolf.titleCreateTime')" min-width="20" show-overflow-tooltip prop="createTime" :formatter="unixtimeFormat" />
+      <el-table-column align="center" :label="$t('wolf.titleOperations')" min-width="20" show-overflow-tooltip>
         <template slot-scope="scope">
-          <el-button type="primary" size="small" @click="handleEdit(scope)">Edit</el-button>
-          <el-button type="danger" size="small" @click="handleDelete(scope)">Delete</el-button>
+          <el-button type="primary" size="small" @click="handleEdit(scope)">{{ $t('wolf.btnEdit') }}</el-button>
+          <el-button type="danger" size="small" @click="handleDelete(scope)">{{ $t('wolf.btnDelete') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -47,26 +47,26 @@
       <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="listCategorys" />
     </div>
 
-    <el-dialog :visible.sync="dialogVisible" :title="dialogType==='edit'?'Edit Category':'New Category'" custom-class="rbac-edit-dialog">
+    <el-dialog :visible.sync="dialogVisible" :title="dialogType==='edit'?$t('wolf.categoryEditCategory'):$t('wolf.categoryNewCategory')" custom-class="rbac-edit-dialog">
       <el-form ref="category" :model="category" :rules="rules" label-width="120px" label-position="left">
-        <el-form-item v-if="dialogType==='edit'" label="Category ID" prop="id">
+        <el-form-item v-if="dialogType==='edit'" :label="$t('wolf.newCategoryLabelID')" prop="id">
           <el-input
             v-model="category.id"
-            placeholder="Category ID"
+            :placeholder="$t('wolf.newCategoryPromptID')"
             readonly
           />
         </el-form-item>
-        <el-form-item label="Name" prop="name">
+        <el-form-item :label="$t('wolf.newCategoryLabelName')" prop="name">
           <el-input
             v-model="category.name"
-            placeholder="Category Name"
+            :placeholder="$t('wolf.newCategoryPromptName')"
             minlength="5"
             maxlength="64"
             show-word-limit
           />
         </el-form-item>
-        <el-form-item label="App" prop="appID">
-          <el-select v-model="category.appID" placeholder="Change App" size="small" style="display: block">
+        <el-form-item :label="$t('wolf.newCategoryLabelAppID')" prop="appID">
+          <el-select v-model="category.appID" :placeholder="$t('wolf.newCategoryPromptAppID')" size="small" style="display: block">
             <!-- <el-option
               v-for="application in applications"
               :key="application.appID"
@@ -77,8 +77,8 @@
         </el-form-item>
       </el-form>
       <div style="text-align:right;">
-        <el-button type="danger" @click="dialogVisible=false">Cancel</el-button>
-        <el-button type="primary" @click="validateAndSubmit('category');">Confirm</el-button>
+        <el-button type="danger" @click="dialogVisible=false">{{ $t('wolf.btnCancel') }}</el-button>
+        <el-button type="primary" @click="validateAndSubmit('category');">{{ $t('wolf.btnConfirm') }}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -90,6 +90,7 @@ import CurrentApp from '@/components/CurrentApp'
 import { deepClone } from '@/utils'
 import { listCategorys, addCategory, deleteCategory, updateCategory, checkCategoryNameExist } from '@/api/category'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import i18n from '@/i18n/i18n'
 
 const defaultCategory = {
   id: '',
@@ -124,8 +125,8 @@ export default {
 
       rules: {
         name: [
-          { required: true, message: 'Please Input Category Name', trigger: ['blur', 'change'] },
-          { min: 2, max: 32, message: 'Length must be between 2 and 32 characters', trigger: ['blur', 'change'] },
+          { required: true, message: i18n.t('wolf.categoryRulesMessageNameRequired'), trigger: ['blur', 'change'] },
+          { min: 2, max: 32, message: i18n.t('wolf.pubRulesMessageLength_2_32'), trigger: ['blur', 'change'] },
           { validator: this.validateCategoryName, trigger: ['blur', 'change'] },
         ],
       },
@@ -157,7 +158,7 @@ export default {
     async validateCategoryName(rule, value, callback) {
       const res = await checkCategoryNameExist(this.currentApp, value, this.category.id)
       if (res.ok && res.exist) {
-        callback(new Error(`Category Name '${value}' already exists`))
+        callback(new Error(i18n.t('wolf.categoryPromptNameExist')))
       } else {
         callback()
       }
@@ -181,9 +182,12 @@ export default {
       this.category = deepClone(scope.row)
     },
     handleDelete({ $index, row }) {
-      this.$confirm('Confirm to remove the category?', 'Warning', {
-        confirmButtonText: 'Confirm',
-        cancelButtonText: 'Cancel',
+      const prompt = i18n.t('wolf.categoryPromptConfirmRemoveCategory')
+      const textConfirm = i18n.t('wolf.btnConfirm')
+      const textCancel = i18n.t('wolf.btnCancel')
+      this.$confirm(prompt, 'Warning', {
+        confirmButtonText: textConfirm,
+        cancelButtonText: textCancel,
         type: 'warning',
       })
         .then(async() => {
@@ -192,7 +196,7 @@ export default {
             this.listCategorys()
             this.$message({
               type: 'success',
-              message: 'Delete succed!',
+              message: i18n.t('wolf.categoryPromptRemoveSuccess'),
             })
           }
         })
@@ -219,14 +223,11 @@ export default {
         }
         this.listCategorys()
 
-        const { name } = this.category
         this.dialogVisible = false
         this.$notify({
           title: 'Success',
           dangerouslyUseHTMLString: true,
-          message: `
-            <div>Alter Category '${name}' success.</div>
-          `,
+          message: i18n.t('wolf.categoryPromptUpdateSuccess'),
           type: 'success',
         })
       } else {
@@ -236,12 +237,11 @@ export default {
         }
         this.listCategorys()
         this.category = res.data.category
-        const { name } = this.category
         this.dialogVisible = false
         this.$notify({
           title: 'Success',
           dangerouslyUseHTMLString: true,
-          message: `<div>Category '${name}' added.</div>`,
+          message: i18n.t('wolf.categoryPromptAddSuccess'),
           type: 'success',
         })
       }
