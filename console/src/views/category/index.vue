@@ -182,7 +182,7 @@ export default {
       this.category = deepClone(scope.row)
     },
     handleDelete({ $index, row }) {
-      const prompt = i18n.t('wolf.categoryPromptConfirmRemoveCategory')
+      const prompt = i18n.t('wolf.categoryPromptConfirmRemove')
       const textConfirm = i18n.t('wolf.btnConfirm')
       const textCancel = i18n.t('wolf.btnCancel')
       this.$confirm(prompt, 'Warning', {

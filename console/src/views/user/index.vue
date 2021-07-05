@@ -277,7 +277,7 @@ export default {
         .catch(err => { console.error(err) })
     },
     handleDelete({ $index, row }) {
-      const prompt = i18n.t('wolf.userPromptConfirmRemoveUser')
+      const prompt = i18n.t('wolf.userPromptConfirmRemove')
       const textConfirm = i18n.t('wolf.btnConfirm')
       const textCancel = i18n.t('wolf.btnCancel')
       this.$confirm(prompt, 'Warning', {

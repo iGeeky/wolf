@@ -363,7 +363,7 @@ export default {
       this.diagramDialogVisible = true
     },
     handleDelete({ $index, row }) {
-      const prompt = i18n.t('wolf.appPromptConfirmRemoveApplication')
+      const prompt = i18n.t('wolf.appPromptConfirmRemove')
       const textConfirm = i18n.t('wolf.btnConfirm')
       const textCancel = i18n.t('wolf.btnCancel')
       this.$confirm(prompt, 'Warning', {

@@ -248,7 +248,7 @@ export default {
       this.role = deepClone(scope.row)
     },
     handleDelete({ $index, row }) {
-      const prompt = i18n.t('wolf.rolePromptConfirmRemoveRole')
+      const prompt = i18n.t('wolf.rolePromptConfirmRemove')
       const textConfirm = i18n.t('wolf.btnConfirm')
       const textCancel = i18n.t('wolf.btnCancel')
       this.$confirm(prompt, 'Warning', {

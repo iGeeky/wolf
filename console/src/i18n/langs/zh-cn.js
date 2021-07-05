@@ -63,7 +63,7 @@ const zhcn = {
     'appRulesMessageNameRequired': '请输入应用名称',
 
     'appPromptConfirmResetSecret': '确定要重置密钥吗?',
-    'appPromptConfirmRemoveApplication': '确定要删除应用吗?',
+    'appPromptConfirmRemove': '确定要删除应用吗?',
     'appPromptAppIDExist': '应用ID已经存在了',
     'appPromptAppNameExist': '应用名称已经存在了',
     'appPromptRemoveSuccess': '应用已经删除!',
@@ -123,7 +123,7 @@ const zhcn = {
     'userPromptUsernameExist': '用户名已经存在了',
     'userPromptConfirmResetPassword': '确定要重置该用户的密码吗?',
     'userPromptResetPasswordSuccess': '<div>密码已经重置! 新密码是: ${password}</div><div>此信息只显示一次，请务必保存新密码。</div>',
-    'userPromptConfirmRemoveUser': '确定要删除用户吗?',
+    'userPromptConfirmRemove': '确定要删除用户吗?',
     'userPromptRemoveSuccess': '用户已经删除!',
     'userPromptUpdateSuccess': '<div>用户已经修改.</div>',
     'userPromptAddSuccess': '<div>用户名: ${username}</div><div>密码: ${password}</div><div>此信息只显示一次，请务必保存新账号及密码。</div>',
@@ -147,7 +147,7 @@ const zhcn = {
 
     'rolePromptIDExist': '角色ID已经存在',
     'rolePromptNameExist': '角色名称已经存在',
-    'rolePromptConfirmRemoveRole': '确定要删除角色吗?',
+    'rolePromptConfirmRemove': '确定要删除角色吗?',
     'rolePromptRemoveSuccess': '角色已经删除!',
     'rolePromptUpdateSuccess': '<div>角色已经修改.</div>',
     'rolePromptAddSuccess': '<div>角色已经添加.</div>',
@@ -166,7 +166,7 @@ const zhcn = {
     'categoryRulesMessageNameRequired': '请输入分类名称',
 
     'categoryPromptNameExist': '分类名称已经存在',
-    'categoryPromptConfirmRemoveCategory': '确定要删除分类吗?',
+    'categoryPromptConfirmRemove': '确定要删除分类吗?',
     'categoryPromptRemoveSuccess': '分类已经删除!',
     'categoryPromptUpdateSuccess': '<div>分类已经修改.</div>',
     'categoryPromptAddSuccess': '<div>分类已经添加.</div>',

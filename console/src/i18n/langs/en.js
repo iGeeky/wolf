@@ -63,7 +63,7 @@ const en = {
     'appRulesMessageNameRequired': 'Please Input Application Name',
 
     'appPromptConfirmResetSecret': 'Confirm to reset the secret?',
-    'appPromptConfirmRemoveApplication': 'Confirm to remove the application?',
+    'appPromptConfirmRemove': 'Confirm to remove the application?',
     'appPromptAppIDExist': 'App ID already exists',
     'appPromptAppNameExist': 'App Name already exists',
     'appPromptRemoveSuccess': 'Delete succed!',
@@ -123,7 +123,7 @@ const en = {
     'userPromptUsernameExist': 'Username already exists',
     'userPromptConfirmResetPassword': 'Confirm to reset the password of user?',
     'userPromptResetPasswordSuccess': '<div>Success to reset password! New password: ${password}</div><div>This information is only displayed once, please be sure to save this new password.</div>',
-    'userPromptConfirmRemoveUser': 'Confirm to remove the user?',
+    'userPromptConfirmRemove': 'Confirm to remove the user?',
     'userPromptRemoveSuccess': 'Delete succed!',
     'userPromptUpdateSuccess': '<div>Alter user success.</div>',
     'userPromptAddSuccess': '<div>User name: ${username}</div><div>Password: ${password}</div><div>This information is only displayed once, please be sure to save this account and password.</div>',
@@ -147,7 +147,7 @@ const en = {
 
     'rolePromptIDExist': 'Role ID already exists',
     'rolePromptNameExist': 'Role Name already exists',
-    'rolePromptConfirmRemoveRole': 'Confirm to remove the role?',
+    'rolePromptConfirmRemove': 'Confirm to remove the role?',
     'rolePromptRemoveSuccess': 'Delete succed!',
     'rolePromptUpdateSuccess': '<div>Alter Role success.</div>',
     'rolePromptAddSuccess': '<div>Role added.</div>',
@@ -166,7 +166,7 @@ const en = {
     'categoryRulesMessageNameRequired': 'Please Input Category Name',
 
     'categoryPromptNameExist': 'Category Name already exists',
-    'categoryPromptConfirmRemoveCategory': 'Confirm to remove the category?',
+    'categoryPromptConfirmRemove': 'Confirm to remove the category?',
     'categoryPromptRemoveSuccess': 'Delete succed!',
     'categoryPromptUpdateSuccess': '<div>Alter Category success.</div>',
     'categoryPromptAddSuccess': '<div>Category added.</div>',
