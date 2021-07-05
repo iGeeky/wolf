@@ -14,6 +14,7 @@ const zhcn = {
     'category': '分类',
     'resource': '资源',
     'auditLog': '审计日志',
+    'app': '应用',
     'search': '搜索',
     'titleId': 'ID',
     'titleName': '名称',
@@ -28,6 +29,10 @@ const zhcn = {
     'btnReset': '重置',
     'btnLogin': '登录',
     'btnDetail': '详情',
+    'btnView': '查看',
+
+    'pubRulesMessageLength_2_32': '长度只能是2-32个字符',
+    'pubRulesMessageIDFormat': '只能包含: 字母(a-zA-Z), 数字(0-9),下划线(_),连字符(-)',
 
     'appSearchPrompt': '应用ID或名称',
     'appNewApplication': '新应用',
@@ -55,8 +60,6 @@ const zhcn = {
     'appDiagramTitle': '应用图表',
 
     'appRulesMessageIDRequired': '请输入应用ID',
-    'appRulesMessageIDLength': '长度只能是2-32个字符',
-    'appRulesMessageIDFormat': '应用ID只能包含: 字母(a-zA-Z), 数字(0-9),下划线(_)',
     'appRulesMessageNameRequired': '请输入应用名称',
 
     'appPromptConfirmResetSecret': '确定要重置密钥吗?',
@@ -112,10 +115,7 @@ const zhcn = {
     'promptChangePermission': '修改权限',
 
     'userRulesMessageUsernameRequired': '请输入用户名',
-    'userRulesMessageUsernameLength': '长度只能是2-32个字符',
-    'userRulesMessageUsernameFormat': '用户名只能包含: 字母(a-zA-Z), 数字(0-9),下划线(_)',
     'userRulesMessageNicknameRequired': '请输入昵称',
-    'userRulesMessageNicknameLength': '长度只能是2-32个字符',
     'userRulesMessageEmailFormat': '请输入合法的电子邮件地址',
     'userRulesMessageTelFormat': '请输入合法的手机号码',
     'userRulesMessageAppIDRequired': '请选择管理的应用',
@@ -128,6 +128,29 @@ const zhcn = {
     'userPromptUpdateSuccess': '<div>用户已经修改.</div>',
     'userPromptAddSuccess': '<div>用户名: ${username}</div><div>密码: ${password}</div><div>此信息只显示一次，请务必保存新账号及密码。</div>',
 
+    'roleSearchPrompt': '角色ID或名称',
+    'roleNewRole': '新角色',
+    'roleEditRole': '编辑角色',
+    'roleViewRole': '查看角色',
+    'roleTitleApp': '所属应用',
+    'roleTitlePermissions': '权限',
+    'newRoleLabelName': '名称',
+    'newRolePromptName': '权限名称',
+    'newRoleLabelDescription': '描述',
+    'newRolePromptDescription': '权限描述',
+    'newRoleLabelAppID': '应用',
+    'newRolePromptAppID': '修改所属应用',
+    'newRoleLabelPermissions': '权限',
+
+    'roleRulesMessageIDRequired': '请输入角色ID',
+    'roleRulesMessageNameRequired': '请输入角色名称',
+
+    'rolePromptIDExist': '角色ID已经存在',
+    'rolePromptNameExist': '角色名称已经存在',
+    'rolePromptConfirmRemoveRole': '确定要删除角色吗?',
+    'rolePromptRemoveSuccess': '角色已经删除!',
+    'rolePromptUpdateSuccess': '<div>角色已经修改.</div>',
+    'rolePromptAddSuccess': '<div>角色已经添加.</div>',
   },
   ...zhLocale,
 }

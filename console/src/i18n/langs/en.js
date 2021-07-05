@@ -14,6 +14,7 @@ const en = {
     'category': 'Category',
     'resource': 'Resource',
     'auditLog': 'Audit Log',
+    'app': 'App',
     'search': 'Search',
     'titleId': 'ID',
     'titleName': 'Name',
@@ -28,6 +29,10 @@ const en = {
     'btnReset': 'Reset',
     'btnLogin': 'Login',
     'btnDetail': 'Detail',
+    'btnView': 'View',
+
+    'pubRulesMessageLength_2_32': 'length must be between 2 and 32 characters',
+    'pubRulesMessageIDFormat': 'only contain letters(a-zA-Z), numbers(0-9), underline(_), hyphen(-)',
 
     'appSearchPrompt': 'App ID or App Name',
     'appNewApplication': 'New Application',
@@ -55,8 +60,6 @@ const en = {
     'appDiagramTitle': 'Application Diagram',
 
     'appRulesMessageIDRequired': 'Please Input Application ID',
-    'appRulesMessageIDLength': 'Length must be between 2 and 32 characters',
-    'appRulesMessageIDFormat': 'App ID can only contain letters(a-zA-Z), numbers(0-9), underline(_)',
     'appRulesMessageNameRequired': 'Please Input Application Name',
 
     'appPromptConfirmResetSecret': 'Confirm to reset the secret?',
@@ -112,10 +115,7 @@ const en = {
     'promptChangePermission': 'Change Permission',
 
     'userRulesMessageUsernameRequired': 'Please input username',
-    'userRulesMessageUsernameLength': 'length must be between 2 and 32 characters',
-    'userRulesMessageUsernameFormat': 'username can only contain letters(a-zA-Z), numbers(0-9), underline(_)',
     'userRulesMessageNicknameRequired': 'Please input nickname',
-    'userRulesMessageNicknameLength': 'length must be between 2 and 32 characters',
     'userRulesMessageEmailFormat': 'Please input Valid Email',
     'userRulesMessageTelFormat': 'Please input valid phone number',
     'userRulesMessageAppIDRequired': 'Please select a management application.',
@@ -127,6 +127,30 @@ const en = {
     'userPromptRemoveSuccess': 'Delete succed!',
     'userPromptUpdateSuccess': '<div>Alter user success.</div>',
     'userPromptAddSuccess': '<div>User name: ${username}</div><div>Password: ${password}</div><div>This information is only displayed once, please be sure to save this account and password.</div>',
+
+    'roleSearchPrompt': 'Role id or name',
+    'roleNewRole': 'New Role',
+    'roleEditRole': 'Edit Role',
+    'roleViewRole': 'View Role',
+    'roleTitleApp': 'App',
+    'roleTitlePermissions': 'Permissions',
+    'newRoleLabelName': 'Name',
+    'newRolePromptName': 'Role Name',
+    'newRoleLabelDescription': 'Description',
+    'newRolePromptDescription': 'Description',
+    'newRoleLabelAppID': 'App',
+    'newRolePromptAppID': 'Change App',
+    'newRoleLabelPermissions': 'Permissions',
+
+    'roleRulesMessageIDRequired': 'Please input role ID',
+    'roleRulesMessageNameRequired': 'Please input role name',
+
+    'rolePromptIDExist': 'Role ID already exists',
+    'rolePromptNameExist': 'Role Name already exists',
+    'rolePromptConfirmRemoveRole': 'Confirm to remove the role?',
+    'rolePromptRemoveSuccess': 'Delete succed!',
+    'rolePromptUpdateSuccess': '<div>Alter Role success.</div>',
+    'rolePromptAddSuccess': '<div>Role added.</div>',
 
   },
   ...enLocale,

@@ -214,8 +214,8 @@ export default {
       rules: {
         id: [
           { required: true, message: i18n.t('wolf.appRulesMessageIDRequired'), trigger: ['blur', 'change'] },
-          { min: 2, max: 32, message: i18n.t('wolf.appRulesMessageIDLength'), trigger: ['blur', 'change'] },
-          { pattern: /^[a-zA-Z0-9_-]*$/, message: i18n.t('wolf.appRulesMessageIDFormat'), trigger: ['blur', 'change'] },
+          { min: 2, max: 32, message: i18n.t('wolf.pubRulesMessageLength_2_32'), trigger: ['blur', 'change'] },
+          { pattern: /^[a-zA-Z0-9_-]*$/, message: i18n.t('wolf.pubRulesMessageIDFormat'), trigger: ['blur', 'change'] },
           { validator: this.validateAppId, trigger: ['blur', 'change'] },
         ],
         name: [

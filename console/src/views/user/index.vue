@@ -164,8 +164,8 @@ export default {
       return {
         username: [
           { required: true, message: i18n.t('wolf.userRulesMessageUsernameRequired'), trigger: ['blur', 'change'] },
-          { min: 2, max: 32, message: i18n.t('wolf.userRulesMessageUsernameLength'), trigger: ['blur', 'change'] },
-          { pattern: /^[a-zA-Z0-9_-]*$/, message: i18n.t('wolf.userRulesMessageUsernameFormat'), trigger: ['blur', 'change'] },
+          { min: 2, max: 32, message: i18n.t('wolf.pubRulesMessageLength_2_32'), trigger: ['blur', 'change'] },
+          { pattern: /^[a-zA-Z0-9_-]*$/, message: i18n.t('wolf.pubRulesMessageIDFormat'), trigger: ['blur', 'change'] },
           { validator: this.validateUsername, trigger: ['blur', 'change'] },
         ],
         nickname: [
