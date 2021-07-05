@@ -78,7 +78,7 @@
         <el-form-item :label="$t('wolf.newUserLabelTel')" prop="tel">
           <el-input v-model="user.tel" :placeholder="$t('wolf.newUserPromptTel')" />
         </el-form-item>
-        <el-form-item :label="$t('wolf.newUserLabelAppID')" prop="appIDs">
+        <el-form-item :label="$t('wolf.labelApp')" prop="appIDs">
           <el-select v-model="user.appIDs" multiple filterable :placeholder="$t('wolf.newUserPromptAppID')" style="display: block">
             <el-option v-for="application in applications" :key="application.id" :label="application.name" :value="application.id" />
           </el-select>

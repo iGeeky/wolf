@@ -57,7 +57,7 @@
 
     <el-dialog :visible.sync="dialogVisible" :title="dialogType==='edit'?$t('wolf.appEditApplication'):$t('wolf.appNewApplication')" custom-class="application-edit-dialog">
       <el-form ref="application" :model="application" :rules="rules" label-width="150px" label-position="left">
-        <el-form-item :label="$t('wolf.newAppLabelAppID')" prop="id">
+        <el-form-item :label="$t('wolf.labelAppID')" prop="id">
           <el-input
             v-model="application.id"
             :placeholder="$t('wolf.newAppPromptAppID')"

@@ -35,7 +35,7 @@
           {{ scope.row.description }}
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('wolf.roleTitleApp')" min-width="20" show-overflow-tooltip>
+      <el-table-column align="center" :label="$t('wolf.titleApp')" min-width="20" show-overflow-tooltip>
         <template slot-scope="scope">
           {{ scope.row.appID }}
         </template>
@@ -85,8 +85,8 @@
             :readonly="inputReadonly"
           />
         </el-form-item>
-        <el-form-item :label="$t('wolf.newRoleLabelAppID')" prop="appID" :readonly="inputReadonly">
-          <el-select v-model="role.appID" :placeholder="$t('wolf.newRolePromptAppID')" size="small" style="display: block" />
+        <el-form-item :label="$t('wolf.labelApp')" prop="appID" :readonly="inputReadonly">
+          <el-select v-model="role.appID" :placeholder="$t('wolf.promptChangeApp')" size="small" style="display: block" />
         </el-form-item>
         <el-form-item :label="$t('wolf.newRoleLabelPermissions')" prop="permIDs">
           <permission-select :value.sync="role.permIDs" multiple :readonly="dialogType==='view'" />

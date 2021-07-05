@@ -35,7 +35,7 @@
           {{ scope.row.description }}
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('wolf.permTitleApp')" min-width="20" show-overflow-tooltip>
+      <el-table-column align="center" :label="$t('wolf.titleApp')" min-width="20" show-overflow-tooltip>
         <template slot-scope="scope">
           {{ scope.row.appID }}
         </template>
@@ -83,8 +83,8 @@
             show-word-limit
           />
         </el-form-item>
-        <el-form-item :label="$t('wolf.newPermLabelAppID')" prop="appID">
-          <el-select v-model="permission.appID" :placeholder="$t('wolf.newPermPromptAppID')" size="small" style="display: block" />
+        <el-form-item :label="$t('wolf.labelApp')" prop="appID">
+          <el-select v-model="permission.appID" :placeholder="$t('wolf.promptChangeApp')" size="small" style="display: block" />
         </el-form-item>
         <el-form-item :label="$t('wolf.newPermLabelCategory')" prop="categoryID">
           <el-select v-model="permission.categoryID" :placeholder="$t('wolf.newPermPromptCategory')" size="small" style="display: block" clearable filterable>

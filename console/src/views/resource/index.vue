@@ -2,11 +2,11 @@
   <div class="app-container">
 
     <div class="filter-container">
-      <div class="filter-item">App:</div>
+      <div class="filter-item">{{ $t('wolf.app') }}:</div>
       <current-app class="current-app filter-item" />
       <el-input
         v-model="listQuery.key"
-        placeholder="resource name or permission"
+        :placeholder="$t('wolf.resSearchPrompt')"
         style="width: 200px;"
         class="filter-item"
         maxlength="32"
@@ -14,42 +14,42 @@
         @keyup.enter.native="handleFilter"
       />
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        Search
+        {{ $t('wolf.search') }}
       </el-button>
-      <el-button class="filter-item" type="primary" @click="handleAdd">New Resource</el-button>
+      <el-button class="filter-item" type="primary" @click="handleAdd">{{ $t('wolf.resNewResource') }}</el-button>
     </div>
 
     <el-table :data="resources" style="margin-top:30px; " border>
-      <el-table-column align="center" label="App" min-width="20" show-overflow-tooltip>
+      <el-table-column align="center" :label="$t('wolf.titleApp')" min-width="20" show-overflow-tooltip>
         <template slot-scope="scope">
           {{ scope.row.appID }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Match Type" min-width="20" show-overflow-tooltip>
+      <el-table-column align="center" :label="$t('wolf.resTitleMatchType')" min-width="20" show-overflow-tooltip>
         <template slot-scope="scope">
           {{ scope.row.matchTypeName }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Name" min-width="60" show-overflow-tooltip>
+      <el-table-column align="center" :label="$t('wolf.titleName')" min-width="60" show-overflow-tooltip>
         <template slot-scope="scope">
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Action" min-width="20" show-overflow-tooltip>
+      <el-table-column align="center" :label="$t('wolf.resTitleAction')" min-width="20" show-overflow-tooltip>
         <template slot-scope="scope">
           {{ scope.row.action }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Permission" min-width="20" show-overflow-tooltip>
+      <el-table-column align="center" :label="$t('wolf.resTitlePermission')" min-width="20" show-overflow-tooltip>
         <template slot-scope="scope">
           {{ scope.row.permission_name }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Create Time" min-width="20" show-overflow-tooltip prop="createTime" :formatter="unixtimeFormat" />
-      <el-table-column align="center" label="Operations" min-width="20" show-overflow-tooltip>
+      <el-table-column align="center" :label="$t('wolf.titleCreateTime')" min-width="20" show-overflow-tooltip prop="createTime" :formatter="unixtimeFormat" />
+      <el-table-column align="center" :label="$t('wolf.titleOperations')" min-width="20" show-overflow-tooltip>
         <template slot-scope="scope">
-          <el-button type="primary" size="small" @click="handleEdit(scope)">Edit</el-button>
-          <el-button type="danger" size="small" @click="handleDelete(scope)">Delete</el-button>
+          <el-button type="primary" size="small" @click="handleEdit(scope)">{{ $t('wolf.btnEdit') }}</el-button>
+          <el-button type="danger" size="small" @click="handleDelete(scope)">{{ $t('wolf.btnDelete') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -59,10 +59,10 @@
 
     <el-dialog :visible.sync="dialogVisible" :title="dialogTitle" custom-class="rbac-edit-dialog">
       <el-form ref="resource" :model="resource" :rules="rules" label-width="120px" label-position="left">
-        <el-form-item label="App" prop="appID">
-          <el-select v-model="resource.appID" placeholder="Change App" size="small" style="display: block" />
+        <el-form-item :label="$t('wolf.labelApp')" prop="appID">
+          <el-select v-model="resource.appID" :placeholder="$t('wolf.promptChangeApp')" size="small" style="display: block" />
         </el-form-item>
-        <el-form-item label="Match Type" prop="matchType">
+        <el-form-item :label="$t('wolf.resTitleMatchType')" prop="matchType">
           <el-select v-model="resource.matchType" size="small" style="display: block">
             <el-option
               v-for="matchType in matchTypes"
@@ -72,24 +72,24 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="Action" prop="action">
-          <el-select v-model="resource.action" placeholder="Http Method" size="small" style="display: block">
+        <el-form-item :label="$t('wolf.resTitleAction')" prop="action">
+          <el-select v-model="resource.action" size="small" style="display: block">
             <el-option v-for="action in actions" :key="action" :label="action" :value="action" />
           </el-select>
         </el-form-item>
-        <el-form-item label="Name" prop="name">
+        <el-form-item :label="$t('wolf.titleName')" prop="name">
           <el-input
             v-model="resource.name"
-            placeholder="resource name"
+            :placeholder="$t('wolf.newResourcePromptName')"
           />
         </el-form-item>
-        <el-form-item label="Permission" prop="permID">
+        <el-form-item :label="$t('wolf.resTitlePermission')" prop="permID">
           <permission-select :value.sync="resource.permID" />
         </el-form-item>
       </el-form>
       <div style="text-align:right;">
-        <el-button type="danger" @click="dialogVisible=false">Cancel</el-button>
-        <el-button v-if="dialogType!=='view'" type="primary" @click="validateAndSubmit('resource');">Confirm</el-button>
+        <el-button type="danger" @click="dialogVisible=false">{{ $t('wolf.btnCancel') }}</el-button>
+        <el-button v-if="dialogType!=='view'" type="primary" @click="validateAndSubmit('resource');">{{ $t('wolf.btnConfirm') }}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -100,10 +100,11 @@
 import CurrentApp from '@/components/CurrentApp'
 import PermissionSelect from '@/components/PermissionSelect'
 var _ = require('lodash')
-import { deepClone } from '@/utils'
+import { deepClone, format } from '@/utils'
 import { listResources, addResource, deleteResource, updateResource, checkResourceExist } from '@/api/resource'
 import { listPermissions } from '@/api/permission'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import i18n from '@/i18n/i18n'
 
 const defaultResource = {
   appID: '',
@@ -139,15 +140,15 @@ export default {
         label: 'title',
       },
       matchTypes: [
-        { type: 'equal', name: 'Equals Match' },
-        { type: 'prefix', name: 'Prefix Match' },
-        { type: 'suffix', name: 'Suffix Match' },
+        { type: 'equal', name: i18n.t('wolf.labelEqualsMatch') },
+        { type: 'prefix', name: i18n.t('wolf.labelPrefixMatch') },
+        { type: 'suffix', name: i18n.t('wolf.labelSuffixMatch') },
       ],
       actions: ['ALL', 'GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'OPTIONS', 'PATCH'],
       rules: {
         name: [
-          { required: true, message: 'Please input resource name', trigger: ['blur', 'change'] },
-          { min: 1, max: 512, message: 'length must be between 1 and 512 characters', trigger: ['blur', 'change'] },
+          { required: true, message: i18n.t('wolf.resRulesMessageNameRequired'), trigger: ['blur', 'change'] },
+          { min: 1, max: 512, message: i18n.t('wolf.resRulesMessageNameLength'), trigger: ['blur', 'change'] },
           { validator: this.validateResource, trigger: ['blur', 'change'] },
         ],
         matchType: [
@@ -157,7 +158,7 @@ export default {
           { validator: this.validateResource, trigger: ['blur', 'change'] },
         ],
         permID: [
-          { required: true, message: 'Please select a permission for resource', trigger: ['blur', 'change'] },
+          { required: true, message: i18n.t('wolf.resRulesMessagePermIDRequired'), trigger: ['blur', 'change'] },
         ],
       },
     }
@@ -169,9 +170,9 @@ export default {
     dialogTitle: function() {
       switch (this.dialogType) {
         case 'edit':
-          return 'Edit Resource'
+          return i18n.t('wolf.resEditResource')
         default:
-          return 'New Resource'
+          return i18n.t('wolf.resNewResource')
       }
     },
 
@@ -226,7 +227,11 @@ export default {
       const { matchType, name, action } = this.resource
       const res = await checkResourceExist(this.resource)
       if (res.ok && res.exist) {
-        callback(new Error(`Resource '${matchType}:${action}:${name}' already exists`))
+        const matchTypeKey = i18n.t('wolf.resTitleMatchType')
+        const actionKey = i18n.t('wolf.resTitleAction')
+        const nameKey = i18n.t('wolf.titleName')
+        const prompt = format(i18n.t('wolf.resPromptResourceExist'), { matchTypeKey, matchType, actionKey, action, nameKey, name })
+        callback(new Error(prompt))
       } else {
         callback()
       }
@@ -251,9 +256,12 @@ export default {
     },
 
     handleDelete({ $index, row }) {
-      this.$confirm('Confirm to remove the resource?', 'Warning', {
-        confirmButtonText: 'Confirm',
-        cancelButtonText: 'Cancel',
+      const prompt = i18n.t('wolf.resPromptConfirmRemove')
+      const textConfirm = i18n.t('wolf.btnConfirm')
+      const textCancel = i18n.t('wolf.btnCancel')
+      this.$confirm(prompt, 'Warning', {
+        confirmButtonText: textConfirm,
+        cancelButtonText: textCancel,
         type: 'warning',
       })
         .then(async() => {
@@ -262,7 +270,7 @@ export default {
             this.listResources()
             this.$message({
               type: 'success',
-              message: 'Delete succed!',
+              message: i18n.t('wolf.resPromptRemoveSuccess'),
             })
           }
         })
@@ -289,14 +297,11 @@ export default {
         }
         this.listResources()
 
-        const { name } = this.resource
         this.dialogVisible = false
         this.$notify({
           title: 'Success',
           dangerouslyUseHTMLString: true,
-          message: `
-            <div>Alter Resource '${name}' success.</div>
-          `,
+          message: i18n.t('wolf.resPromptUpdateSuccess'),
           type: 'success',
         })
       } else {
@@ -306,12 +311,11 @@ export default {
         }
         this.listResources()
         this.resource = res.data.resource
-        const { name } = this.resource
         this.dialogVisible = false
         this.$notify({
           title: 'Success',
           dangerouslyUseHTMLString: true,
-          message: `<div>Resource '${name}' added.</div>`,
+          message: i18n.t('wolf.resPromptAddSuccess'),
           type: 'success',
         })
       }

@@ -19,7 +19,7 @@
         <el-form-item :label="$t('wolf.roleDetailLabelNickname')" prop="nickname">
           <el-input v-model="user.nickname" readonly />
         </el-form-item>
-        <el-form-item :label="$t('wolf.roleDetailLabelAppID')" prop="appIDs">
+        <el-form-item :label="$t('wolf.labelApp')" prop="appIDs">
           <el-input v-model="currentApp" readonly />
         </el-form-item>
         <el-form-item :label="$t('wolf.roleDetailLabelPermissions')" prop="permIDs">

@@ -26,6 +26,7 @@
 
 <script>
 import { listPermissions } from '@/api/permission'
+import i18n from '@/i18n/i18n'
 
 export default {
   name: 'PermissionSelect',
@@ -86,8 +87,8 @@ export default {
       if (res && res.ok) {
         const permissions = res.data.permissions
         if (!this.multiple) {
-          const denyAll = { id: 'DENY_ALL', name: 'Deny All' }
-          const allowAll = { id: 'ALLOW_ALL', name: 'Allow All' }
+          const denyAll = { id: 'DENY_ALL', name: i18n.t('wolf.labelDenyAll') }
+          const allowAll = { id: 'ALLOW_ALL', name: i18n.t('wolf.labelAllowAll') }
           permissions.unshift(allowAll)
           permissions.unshift(denyAll)
         }

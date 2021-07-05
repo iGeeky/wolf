@@ -30,7 +30,7 @@
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('wolf.categoryTitleApp')" min-width="20" show-overflow-tooltip>
+      <el-table-column align="center" :label="$t('wolf.titleApp')" min-width="20" show-overflow-tooltip>
         <template slot-scope="scope">
           {{ scope.row.appID }}
         </template>
@@ -65,8 +65,8 @@
             show-word-limit
           />
         </el-form-item>
-        <el-form-item :label="$t('wolf.newCategoryLabelAppID')" prop="appID">
-          <el-select v-model="category.appID" :placeholder="$t('wolf.newCategoryPromptAppID')" size="small" style="display: block">
+        <el-form-item :label="$t('wolf.labelApp')" prop="appID">
+          <el-select v-model="category.appID" :placeholder="$t('wolf.promptChangeApp')" size="small" style="display: block">
             <!-- <el-option
               v-for="application in applications"
               :key="application.appID"
