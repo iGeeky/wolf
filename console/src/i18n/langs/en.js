@@ -116,7 +116,7 @@ const en = {
 
     'userRulesMessageUsernameRequired': 'Please input username',
     'userRulesMessageNicknameRequired': 'Please input nickname',
-    'userRulesMessageEmailFormat': 'Please input Valid Email',
+    'userRulesMessageEmailFormat': 'Please input valid email',
     'userRulesMessageTelFormat': 'Please input valid phone number',
     'userRulesMessageAppIDRequired': 'Please select a management application.',
 
@@ -163,7 +163,7 @@ const en = {
     'newCategoryLabelAppID': 'App',
     'newCategoryPromptAppID': 'Change App',
 
-    'categoryRulesMessageNameRequired': 'Please Input Category Name',
+    'categoryRulesMessageNameRequired': 'Please input category name',
 
     'categoryPromptNameExist': 'Category Name already exists',
     'categoryPromptConfirmRemove': 'Confirm to remove the category?',
@@ -171,6 +171,32 @@ const en = {
     'categoryPromptUpdateSuccess': '<div>Alter Category success.</div>',
     'categoryPromptAddSuccess': '<div>Category added.</div>',
 
+    'permSearchPrompt': 'Permission ID or Name',
+    'permNewPermission': 'New Permission',
+    'permEditPermission': 'Edit Permission',
+    'permTitleApp': 'App',
+    'permTitleCategory': 'Category',
+
+    'newPermLabelID': 'ID',
+    'newPermPromptID': 'Permission ID',
+    'newPermLabelName': 'Name',
+    'newPermPromptName': 'Permission Name',
+    'newPermLabelDescription': 'Description',
+    'newPermPromptDescription': 'Description',
+    'newPermLabelAppID': 'App',
+    'newPermPromptAppID': 'Change App',
+    'newPermLabelCategory': 'Category',
+    'newPermPromptCategory': 'Change Category',
+
+    'permRulesMessageIDRequired': 'Please input permission id',
+    'permRulesMessageNameRequired': 'Please input permission name',
+
+    'permPromptIDExist': 'Permission id already exists',
+    'permPromptNameExist': 'Permission name already exists',
+    'permPromptConfirmRemove': 'Confirm to remove the permission?',
+    'permPromptRemoveSuccess': 'Delete succed!',
+    'permPromptUpdateSuccess': '<div>Alter Permission success.</div>',
+    'permPromptAddSuccess': '<div>Permission added.</div>',
   },
   ...enLocale,
 }

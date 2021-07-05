@@ -2,11 +2,11 @@
   <div class="app-container">
 
     <div class="filter-container">
-      <div class="filter-item">App:</div>
+      <div class="filter-item">{{ $t('wolf.app') }}:</div>
       <current-app class="current-app filter-item" />
       <el-input
         v-model="listQuery.key"
-        placeholder="Permission id or name"
+        :placeholder="$t('wolf.permSearchPrompt')"
         style="width: 200px;"
         class="filter-item"
         maxlength="32"
@@ -14,9 +14,9 @@
         @keyup.enter.native="handleFilter"
       />
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        Search
+        {{ $t('wolf.search') }}
       </el-button>
-      <el-button class="filter-item" type="primary" @click="handleAdd">New Permission</el-button>
+      <el-button class="filter-item" type="primary" @click="handleAdd">{{ $t('wolf.permNewPermission') }}</el-button>
     </div>
 
     <el-table :data="permissions" style="margin-top:30px; " border>
@@ -25,31 +25,31 @@
           {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Name" min-width="25" show-overflow-tooltip>
+      <el-table-column align="center" :label="$t('wolf.titleName')" min-width="25" show-overflow-tooltip>
         <template slot-scope="scope">
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Description" min-width="40" show-overflow-tooltip>
+      <el-table-column align="center" :label="$t('wolf.titleDescription')" min-width="40" show-overflow-tooltip>
         <template slot-scope="scope">
           {{ scope.row.description }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="App" min-width="20" show-overflow-tooltip>
+      <el-table-column align="center" :label="$t('wolf.permTitleApp')" min-width="20" show-overflow-tooltip>
         <template slot-scope="scope">
           {{ scope.row.appID }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Category" min-width="20" show-overflow-tooltip>
+      <el-table-column align="center" :label="$t('wolf.permTitleCategory')" min-width="20" show-overflow-tooltip>
         <template slot-scope="scope">
           {{ scope.row.category_name }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Create Time" min-width="20" show-overflow-tooltip prop="createTime" :formatter="unixtimeFormat" />
-      <el-table-column align="center" label="Operations" min-width="20" show-overflow-tooltip>
+      <el-table-column align="center" :label="$t('wolf.titleCreateTime')" min-width="20" show-overflow-tooltip prop="createTime" :formatter="unixtimeFormat" />
+      <el-table-column align="center" :label="$t('wolf.titleOperations')" min-width="20" show-overflow-tooltip>
         <template slot-scope="scope">
-          <el-button type="primary" size="small" @click="handleEdit(scope)">Edit</el-button>
-          <el-button type="danger" size="small" @click="handleDelete(scope)">Delete</el-button>
+          <el-button type="primary" size="small" @click="handleEdit(scope)">{{ $t('wolf.btnEdit') }}</el-button>
+          <el-button type="danger" size="small" @click="handleDelete(scope)">{{ $t('wolf.btnDelete') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -57,37 +57,37 @@
       <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="listPermissions" />
     </div>
 
-    <el-dialog :visible.sync="dialogVisible" :title="dialogType==='edit'?'Edit Permission':'New Permission'" custom-class="rbac-edit-dialog">
+    <el-dialog :visible.sync="dialogVisible" :title="dialogType==='edit'?$t('wolf.permEditPermission'):$t('wolf.permNewPermission')" custom-class="rbac-edit-dialog">
       <el-form ref="permission" :model="permission" :rules="rules" label-width="120px" label-position="left">
-        <el-form-item label="ID" prop="id">
+        <el-form-item :label="$t('wolf.newPermLabelID')" prop="id">
           <el-input
             v-model="permission.id"
-            placeholder="ID"
+            :placeholder="$t('wolf.newPermPromptID')"
             :readonly="dialogType==='edit'"
           />
         </el-form-item>
-        <el-form-item label="Name" prop="name">
+        <el-form-item :label="$t('wolf.newPermLabelName')" prop="name">
           <el-input
             v-model="permission.name"
-            placeholder="Permission Name"
+            :placeholder="$t('wolf.newPermPromptName')"
             minlength="5"
             maxlength="64"
             show-word-limit
           />
         </el-form-item>
-        <el-form-item label="Description" prop="description">
+        <el-form-item :label="$t('wolf.newPermLabelDescription')" prop="description">
           <el-input
             v-model="permission.description"
-            placeholder="Description"
+            :placeholder="$t('wolf.newPermPromptDescription')"
             maxlength="256"
             show-word-limit
           />
         </el-form-item>
-        <el-form-item label="App" prop="appID">
-          <el-select v-model="permission.appID" placeholder="Change App" size="small" style="display: block" />
+        <el-form-item :label="$t('wolf.newPermLabelAppID')" prop="appID">
+          <el-select v-model="permission.appID" :placeholder="$t('wolf.newPermPromptAppID')" size="small" style="display: block" />
         </el-form-item>
-        <el-form-item label="Category" prop="categoryID">
-          <el-select v-model="permission.categoryID" placeholder="Change Category" size="small" style="display: block" clearable filterable>
+        <el-form-item :label="$t('wolf.newPermLabelCategory')" prop="categoryID">
+          <el-select v-model="permission.categoryID" :placeholder="$t('wolf.newPermPromptCategory')" size="small" style="display: block" clearable filterable>
             <el-option
               v-for="category in categorys"
               :key="category.id"
@@ -99,8 +99,8 @@
 
       </el-form>
       <div style="text-align:right;">
-        <el-button type="danger" @click="dialogVisible=false">Cancel</el-button>
-        <el-button type="primary" @click="validateAndSubmit('permission');">Confirm</el-button>
+        <el-button type="danger" @click="dialogVisible=false">{{ $t('wolf.btnCancel') }}</el-button>
+        <el-button type="primary" @click="validateAndSubmit('permission');">{{ $t('wolf.btnConfirm') }}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -114,6 +114,7 @@ import { deepClone } from '@/utils'
 import { listPermissions, addPermission, deletePermission, updatePermission, checkPermissionIDExist, checkPermissionNameExist } from '@/api/permission'
 import { listCategorys } from '@/api/category'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import i18n from '@/i18n/i18n'
 
 const defaultPermission = {
   id: '',
@@ -149,14 +150,14 @@ export default {
 
       rules: {
         id: [
-          { required: true, message: 'Please input permission ID', trigger: ['blur', 'change'] },
-          { min: 2, max: 32, message: 'Length must be between 2 and 32 characters', trigger: ['blur', 'change'] },
-          { pattern: /^[a-zA-Z0-9_-]*$/, message: 'Permission ID can only contain letters(a-zA-Z), numbers(0-9), underline(_)', trigger: ['blur', 'change'] },
+          { required: true, message: i18n.t('wolf.permRulesMessageIDRequired'), trigger: ['blur', 'change'] },
+          { min: 2, max: 32, message: i18n.t('wolf.pubRulesMessageLength_2_32'), trigger: ['blur', 'change'] },
+          { pattern: /^[a-zA-Z0-9_-]*$/, message: i18n.t('wolf.pubRulesMessageIDFormat'), trigger: ['blur', 'change'] },
           { validator: this.validatePermissionId, trigger: ['blur', 'change'] },
         ],
         name: [
-          { required: true, message: 'Please input permission name', trigger: ['blur', 'change'] },
-          { min: 2, max: 32, message: 'Length must be between 2 and 32 characters', trigger: ['blur', 'change'] },
+          { required: true, message: i18n.t('wolf.permRulesMessageNameRequired'), trigger: ['blur', 'change'] },
+          { min: 2, max: 32, message: i18n.t('wolf.pubRulesMessageLength_2_32'), trigger: ['blur', 'change'] },
           { validator: this.validatePermissionName, trigger: ['blur', 'change'] },
         ],
       },
@@ -217,7 +218,7 @@ export default {
       }
       const res = await checkPermissionIDExist(this.currentApp, value)
       if (res.ok && res.exist) {
-        callback(new Error(`Permission Name '${value}' already exists`))
+        callback(new Error(i18n.t('wolf.permPromptIDExist')))
       } else {
         callback()
       }
@@ -226,7 +227,7 @@ export default {
     async validatePermissionName(rule, value, callback) {
       const res = await checkPermissionNameExist(this.currentApp, value, this.permission.id)
       if (res.ok && res.exist) {
-        callback(new Error(`Permission Name '${value}' already exists`))
+        callback(new Error(i18n.t('wolf.permPromptNameExist')))
       } else {
         callback()
       }
@@ -252,9 +253,12 @@ export default {
       this.listCategorys()
     },
     handleDelete({ $index, row }) {
-      this.$confirm('Confirm to remove the permission?', 'Warning', {
-        confirmButtonText: 'Confirm',
-        cancelButtonText: 'Cancel',
+      const prompt = i18n.t('wolf.permPromptConfirmRemove')
+      const textConfirm = i18n.t('wolf.btnConfirm')
+      const textCancel = i18n.t('wolf.btnCancel')
+      this.$confirm(prompt, 'Warning', {
+        confirmButtonText: textConfirm,
+        cancelButtonText: textCancel,
         type: 'warning',
       })
         .then(async() => {
@@ -263,7 +267,7 @@ export default {
             this.listPermissions()
             this.$message({
               type: 'success',
-              message: 'Delete succed!',
+              message: i18n.t('wolf.permPromptRemoveSuccess'),
             })
           }
         })
@@ -290,14 +294,11 @@ export default {
         }
         this.listPermissions()
 
-        const { name } = this.permission
         this.dialogVisible = false
         this.$notify({
           title: 'Success',
           dangerouslyUseHTMLString: true,
-          message: `
-            <div>Alter Permission '${name}' success.</div>
-          `,
+          message: i18n.t('wolf.permPromptUpdateSuccess'),
           type: 'success',
         })
       } else {
@@ -307,12 +308,11 @@ export default {
         }
         this.listPermissions()
         this.permission = res.data.permission
-        const { name } = this.permission
         this.dialogVisible = false
         this.$notify({
           title: 'Success',
           dangerouslyUseHTMLString: true,
-          message: `<div>Permission '${name}' added.</div>`,
+          message: i18n.t('wolf.permPromptAddSuccess'),
           type: 'success',
         })
       }
