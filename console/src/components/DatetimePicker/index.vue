@@ -4,8 +4,8 @@
     type="datetimerange"
     :picker-options="pickerOptions"
     range-separator="to"
-    start-placeholder="Start Time"
-    end-placeholder="End Time"
+    :start-placeholder="$t('wolf.labelStartTime')"
+    :end-placeholder="$t('wolf.labelEndTime')"
     format="yyyy-MM-dd HH:mm"
     style="width: 360px;"
   />

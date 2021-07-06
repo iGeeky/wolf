@@ -41,6 +41,7 @@
 import { getUserRole, setUserRole } from '@/api/user-role'
 import PermissionSelect from '@/components/PermissionSelect'
 import RoleSelect from '@/components/RoleSelect'
+import i18n from '@/i18n/i18n'
 
 const defaultUserRole = {
   userID: null,
@@ -111,7 +112,7 @@ export default {
         this.$notify({
           title: 'Success',
           dangerouslyUseHTMLString: true,
-          message: `<div>Alter ${this.user.username}'s permissions/roles success!</div>`,
+          message: i18n.t('wolf.userPromptUpdateRoleDetailSuccess'),
           type: 'success',
         })
       } else {

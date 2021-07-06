@@ -30,6 +30,8 @@ const zhcn = {
     'labelEqualsMatch': '相等匹配',
     'labelPrefixMatch': '前缀匹配',
     'labelSuffixMatch': '后缀匹配',
+    'labelStartTime': '开始时间',
+    'labelEndTime': '结束时间',
     'btnCancel': '取消',
     'btnConfirm': '确定',
     'btnShow': '显示',
@@ -133,6 +135,7 @@ const zhcn = {
     'userPromptRemoveSuccess': '用户已经删除!',
     'userPromptUpdateSuccess': '<div>用户已经修改.</div>',
     'userPromptAddSuccess': '<div>用户名: ${username}</div><div>密码: ${password}</div><div>此信息只显示一次，请务必保存新账号及密码。</div>',
+    'userPromptUpdateRoleDetailSuccess': '<div>用户权限/角色已经修改!</div>',
 
     'roleSearchPrompt': '角色ID或名称',
     'roleNewRole': '新角色',
@@ -212,6 +215,20 @@ const zhcn = {
     'resPromptRemoveSuccess': '资源已经删除!',
     'resPromptUpdateSuccess': '<div>资源已经修改.</div>',
     'resPromptAddSuccess': '<div>资源已经添加.</div>',
+
+    'alogPromptHttpMethod': 'Http方法',
+    'alogPromptRequestStatus': '请求状态',
+    'alogPromptUrl': 'URL(完全匹配)',
+    'alogPromptIp': '客户端IP',
+    'alogPromptUsername': '用户名或昵称(完全匹配)',
+    'alogTitleUsername': '用户名',
+    'alogTitleMethod': 'Http方法',
+    'alogTitleUrl': 'Url',
+    'alogTitleStatus': '请求状态',
+    'alogTitleAccessTime': '访问时间',
+    'alogTitleClientIP': '客户端IP',
+    'alogBtnViewBody': '查看请求Body',
+
   },
   ...zhLocale,
 }

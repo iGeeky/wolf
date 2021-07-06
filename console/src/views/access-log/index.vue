@@ -2,20 +2,20 @@
   <div class="app-container">
 
     <div class="filter-container">
-      <div class="filter-item">App:</div>
+      <div class="filter-item">{{ $t('wolf.app') }}:</div>
       <current-app class="current-app filter-item" add-rbac-console-item />
 
-      <el-select v-model="listQuery.action" class="filter-item" placeholder="Http Method" size="small" clearable style="width: 140px;">
+      <el-select v-model="listQuery.action" class="filter-item" :placeholder="$t('wolf.alogPromptHttpMethod')" size="small" clearable style="width: 140px;">
         <el-option v-for="action in actions" :key="action" :label="action" :value="action" />
       </el-select>
       <!-- <div class="filter-item">Request Status:</div> -->
-      <el-select v-model="listQuery.status" class="filter-item" placeholder="Request status" size="small" clearable style="width: 150px;">
+      <el-select v-model="listQuery.status" class="filter-item" :placeholder="$t('wolf.alogPromptRequestStatus')" size="small" clearable style="width: 150px;">
         <el-option v-for="status in statuses" :key="status.status" :label="status.description" :value="status.status" />
       </el-select>
       <!-- <div class="filter-item">Url:</div> -->
       <el-input
         v-model="listQuery.resName"
-        placeholder="Url for full match"
+        :placeholder="$t('wolf.alogPromptUrl')"
         style="width: 200px;"
         class="filter-item"
         maxlength="128"
@@ -25,7 +25,7 @@
       <!-- <div class="filter-item">Client IP:</div> -->
       <el-input
         v-model="listQuery.ip"
-        placeholder="client ip"
+        :placeholder="$t('wolf.alogPromptIp')"
         style="width: 150px;"
         class="filter-item"
         maxlength="64"
@@ -34,7 +34,7 @@
       />
       <el-input
         v-model="listQuery.username"
-        placeholder="username or nickname for full match"
+        :placeholder="$t('wolf.alogPromptUsername')"
         style="width: 200px;"
         class="filter-item"
         maxlength="128"
@@ -43,7 +43,7 @@
       />
       <DatetimePicker :value.sync="datetimeRange" class="filter-item" />
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        Search
+        {{ $t('wolf.search') }}
       </el-button>
     </div>
 
@@ -53,27 +53,27 @@
           {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Username" min-width="25" prop="username" show-overflow-tooltip :formatter="usernameFormat" />
-      <el-table-column align="center" label="Method" min-width="10" show-overflow-tooltip>
+      <el-table-column align="center" :label="$t('wolf.alogTitleUsername')" min-width="25" prop="username" show-overflow-tooltip :formatter="usernameFormat" />
+      <el-table-column align="center" :label="$t('wolf.alogTitleMethod')" min-width="10" show-overflow-tooltip>
         <template slot-scope="scope">
           {{ scope.row.action }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Url" min-width="50" show-overflow-tooltip>
+      <el-table-column align="center" :label="$t('wolf.alogTitleUrl')" min-width="50" show-overflow-tooltip>
         <template slot-scope="scope">
           {{ scope.row.resName }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Status" min-width="10" show-overflow-tooltip>
+      <el-table-column align="center" :label="$t('wolf.alogTitleStatus')" min-width="10" show-overflow-tooltip>
         <template slot-scope="scope">
           {{ scope.row.status }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Access Time" min-width="20" show-overflow-tooltip prop="accessTime" :formatter="unixtimeFormat" />
-      <el-table-column align="center" label="Client IP" min-width="15" show-overflow-tooltip prop="ip" />
-      <el-table-column align="center" label="Operations" min-width="10" show-overflow-tooltip>
+      <el-table-column align="center" :label="$t('wolf.alogTitleAccessTime')" min-width="20" show-overflow-tooltip prop="accessTime" :formatter="unixtimeFormat" />
+      <el-table-column align="center" :label="$t('wolf.alogTitleClientIP')" min-width="15" show-overflow-tooltip prop="ip" />
+      <el-table-column align="center" :label="$t('wolf.titleOperations')" min-width="10" show-overflow-tooltip>
         <template slot-scope="scope">
-          <el-button v-if="!jsonIsEmpty(scope.row.body)" type="primary" size="small" @click="handleJsonView(scope)">View Body</el-button>
+          <el-button v-if="!jsonIsEmpty(scope.row.body)" type="primary" size="small" @click="handleJsonView(scope)">{{ $t('wolf.alogBtnViewBody') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
