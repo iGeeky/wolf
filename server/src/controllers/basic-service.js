@@ -41,7 +41,7 @@ class BasicService extends Service {
   // for REST
   checkMethod(method) {
     if (this.ctx.method !== method) {
-      throw new MethodInvalidError(errors.errmsg(errors.ERR_METHOD_INVALID))
+      throw new MethodInvalidError(errors.ERR_METHOD_INVALID)
       return
     }
   }

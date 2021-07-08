@@ -272,7 +272,8 @@ class Rbac extends RbacPub {
   async changePwdPost() {
     const {ok, reason} = await this._changePwdInternal();
     if (!ok) {
-      this.fail(200, reason, {})
+      const errmsg = errors[reason] || reason
+      this.fail2(200, reason, errmsg, {})
       return
     }
     const data = {}

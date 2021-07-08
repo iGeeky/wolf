@@ -80,7 +80,7 @@ class Category extends BasicService {
     const existObject = await PermissionModel.findOne({where})
     if (existObject) {
       this.log4js.error('Deleting the category(%s) failed, it has been used.', categoryID)
-      throw new AccessDenyError('Deleting the category failed, it has been used.')
+      throw new AccessDenyError('ERR_CATEGORY_REMOVE_DENIED')
     }
     await this.deleteByPk('id')
   }

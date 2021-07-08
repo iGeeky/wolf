@@ -170,7 +170,7 @@ export default {
         ],
         nickname: [
           { required: true, message: i18n.t('wolf.userRulesMessageNicknameRequired'), trigger: ['blur', 'change'] },
-          { min: 2, max: 32, message: i18n.t('wolf.userRulesMessageNicknameLength'), trigger: ['blur', 'change'] },
+          { min: 2, max: 32, message: i18n.t('wolf.pubRulesMessageLength_2_32'), trigger: ['blur', 'change'] },
         ],
         email: [{ type: 'email', message: i18n.t('wolf.userRulesMessageEmailFormat'), trigger: ['blur', 'change'] }],
         tel: [

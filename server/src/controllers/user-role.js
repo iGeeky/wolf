@@ -60,7 +60,7 @@ class UserRole extends BasicService {
       const appIds = userInfo.appIDs || []
       if (appIds.indexOf(values.appID) === -1) { // user do not have permission to this app.
         this.log4js.error('access [user-role/set] failed! user:%s have no permission to do this operation', this.ctx.userInfo.username)
-        throw new AccessDenyError('no permission to do this operation.')
+        throw new AccessDenyError('ERR_USER_ROLE_NO_PERM')
       }
     }
 

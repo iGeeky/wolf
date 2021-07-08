@@ -24,7 +24,7 @@ class User extends BasicService {
     if (method !== 'GET' && this.ctx.userInfo && bizMethod !== 'checkExist') { // POST, PUT, DELETE
       if (this.ctx.userInfo.manager !== constant.Manager.super) {
         this.log4js.error('access [%s] failed! user:%s have no permission to do this operation', bizMethod, this.ctx.userInfo.username)
-        throw new AccessDenyError('need super user to do this operation.')
+        throw new AccessDenyError('ERR_NEED_SUPER_USER')
       }
     }
   }
@@ -99,7 +99,7 @@ class User extends BasicService {
 
     if (!(userInfo.manager === constant.Manager.super || userInfo.manager === constant.Manager.admin)) {
       this.log4js.error('login failed! user:%s have no permission to login the rbac console', username)
-      throw new AccessDenyError('need super or admin user to login the rbac console.')
+      throw new AccessDenyError('ERR_LOGIN_NEED_SUPER_OR_ADMIN')
     }
 
     const {token} = await this.tokenCreate(userInfo)
@@ -204,7 +204,7 @@ class User extends BasicService {
     if (values.status === constant.UserStatus.Disabled) { // disabled.
       if (user.manager === constant.Manager.super) {
         this.log4js.error('update failed! cannot disabled a super user(%d:%s)', id, values.username)
-        throw new AccessDenyError('update failed! cannot disabled a super user.')
+        throw new AccessDenyError('ERR_CANNOT_DISABLED_SUPER_USER')
       }
     }
 

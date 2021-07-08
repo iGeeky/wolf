@@ -61,12 +61,12 @@ module.exports = function() {
       const token = getClientToken(ctx)
       if (!token) {
         log4js.error('request [%s %s] invalid! token missing', ctx.method, ctx.url)
-        throw new TokenError('TOKEN MISSING')
+        throw new TokenError('ERR_TOKEN_MISSING')
       }
       const user = tokenUtil.tokenDecrypt(token)
       if (user.error) { // failed
         log4js.error('request [%s %s] invalid! token decrypt failed!', ctx.method, ctx.path)
-        throw new TokenError('TOKEN INVALID')
+        throw new TokenError('ERR_TOKEN_INVALID')
       }
       const userId = user.id;
       let userInfo = await UserModel.findByPk(userId);
@@ -79,12 +79,12 @@ module.exports = function() {
       /* istanbul ignore if */
       if (!(userInfo.manager === constant.Manager.super || userInfo.manager === constant.Manager.admin)) {
         log4js.error('request [%s %s] failed! user [%s] have no permission to do this operation', ctx.method, ctx.path, userInfo.username)
-        throw new AccessDenyError('need super or admin user to do this operation.')
+        throw new AccessDenyError('ERR_NEED_SUPER_OR_ADMIN_USER')
       }
 
       if (userInfo.status === constant.UserStatus.Disabled) {
         log4js.error('request [%s %s] failed! user [%s] is disabled', ctx.method, ctx.path, userInfo.username)
-        throw new AccessDenyError('user is disabled.')
+        throw new AccessDenyError('ERR_USER_DISABLED')
       }
 
       userInfo = userInfo.toJSON()

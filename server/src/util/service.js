@@ -110,13 +110,13 @@ class Service extends ArgsUtil {
 
   fail(status, reason, data=null) {
     this.ctx.status = status;
-    const body = json.fail(reason, errors.errmsg(reason), data)
+    const body = json.fail(reason, '', data)
     this.ctx.body = body
   }
 
   fail2(status, reason, errmsg, data=null) {
     this.ctx.status = status;
-    const body = json.fail(reason, errmsg || errors.errmsg(reason), data)
+    const body = json.fail(reason, errmsg, data)
     this.ctx.body = body
   }
 

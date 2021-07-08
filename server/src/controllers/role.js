@@ -101,7 +101,7 @@ class Role extends BasicService {
     const existObject = await UserRoleModel.findOne({where})
     if (existObject) {
       this.log4js.error('Deleting the role(%s) failed, it has been used.', roleID)
-      throw new AccessDenyError('Deleting the role failed, it has been used.')
+      throw new AccessDenyError('ERR_ROLE_REMOVE_DENIED')
     }
     await this.deleteBy(['id', 'appID'])
   }

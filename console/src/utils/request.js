@@ -3,6 +3,7 @@ import { Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 import router from '@/router'
+import i18n from '@/i18n/i18n'
 
 // create an axios instance
 const service = axios.create({
@@ -31,6 +32,34 @@ service.interceptors.request.use(
   }
 )
 
+function getI18nMessage(errmsg, reason) {
+  const keys = []
+  console.log('reason: %s, errmsg: %s', reason, errmsg)
+
+  const regex = /^[A-Za-z_0-9\.]+$/g
+  if (errmsg && regex.test(errmsg)) {
+    keys.push(errmsg)
+  }
+  if (reason && regex.test(reason)) {
+    keys.push(reason)
+  }
+  let message
+  for (const key of keys) {
+    if (!key) {
+      continue
+    }
+    const i18n_key = `wolf.error.${key}`
+    message = i18n.t(i18n_key)
+    if (message) {
+      break
+    }
+  }
+  if (!message) {
+    message = errmsg || reason || 'unknow error'
+  }
+  return message
+}
+
 // response interceptor
 service.interceptors.response.use(
   /**
@@ -47,9 +76,8 @@ service.interceptors.response.use(
     const res = response.data
 
     // if the custom code is not 20000, it is judged as an error.
-    // console.info('>>>response data: ', JSON.stringify(res))
     if (!res.ok) {
-      const errmsg = res.errmsg || res.reason || 'unknow error'
+      const errmsg = getI18nMessage(res.errmsg, res.reason)
       Message({
         message: errmsg,
         type: 'error',
@@ -64,9 +92,10 @@ service.interceptors.response.use(
     console.error('axios request failed! ' + error) // for debug
     let errmsg = null
     let reason = null
-    if (typeof (error.response.data) === 'object' && !error.response.data.ok && error.response.data.errmsg) {
+    if (typeof (error.response.data) === 'object' && !error.response.data.ok && error.response.data.reason) {
       errmsg = error.response.data.errmsg
       reason = error.response.data.reason
+      errmsg = getI18nMessage(errmsg, reason)
     } else {
       errmsg = `error: ${error.message}`
     }

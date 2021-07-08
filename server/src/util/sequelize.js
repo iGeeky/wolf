@@ -53,7 +53,7 @@ const mustUpdate = async function(values, options) {
 const checkNotExist = async function(where, reason) {
   const existObject = await this.findOne({"where": where})
   if (existObject) {
-    throw new DataExistError(reason, errors.errmsg(reason))
+    throw new DataExistError(reason, '')
   }
   return existObject
 }
@@ -66,7 +66,7 @@ const checkNotExist = async function(where, reason) {
 const checkExist = async function(where, reason) {
   const existObject = await this.findOne({"where": where})
   if (!existObject) {
-    throw new DataNotFoundError(reason, errors.errmsg(reason))
+    throw new DataNotFoundError(reason, '')
   }
   return existObject
 }

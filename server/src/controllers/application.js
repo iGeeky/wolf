@@ -22,7 +22,7 @@ class Application extends BasicService {
     if (checkSuperRole) { // POST, PUT, DELETE
       if (this.ctx.userInfo.manager !== constant.Manager.super) {
         this.log4js.error('access [%s] failed! user:%s have no permission to do this operation', bizMethod, this.ctx.userInfo.username)
-        throw new AccessDenyError('need super user to do this operation.')
+        throw new AccessDenyError('ERR_NEED_SUPER_USER')
       }
     }
   }

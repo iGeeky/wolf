@@ -103,7 +103,7 @@ class Permission extends BasicService {
     }
     if (existObject) {
       this.log4js.error('Deleting the permission(%s) failed, it has been used.', permID)
-      throw new AccessDenyError('Deleting the permission failed, it has been used.')
+      throw new AccessDenyError('ERR_PERMISSION_REMOVE_DENIED')
     }
 
     await this.deleteBy(['id', 'appID'])

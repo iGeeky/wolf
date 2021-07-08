@@ -45,6 +45,9 @@ module.exports = function() {
       } else if (err instanceof BackendError) {
         ctx.status = 500
         ctx.body = json.fail('ERR_SERVER_ERROR', err.message)
+      } else if (err instanceof Sequelize.DatabaseError) {
+        ctx.status = 500
+        ctx.body = json.fail('ERR_SERVER_ERROR', '')
       } else {
         ctx.status = 200
         ctx.body = json.fail('ERR_SERVER_ERROR', err.message)
