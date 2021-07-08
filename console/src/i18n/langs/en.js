@@ -204,7 +204,7 @@ const en = {
     'resTitleMatchType': 'Match type',
     'resTitleAction': 'Action(method)',
     'resTitlePermission': 'Permission',
-    'newResourcePromptName': 'resource name',
+    'newResourcePromptName': 'resource name(url or url prefix, url suffix)',
 
     'resRulesMessageNameRequired': 'Please input resource name',
     'resRulesMessageNameLength': 'length must be between 1 and 512 characters',
@@ -279,6 +279,7 @@ const en = {
       'ERR_PERMISSION_REMOVE_DENIED': 'Deleting the permission failed, it has been used.',
       'ERR_ROLE_REMOVE_DENIED': 'Deleting the role failed, it has been used.',
       'ERR_CANNOT_DISABLED_SUPER_USER': 'update failed! cannot disabled a super user.',
+      'ERR_CANNOT_REMOVE_SUPER_USER_MANAGER': 'update failed! cannot update super role of the default super',
       'ERR_LOGIN_NEED_SUPER_OR_ADMIN': 'need super or admin user to login the rbac console.',
     },
   },

@@ -201,10 +201,16 @@ class User extends BasicService {
       return
     }
 
-    if (values.status === constant.UserStatus.Disabled) { // disabled.
-      if (user.manager === constant.Manager.super) {
-        this.log4js.error('update failed! cannot disabled a super user(%d:%s)', id, values.username)
-        throw new AccessDenyError('ERR_CANNOT_DISABLED_SUPER_USER')
+    if (user.manager === constant.Manager.super && values.status === constant.UserStatus.Disabled) { // disabled.
+      this.log4js.error('update failed! cannot disabled a super user(%d:%s)', id, values.username)
+      throw new AccessDenyError('ERR_CANNOT_DISABLED_SUPER_USER')
+    }
+
+    // cannot change super role of the default super user 'root'
+    if (id === 0 || user.username === 'root') {
+      if (values.manager && user.manager != values.manager) {
+        this.log4js.error('update failed! cannot remove super role of the default super user(%d:%s)', id, values.username)
+        throw new AccessDenyError('ERR_CANNOT_REMOVE_SUPER_USER_MANAGER')
       }
     }
 

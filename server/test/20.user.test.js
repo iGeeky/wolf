@@ -103,9 +103,20 @@ describe('user', function() {
     if (!rootUserInfo) {
       this.skip()
     }
-    const schema = util.failSchema('ERR_ACCESS_DENIED')
-    const body = rootUserInfo
+    const schema = util.failSchema('ERR_ACCESS_DENIED', 'ERR_CANNOT_DISABLED_SUPER_USER')
+    const body = Object.assign({}, rootUserInfo)
     body.status = -1
+    const url = '/wolf/user';
+    await mocha.put({url, headers, body, status: 401, schema})
+  });
+
+  it('failed to update root user manager', async function() {
+    if (!rootUserInfo) {
+      this.skip()
+    }
+    const schema = util.failSchema('ERR_ACCESS_DENIED', 'ERR_CANNOT_REMOVE_SUPER_USER_MANAGER')
+    const body =  Object.assign({}, rootUserInfo)
+    body.manager = 'admin'
     const url = '/wolf/user';
     await mocha.put({url, headers, body, status: 401, schema})
   });

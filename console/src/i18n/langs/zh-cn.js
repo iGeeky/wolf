@@ -204,7 +204,7 @@ const zhcn = {
     'resTitleMatchType': '匹配类型',
     'resTitleAction': '动作(方法)',
     'resTitlePermission': '权限',
-    'newResourcePromptName': '资源名称',
+    'newResourcePromptName': '资源名称(URL或URL前缀,URL后缀)',
 
     'resRulesMessageNameRequired': '请输入资源名称',
     'resRulesMessageNameLength': '长度只能是1-512个字符',
@@ -279,6 +279,7 @@ const zhcn = {
       'ERR_PERMISSION_REMOVE_DENIED': '权限删除失败,它已经被使用了.',
       'ERR_ROLE_REMOVE_DENIED': '角色删除失败,它已经被使用了.',
       'ERR_CANNOT_DISABLED_SUPER_USER': '更新失败, 不能禁用 超级管理员 用户.',
+      'ERR_CANNOT_REMOVE_SUPER_USER_MANAGER': '更新失败, 不能改变 超级管理员 用户的管理角色.',
       'ERR_LOGIN_NEED_SUPER_OR_ADMIN': '需要\'超级管理员\'或\'管理员\'用户来登录wolf管理台',
     },
   },
