@@ -18,6 +18,9 @@ async function getUserInfoFromDbById(userId, appId) {
   const permissions = {}
   userInfo.permissions = permissions;
   userInfo.roles = {}
+  if (!appId) {
+    return userInfo;
+  }
 
   const where = {appID: appId, userID: userId}
   const options = {where}

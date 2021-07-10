@@ -98,7 +98,7 @@ const sequelize = new Sequelize(pgConfig.url, {
   define: {
     timestamps: false, // default is true
   },
-  operatorsAliases: false,
+  operatorsAliases: '0',
   dialectOptions: {
     useUTC: false, // for reading from database
   },
