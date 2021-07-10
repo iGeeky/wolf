@@ -60,6 +60,10 @@ function filterFieldBlack(obj, blackFields) {
   return _.pickBy(obj, (val, key) => _.findIndex(blackFields, (v) => v === key) === -1)
 }
 
+function format(str, argObject) {
+  return str.replace(/\${(.*?)}/g, (x, g) => argObject[g])
+}
+
 exports.isNumeric = isNumeric
 exports.sha1hex = sha1hex
 exports.encodePassword = encodePassword
@@ -71,3 +75,4 @@ exports.fromUnixtime = fromUnixtime
 exports.filterFieldWhite = filterFieldWhite
 exports.filterFieldBlack = filterFieldBlack
 exports.randomString = randomString
+exports.format = format

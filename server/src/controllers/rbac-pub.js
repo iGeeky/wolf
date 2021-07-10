@@ -76,7 +76,7 @@ class RbacPub extends BasicService {
         this.success(data)
       } else if (permID === constant.SystemPerm.DENY_ALL) { // deny all user access
         this.log4js.info('resource {appID: %s, action: %s, resName: %s} permission is [%s], not allow any user to access!', appID, action, resName, permID)
-        const reason = `Access failure. resource '${resName}' is deny all user`
+        const reason = util.format(this.ctx.i18n.__('ERR_RBAC_ACCESS_FAILURE_DENY_ALL'), {resName})
         this.fail(401, reason, data)
       } else if (userInfo.permissions[permID]) { // have permission
         this.log4js.info('user [%s] have permission [%s] to access {appID: %s, action: %s, resName: %s}', userInfo.username, permID, appID, action, resName)
@@ -84,13 +84,13 @@ class RbacPub extends BasicService {
       } else { // have no permission
         this.log4js.info('user [%s] have no permission [%s] to access {appID: %s, action: %s, resName: %s}', userInfo.username, permID, appID, action, resName)
         // TODO: get perm name.
-        const reason = `Access failure. resource '${resName}' is required permission [${permID}]`
+        const reason = util.format(this.ctx.i18n.__('ERR_RBAC_ACCESS_FAILURE_NO_PERM'), {resName,permID})
         this.fail(401, reason, data)
       }
       return
     } else {
       this.log4js.info('user [%s] check permission for resource {appID: %s, action: %s, resName: %s} failed, resource not exist!', userInfo.username, appID, action, resName)
-      const reason = `Access failure. resource '${resName}' not exist`
+      const reason = util.format(this.ctx.i18n.__('ERR_RBAC_ACCESS_FAILURE_RES_NOT_EXIST'), {resName})
       this.fail(401, reason, data)
     }
   }
