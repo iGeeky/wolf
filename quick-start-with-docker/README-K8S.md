@@ -1,7 +1,7 @@
 
 ## 使用 k8s 部署
-#### 1. 创建 deployment.yaml 文件
-[deployment.yaml](./deployment.yaml) 内容及说明如下：
+### 1. 创建 postgres-deploy.yaml 文件
+`postgres-deploy.yaml` 文件内容及说明如下：
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -72,7 +72,34 @@ spec:
   type: ClusterIP
 
 
+```
+#### 在 k8s 中部署 postgres
 
+```shell
+kubectl apply -f postgres-deploy.yaml
+```
+使用下面的命令查看 pod 是否正常运行
+```shell
+[root@node01 ~]# kubectl get pod -n default
+NAME                                     READY   STATUS    RESTARTS   AGE
+postgres-wolf-54d8dbfbf-9t629            1/1     Running   0          42m
+```
+#### 初始化数据
+使用下面的命令将 [db.sql](../server/script/db.sql) 复制到容器中，`db.sql` 需要在当前目录
+```shell
+kubectl cp db.sql postgres-wolf-54d8dbfbf-9t629:/
+```
+使用下面的命令执行 db.sql 脚本
+```shell
+kubectl exec postgres-wolf-54d8dbfbf-9t629 -- psql  -d wolf  -f /db.sql
+```
+> 注意 `postgres-wolf-54d8dbfbf-9t629` 是 pod 的名字
+> 如果由外部的 postgres 则不需要部署上面的 postgres
+
+
+### 2. 创建 wolf-deploy.yaml 文件
+`wolf-deploy.yaml` 文件内容及说明如下：
+```yaml
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -169,11 +196,42 @@ spec:
   type: ClusterIP
 
 
-
 ```
-
-#### 2. 使用下面的命令在 k8s 集群中部署应用
+#### 2. 在 k8s 集群中部署 wolf-server
 ```shell
-kubectl apply -f deployment.yaml
+kubectl apply -f wolf-deploy.yaml
 ```
+使用下面的命令查看 pod 是否正常运行
+```shell
+[root@node01 ~]# kubectl get pod -n default
+NAME                                     READY   STATUS    RESTARTS   AGE
+postgres-wolf-54d8dbfbf-9t629            1/1     Running   0          42m
+wolf-server-b8f588587-xv97t              1/1     Running   0          2m
+```
+
+wolf-server 正常运行后可以通过如下方式临时暴露服务
+```shell
+kubectl port-forward service/wolf-server 12180:80
+```
+**建议通过 ingress 的方式暴露服务**
+
+#### 3. 使用账号登录控制台
+访问前面暴露的服务：http://localhost:12180
+
+![登录页面](../docs/imgs/screenshot/console/login.png)
+从下面的代码中可以看出：
+```js
+async function addRootUser() {
+  await createUser('root', 'root(super man)', 'super')
+  await createUser('admin', 'administrator', 'admin')
+}
+setTimeout(()=> {
+    addRootUser().then(() => {
+
+    }).catch((err) => {
+        console.log('create root user failed! err: %s', err)
+    })
+}, 1000 * 1);
+```
+服务第一次启动的时候会自动创建两个用户：`root` 和 `admin`，密码为前面 `RBAC_ROOT_PASSWORD` 设置的密码。
 
