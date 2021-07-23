@@ -94,7 +94,8 @@ kubectl cp db.sql postgres-wolf-54d8dbfbf-9t629:/
 kubectl exec postgres-wolf-54d8dbfbf-9t629 -- psql  -d wolf  -f /db.sql
 ```
 > 注意 `postgres-wolf-54d8dbfbf-9t629` 是 pod 的名字
-> 如果由外部的 postgres 则不需要部署上面的 postgres
+> 
+> 如果有外部的 postgres 则不需要部署上面的 postgres
 
 
 ### 2. 创建 wolf-deploy.yaml 文件
@@ -219,7 +220,7 @@ kubectl port-forward service/wolf-server 12180:80
 访问前面暴露的服务：http://localhost:12180
 
 ![登录页面](../docs/imgs/screenshot/console/login.png)
-从下面的代码中可以看出：
+从 [init-root-user.js](../server/src/util/init-root-user.js) 中的代码中可以看出：
 ```js
 async function addRootUser() {
   await createUser('root', 'root(super man)', 'super')
