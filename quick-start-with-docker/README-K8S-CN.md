@@ -1,5 +1,8 @@
 
 ## 使用 k8s 部署
+
+[Deploying in k8s](./README-K8S.md)
+
 ### 1. 创建 postgres-deploy.yaml 文件
 `postgres-deploy.yaml` 文件内容及说明如下：
 ```yaml
