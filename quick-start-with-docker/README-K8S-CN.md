@@ -1,7 +1,7 @@
 
-## Using k8s deployment
-### 1. Create the postgres-deploy.yaml file
-The content and description of the `postgres-deploy.yaml` file are as follows:
+## 使用 k8s 部署
+### 1. 创建 postgres-deploy.yaml 文件
+`postgres-deploy.yaml` 文件内容及说明如下：
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -31,13 +31,13 @@ spec:
           env:
             - name: TZ
               value: Asia/Shanghai
-              # username to connect to the database
+              # 连接数据库的用户名
             - name: POSTGRES_USER
               value: root
-              # password to connect to the database
+              # 连接数据库的密码
             - name: POSTGRES_PASSWORD
               value: "R0FSCY2pcuAlWhmp"
-              # if you specify a database name, the database is automatically created
+              # 指定数据库名称，会自动创建数据库
             - name: POSTGRES_DB
               value: wolf
           resources:
@@ -49,8 +49,8 @@ spec:
               mountPath: /var/lib/postgresql/data
       volumes:
         - name: data
-          # The temporary directory is used here, and the data will be lost after the container is restarted
-          # In order to persist data, it is recommended to mount PVC
+          # 这里使用的是临时目录，容器重启后数据会丢失
+          # 为了持久化数据建议挂载 pvc
           emptyDir: {}
 
 ---
@@ -73,35 +73,33 @@ spec:
 
 
 ```
-#### Depolying Postgres in k8s
+#### 在 k8s 中部署 postgres
 
 ```shell
 kubectl apply -f postgres-deploy.yaml
 ```
-Using the following command to see if the pod is working properly
+使用下面的命令查看 pod 是否正常运行
 ```shell
 [root@node01 ~]# kubectl get pod -n default
 NAME                                     READY   STATUS    RESTARTS   AGE
 postgres-wolf-54d8dbfbf-9t629            1/1     Running   0          42m
 ```
-#### Initialization data
-
-Using the following command to copy [db.sql](../server/script/db.sql) into container, `db.sql` needs to be in the current directory
-
+#### 初始化数据
+使用下面的命令将 [db.sql](../server/script/db.sql) 复制到容器中，`db.sql` 需要在当前目录
 ```shell
 kubectl cp db.sql postgres-wolf-54d8dbfbf-9t629:/
 ```
-Execute the `db.sql` script with the following command
+使用下面的命令执行 db.sql 脚本
 ```shell
 kubectl exec postgres-wolf-54d8dbfbf-9t629 -- psql  -d wolf  -f /db.sql
 ```
-> Note that `postgres-wolf-54d8dbfbf-9t629` is the name of the pod
+> 注意 `postgres-wolf-54d8dbfbf-9t629` 是 pod 的名字
 > 
-> If there is external postgres, you do not need to deploy the above postgres
+> 如果有外部的 postgres 则不需要部署上面的 postgres
 
 
-### 2. Create the wolf-deploy.yaml file
-The content and description of the `wolf-deploy.yaml` file are as follows:
+### 2. 创建 wolf-deploy.yaml 文件
+`wolf-deploy.yaml` 文件内容及说明如下：
 ```yaml
 ---
 apiVersion: v1
@@ -110,13 +108,13 @@ metadata:
   namespace: default
   name: wolf-config
 data:
-  # The default password for root and admin accounts. The default is 123456
+  # root账号及admin账号的默认密码. 默认为123456
   RBAC_ROOT_PASSWORD: "wolf-123456"
-  # To encrypt the KEY used by the user token, it is highly recommended to set this value
+  # 加密用户token使用的KEY, 强烈建议设置该值
   RBAC_TOKEN_KEY: "f40215a5f25cbb6d36df07629aaf1172240fe48d"
-  # To encrypt the application Secret and OAuth2 login user ID keys
+  # 加密应用Secret及OAuth2登陆用户ID使用的Key
   WOLF_CRYPT_KEY: "fbd4962351924792cb5e5b131435cd30b24e3570"
-  # The database link to the postgres database
+  # 连接 postgres 的地址
   RBAC_SQL_URL: "postgres://root:R0FSCY2pcuAlWhmp@postgres-wolf:5432/wolf"
   CLIENT_CHANGE_PWD: "no"
 
@@ -200,11 +198,11 @@ spec:
 
 
 ```
-#### 2. Deploying wolf-server in k8s
+#### 2. 在 k8s 集群中部署 wolf-server
 ```shell
 kubectl apply -f wolf-deploy.yaml
 ```
-Using the following command to see if the pod is working properly
+使用下面的命令查看 pod 是否正常运行
 ```shell
 [root@node01 ~]# kubectl get pod -n default
 NAME                                     READY   STATUS    RESTARTS   AGE
@@ -212,19 +210,18 @@ postgres-wolf-54d8dbfbf-9t629            1/1     Running   0          42m
 wolf-server-b8f588587-xv97t              1/1     Running   0          2m
 ```
 
-After wolf-server is running normally, you can temporarily expose the service in the following ways:
+wolf-server 正常运行后可以通过如下方式临时暴露服务
 ```shell
 kubectl port-forward service/wolf-server 12180:80
 ```
-**It is recommended to expose services through ingress**
+**建议通过 ingress 的方式暴露服务**
 
-#### 3. Log in to the console with your account
-Accessing previously exposed services: http://localhost:12180
+#### 3. 使用账号登录控制台
+访问前面暴露的服务：http://localhost:12180
 
 ![登录页面](../docs/imgs/screenshot/console/login.png)
 
-You can see from the code in [init-root-user.js](../server/src/util/init-root-user.js)
-
+从 [init-root-user.js](../server/src/util/init-root-user.js) 中的代码中可以看出：
 ```js
 async function addRootUser() {
   await createUser('root', 'root(super man)', 'super')
@@ -238,7 +235,5 @@ setTimeout(()=> {
     })
 }, 1000 * 1);
 ```
-Two users will be created automatically when the service is started for the first time: `root` and `admin`.
-Password is the value of `RBAC_ROOT_PASSWORD`.
-
+服务第一次启动的时候会自动创建两个用户：`root` 和 `admin`，密码为前面 `RBAC_ROOT_PASSWORD` 设置的密码。
 

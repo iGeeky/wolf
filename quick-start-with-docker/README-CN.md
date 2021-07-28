@@ -2,6 +2,7 @@
 
 [Quick Start](./README.md)
 
+[Deploying in k8s](./README-K8S.md)
 
 #### 必要环境
 
