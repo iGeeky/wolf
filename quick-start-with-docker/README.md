@@ -2,6 +2,8 @@
 
 [快速起步](./README-CN.md)
 
+[Deploying in k8s](./README-K8S.md)
+
 #### Requirement
 
 * docker
