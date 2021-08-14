@@ -142,6 +142,15 @@ The system can be applied to a variety of platforms and systems. Unified account
 [OAuth2 interface documentation](./docs/admin-api-oauth2.0.md)
 
 
+## Tests
+
+[Server API Unit Testing](./docs/unittest.md)
+
+## Performance
+
+[`Agent` API performance testing](./docs/perf.md)
+
+
 ## Manual Document
 
 [Usage](./docs/usage.md)

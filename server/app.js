@@ -68,12 +68,12 @@ try {
 process.on('uncaughtException', (err) => {
   /* istanbul ignore next */
   log4js.error('uncaughtException>>', err)
-  process.exit(0)
+  // process.exit(0)
 })
 process.on('unhandledRejection', (reason, p) => {
   /* istanbul ignore next */
   log4js.error(reason)
-  process.exit(0)
+  // process.exit(0)
 })
 
 module.exports = instance

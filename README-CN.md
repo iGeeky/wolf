@@ -144,6 +144,15 @@ wolf是一个通用RBAC系统，适用于所有的HTTP应用．统一授权及�
 [OAuth2接口文档](./docs/admin-api-oauth2.0-cn.md)
 
 
+## Tests
+
+[`Server`接口单元测试](./docs/unittest-cn.md)
+
+## Performance
+
+[`Agent`接口性能测试](./docs/perf-cn.md)
+
+
 ## Manual Document
 
 [使用指南](./docs/usage.md)
