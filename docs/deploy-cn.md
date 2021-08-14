@@ -60,7 +60,7 @@ GRANT ALL PRIVILEGES ON DATABASE wolf to wolfroot;
 使用脚本创建数据库表
 
 ```sql
-\i path/to/wolf/server/script/db.sql;
+\i path/to/wolf/server/script/db-psql.sql;
 ```
 
 查看创建的表:

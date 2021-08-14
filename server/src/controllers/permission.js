@@ -5,6 +5,7 @@ const RoleModel = require('../model/role')
 
 const AccessDenyError = require('../errors/access-deny-error')
 const util = require('../util/util')
+const arrayContains = require('../util/op-util').arrayContains
 const Op = require('sequelize').Op;
 const errors = require('../errors/errors')
 const _ = require('lodash')
@@ -96,7 +97,7 @@ class Permission extends BasicService {
   async delete() {
     const appID = this.getRequiredArg('appID')
     const permID = this.getRequiredArg('id')
-    const where = { appID, permIDs: { [Op.contains]: [permID] }}
+    const where = { appID, permIDs: arrayContains(permID)}
     let existObject = await UserRoleModel.findOne({where})
     if(!existObject) {
       existObject = await RoleModel.findOne({where})

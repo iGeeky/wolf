@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: 123456
       POSTGRES_DB: wolf
     volumes:
-      - ../server/script/db.sql:/docker-entrypoint-initdb.d/db.sql:ro
+      - ../server/script/db-psql.sql:/docker-entrypoint-initdb.d/db.sql:ro
   server:
     container_name: wolf-server
     image: igeeky/wolf-server

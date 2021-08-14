@@ -6,6 +6,7 @@ const AccessDenyError = require('../errors/access-deny-error')
 const constant = require('../util/constant')
 const util = require('../util/util')
 const oauthUtil = require('../util/oauth-util')
+const arrayContains = require('../util/op-util').arrayContains
 const Op = require('sequelize').Op;
 const applicationFields = ['id', 'name', 'description', 'redirectUris', 'grants', 'accessTokenLifetime', 'refreshTokenLifetime', 'createTime', 'updateTime'];
 const applicationDetailFields =  applicationFields.slice()
@@ -35,7 +36,7 @@ class Application extends BasicService {
       this.fail(200, errors.ERR_OBJECT_NOT_FOUND)
       return
     }
-    const where = {appIDs: { [Op.contains]: [id] }}
+    const where = {appIDs: arrayContains(id) }
     const users = await UserModel.findAll({where})
     const userIds = [];
 

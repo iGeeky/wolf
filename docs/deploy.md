@@ -60,7 +60,7 @@ GRANT ALL PRIVILEGES ON DATABASE wolf to wolfroot;
 Creating database tables using scripts
 
 ```sql
-\i path/to/wolf/server/script/db.sql;
+\i path/to/wolf/server/script/db-psql.sql;
 ```
 
 View the created table:

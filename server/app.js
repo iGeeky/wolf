@@ -19,8 +19,23 @@ const path = require('path')
 
 locale(app)
 
+process.on('uncaughtException', (err) => {
+  /* istanbul ignore next */
+  log4js.error('uncaughtException>>', err)
+  // process.exit(0)
+})
+process.on('unhandledRejection', (reason, p) => {
+  /* istanbul ignore next */
+  log4js.error(reason)
+  // process.exit(0)
+})
+
 let instance = null
 try {
+  app.on('error', (err, ctx) => {
+    log4js.error('app error: %s', err)
+  })
+
   app.use(logger((str, args) => {
     log4js.info(str, args)
   }))
@@ -64,16 +79,5 @@ try {
   /* istanbul ignore next */
   log4js.error('app global catch', ex)
 }
-
-process.on('uncaughtException', (err) => {
-  /* istanbul ignore next */
-  log4js.error('uncaughtException>>', err)
-  process.exit(0)
-})
-process.on('unhandledRejection', (reason, p) => {
-  /* istanbul ignore next */
-  log4js.error(reason)
-  process.exit(0)
-})
 
 module.exports = instance

@@ -6,7 +6,7 @@
         "server": {
             "type": "dateFile",
             "encoding": "utf-8",
-            "filename": "log/server-",
+            "filename": "log/server",
             "maxLogSize": 512000000,
             "numBackups": 3,
             "pattern": "yyyy-MM-dd.log",

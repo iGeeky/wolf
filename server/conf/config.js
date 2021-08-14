@@ -19,3 +19,5 @@ const config = {
 }
 
 module.exports = config
+
+// RBAC_SQL_URL = 'mysql://wolfroot:123456@127.0.0.1:3306/wolf'
