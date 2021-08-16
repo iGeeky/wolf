@@ -9,6 +9,10 @@ Within each company, there are different backend services and corresponding mana
 
 The system can be applied to a variety of platforms and systems. Unified account number and unified authorization. And no development work is required for each system.
 
+## Community
+
+* QQ Group: 85892505
+
 
 ## Features
 
