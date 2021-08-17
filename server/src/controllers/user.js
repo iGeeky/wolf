@@ -3,6 +3,7 @@ const UserModel = require('../model/user')
 const AccessDenyError = require('../errors/access-deny-error')
 const ApplicationModel = require('../model/application')
 const UserRoleModel = require('../model/user-role')
+const {like} = require('../util/op-util')
 const Op = require('sequelize').Op;
 const errors = require('../errors/errors')
 const userCache = require('../util/user-cache')
@@ -131,7 +132,7 @@ class User extends BasicService {
     const key = this.getArg('key')
     const where = {}
     if (key && key !== '') {
-      where[Op.or] = [{username: {[Op.regexp]: key}}, {nickname: {[Op.regexp]: key}}, {tel: {[Op.regexp]: key}}]
+      where[Op.or] = [like('username', key), like('nickname', key), like('tel', key)]
     }
 
     const userInfo = this.ctx.userInfo

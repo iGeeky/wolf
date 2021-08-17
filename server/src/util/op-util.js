@@ -12,4 +12,9 @@ function arrayContains(value) {
   return queryItem
 }
 
+function like(field, value) {
+  return { [field]: { [Op.like]: '%' + value + '%' }}
+}
+
 exports.arrayContains = arrayContains
+exports.like = like

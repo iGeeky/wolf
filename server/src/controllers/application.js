@@ -6,7 +6,7 @@ const AccessDenyError = require('../errors/access-deny-error')
 const constant = require('../util/constant')
 const util = require('../util/util')
 const oauthUtil = require('../util/oauth-util')
-const arrayContains = require('../util/op-util').arrayContains
+const {arrayContains, like} = require('../util/op-util')
 const Op = require('sequelize').Op;
 const applicationFields = ['id', 'name', 'description', 'redirectUris', 'grants', 'accessTokenLifetime', 'refreshTokenLifetime', 'createTime', 'updateTime'];
 const applicationDetailFields =  applicationFields.slice()
@@ -110,7 +110,7 @@ class Application extends BasicService {
     const key = this.getArg('key')
     const where = {}
     if (key && key !== '') {
-      where[Op.or] = [{id: {[Op.regexp]: key}}, {name: {[Op.regexp]: key}}]
+      where[Op.or] = [like('id', key), like('name', key)]
     }
     const userInfo = this.ctx.userInfo
     if (userInfo.manager === constant.Manager.admin) {

@@ -4,6 +4,8 @@
 CREATE USER wolfroot WITH PASSWORD '123456';
 CREATE DATABASE wolf with owner=wolfroot ENCODING='UTF8';
 GRANT ALL PRIVILEGES ON DATABASE wolf to wolfroot;
+\c wolf;
+create extension pg_trgm;
 \c wolf wolfroot;
 */
 
@@ -31,12 +33,15 @@ CREATE TABLE "application" (
 );
 
 CREATE UNIQUE INDEX idx_application_name ON "application"(name);
+CREATE INDEX idx_trgm_application_id ON application USING GIN ("id" gin_trgm_ops);
+CREATE INDEX idx_trgm_application_name ON application USING GIN ("name" gin_trgm_ops);
 COMMENT ON TABLE "application" IS 'Managed applications';
 COMMENT ON COLUMN application.id IS 'application id, client.id in oauth2';
 COMMENT ON COLUMN application.secret IS 'client.secret in oauth2';
 COMMENT ON COLUMN application.redirect_uris IS 'client.redirect_uris in oauth2';
 COMMENT ON COLUMN application.access_token_lifetime IS 'access_token.lifetime in oauth2';
 COMMENT ON COLUMN application.refresh_token_lifetime IS 'refresh_token.lifetime in oauth2';
+
 
 CREATE TABLE "user" (
   id bigserial,
@@ -56,11 +61,13 @@ CREATE TABLE "user" (
 );
 
 CREATE UNIQUE INDEX idx_user_username ON "user"(username);
+CREATE INDEX idx_trgm_user_username ON "user" USING GIN ("username" gin_trgm_ops);
+CREATE INDEX idx_trgm_user_nickname ON "user" USING GIN ("nickname" gin_trgm_ops);
+CREATE INDEX idx_trgm_user_tel ON "user" USING GIN ("tel" gin_trgm_ops);
 CREATE INDEX idx_user_email ON "user"(email);
-CREATE INDEX idx_user_tel ON "user"(tel);
 CREATE INDEX idx_user_app_ids ON "user"(app_ids);
-
 COMMENT ON COLUMN "user".manager IS 'super,admin,NULL';
+
 
 CREATE TABLE "category" (
   id serial,
@@ -71,6 +78,7 @@ CREATE TABLE "category" (
   primary key(id)
 );
 CREATE UNIQUE INDEX idx_category_app_id_name ON "category"(app_id,name);
+CREATE INDEX idx_trgm_category_name ON "category" USING GIN ("name" gin_trgm_ops);
 
 
 CREATE TABLE "permission" (
@@ -85,8 +93,11 @@ CREATE TABLE "permission" (
 );
 
 CREATE UNIQUE INDEX idx_permission_app_id_name ON "permission"(app_id,name);
+CREATE INDEX idx_trgm_permission_id ON "permission" USING GIN ("id" gin_trgm_ops);
+CREATE INDEX idx_trgm_permission_name ON "permission" USING GIN ("name" gin_trgm_ops);
 CREATE INDEX idx_permission_category_id ON "permission"(category_id);
 COMMENT ON COLUMN permission.category_id IS 'reference to category.id';
+
 
 CREATE TABLE "resource" (
   id bigserial,
@@ -103,6 +114,8 @@ CREATE TABLE "resource" (
 );
 
 CREATE UNIQUE INDEX idx_resource_app_id_type_name ON "resource"(app_id,"match_type","name", action);
+CREATE INDEX idx_trgm_resource_name ON "resource" USING GIN ("name" gin_trgm_ops);
+CREATE INDEX idx_trgm_resource_perm_id ON "resource" USING GIN ("perm_id" gin_trgm_ops);
 COMMENT ON COLUMN resource.match_type IS 'The name match type, includes the following:
 1. equal, equal match
 2. suffix, suffix matching
@@ -110,6 +123,7 @@ COMMENT ON COLUMN resource.match_type IS 'The name match type, includes the foll
 When matching, equal matches first, if not matched,
 Use suffix match, then prefix';
 COMMENT ON COLUMN resource.action IS 'for http resource, action is http method: GET, HEAD, POST, OPTIONS, DELETE, PUT, PATCH, ALL means includes all.';
+
 
 CREATE TABLE "role" (
   id text ,
@@ -123,6 +137,8 @@ CREATE TABLE "role" (
 );
 
 CREATE UNIQUE INDEX idx_role_app_id_name ON "role"(app_id, name);
+CREATE INDEX idx_trgm_role_id ON "role" USING GIN ("id" gin_trgm_ops);
+CREATE INDEX idx_trgm_role_name ON "role" USING GIN ("name" gin_trgm_ops);
 
 
 CREATE TABLE "user_role" (
