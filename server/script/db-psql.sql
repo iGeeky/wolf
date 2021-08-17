@@ -4,10 +4,11 @@
 CREATE USER wolfroot WITH PASSWORD '123456';
 CREATE DATABASE wolf with owner=wolfroot ENCODING='UTF8';
 GRANT ALL PRIVILEGES ON DATABASE wolf to wolfroot;
+*/
+
 \c wolf;
 create extension pg_trgm;
 \c wolf wolfroot;
-*/
 
 CREATE FUNCTION unix_timestamp() RETURNS bigint AS $$
 SELECT (date_part('epoch',now()))::bigint;

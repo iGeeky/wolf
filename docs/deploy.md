@@ -39,6 +39,10 @@ igeeky/wolf-server        latest              25ee3cb46296        7 hours ago   
 
 #### 1.Initializing the database
 
+Choose between `PostgreSQL` and `MySQL` databases, we recommend using `PostgreSQL`.
+
+###### PostgreSQL
+
 * Installing PostgreSQL
 
 Please google the installation method yourself.
@@ -51,8 +55,6 @@ Login to the postgres database with a postgres account and execute the following
 CREATE USER wolfroot WITH PASSWORD '123456';
 CREATE DATABASE wolf with owner=wolfroot ENCODING='UTF8';
 GRANT ALL PRIVILEGES ON DATABASE wolf to wolfroot;
--- To access the wolf database as wolfroot, if prompted for a password, please enter the password above.
-\c wolf wolfroot;
 ```
 
 * Creation tables
@@ -90,18 +92,71 @@ Output a result similar to the one below, indicating that the database table was
 (12 rows)
 ```
 
+###### MySQL
 
+* Installing MySQL
+
+Please google the installation method yourself.
+
+* Create accounts and databases
+
+Login to the mysql database with a mysql account and execute the following script to create the `wolfroot` user and `wolf` database (please change the username and password as needed):
+
+```sql
+create database `wolf` CHARACTER SET utf8mb4;
+grant DELETE,EXECUTE,INSERT,SELECT,UPDATE
+on wolf.* to wolfroot@'127.0.0.1' IDENTIFIED BY '123456';
+grant DELETE,EXECUTE,INSERT,SELECT,UPDATE
+on wolf.* to wolfroot@'localhost' IDENTIFIED BY '123456';
+FLUSH PRIVILEGES;
+use wolf;
+```
+
+* Creation tables
+
+Creating database tables using scripts
+
+```sql
+source path/to/wolf/server/script/db-mysql.sql;
+```
+
+View the created table:
+
+```
+show tables;
+```
+
+Output a result similar to the one below, indicating that the database table was created successfully:
+
+```
+
++----------------+
+| Tables_in_wolf |
++----------------+
+| access_log     |
+| application    |
+| category       |
+| oauth_code     |
+| oauth_token    |
+| permission     |
+| resource       |
+| role           |
+| user           |
+| user_role      |
++----------------+
+10 rows in set (0.01 sec)
+```
 
 #### 2.Server configuration items
 
-* There are 3 main configuration parameters for the server:
+* The main configuration parameters of the server are the following:
 
   * RBAC_ROOT_PASSWORD The default password for root and admin accounts. The default is `123456`.
   * RBAC_TOKEN_KEY To encrypt the KEY used by the user token, it is highly recommended to set this value.
   * WOLF_CRYPT_KEY To encrypt the application Secret and OAuth2 login user ID keys.
   * RBAC_TOKEN_EXPIRE_TIME The expiration time of the token returned by the `Agent` login interface, the default is 30 days. The unit is seconds.
   * CONSOLE_TOKEN_EXPIRE_TIME The expiration time of the token returned by the `Console` login interface, the default is 30 days. The unit is seconds.
-  * RBAC_SQL_URL The database link to the postgres database. The default is `postgres://wolfroot:123456@127.0.0.1:5432/wolf`
+  * RBAC_SQL_URL The database link to the database. The default is `postgres://wolfroot:123456@127.0.0.1:5432/wolf`
 
   The above three configurations can be configured in the system environment variables or specified at startup.
 
@@ -145,7 +200,7 @@ npm run start
 
 > listen at 0.0.0.0:12180 success!
 >
-> # The following are some initialized system account output information
+> The following are some initialized system account output information
 
 #### 4.Startup Console
 

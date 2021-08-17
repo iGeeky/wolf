@@ -76,7 +76,7 @@ log  JIp2V5w8Mt8K
 #### Access The Console
 
 *  URL: http://127.0.0.1:12180
-* USER: root
+* USER: wolfroot
 *  PWD: wolf-123456
 
 
@@ -106,5 +106,5 @@ No need to log in, you can directly access.
 #### Access The database
 
 ```bash
-docker exec -ti wolf-database psql --port=5432 --host=127.0.0.1 -U root -d wolf
+docker exec -ti wolf-database psql --port=5432 --host=127.0.0.1 -U wolfroot -d wolf
 ```
