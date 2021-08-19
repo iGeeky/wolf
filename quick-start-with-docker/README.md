@@ -4,6 +4,8 @@
 
 [Deploying in k8s](./README-K8S.md)
 
+`Docker` deployments currently only support the `PostgreSQL` database.
+
 #### Requirement
 
 * docker
@@ -78,7 +80,7 @@ log  JIp2V5w8Mt8K
 #### Access The Console
 
 *  URL: http://127.0.0.1:12180
-* USER: wolfroot
+* USER: root
 *  PWD: wolf-123456
 
 

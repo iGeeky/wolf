@@ -24,6 +24,8 @@ The system can be applied to a variety of platforms and systems. Unified account
 * The `OAuth 2.0` authorization is supported and other applications can easily use `wolf` as an authentication source.
 * Supports `Restful` interface, also supports `pure html` applications for backend rendering
 * Support access logging and querying for auditing
+* Rich test cases with over 90% code line coverage.
+* Support `PostgreSQL` and `MySQL` databases.
 * APISIX gateway support[apache-apisix:wolf-rbac](https://github.com/apache/incubator-apisix/blob/master/doc/plugins/wolf-rbac-cn.md)
 * The system has three main modules:
   * Wolf-Server, Service implementation, management backend functionality implementation

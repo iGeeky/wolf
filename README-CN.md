@@ -25,6 +25,8 @@ wolf是一个通用RBAC系统，适用于所有的HTTP应用．统一授权及�
 * 支持 `OAuth 2.0` 授权, 方便其它应用使用 `wolf` 账号登陆
 * 支持`Restful`接口, 也支持后端渲染的`纯html`应用
 * 支持访问日志记录与查询, 以进行审计及问题追溯.
+* 丰富的测试用例,代码行数覆盖率90%以上.
+* 支持`PostgreSQL`及`MySQL`数据库.
 * 支持APISIX网关[apache-apisix:wolf-rbac](https://github.com/apache/incubator-apisix/blob/master/doc/plugins/wolf-rbac-cn.md)
 * 系统有三大模块:
   * Wolf-Server 服务实现,管理后台功能实现

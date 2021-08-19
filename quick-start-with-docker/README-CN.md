@@ -2,6 +2,9 @@
 
 [Quick Start](./README.md)
 
+[k8s部署](./README-K8S-CN.md)
+
+`Docker`部署目前仅支持`PostgreSQL`数据库.
 
 #### 必要环境
 
@@ -81,7 +84,7 @@ log  init-password
 #### 访问管理后台(Console)
 
 * 地址: http://127.0.0.1:12180
-* 用户: wolfroot
+* 用户: root
 * 密码: wolf-123456
 
 
