@@ -77,7 +77,7 @@ describe('framework', function() {
                     properties: {
                         id: {"type":"string"},
                         name: {"type":"string"},
-                        description: {"type":"string"},
+                        description: {"type": ["string", "null"]},
                         createTime: {"type":"integer"}
                     },
                     required: ["id","name","description","createTime"]

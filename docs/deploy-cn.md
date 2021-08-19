@@ -39,6 +39,10 @@ igeeky/wolf-server        latest              25ee3cb46296        7 hours ago   
 
 #### 1.初始化数据库
 
+`PostgreSQL`与`MySQL`数据库二选一, 推荐使用`PostgreSQL`.
+
+###### PostgreSQL
+
 * 安装PostgreSQL
 
 请自行google安装方法.
@@ -51,8 +55,6 @@ igeeky/wolf-server        latest              25ee3cb46296        7 hours ago   
 CREATE USER wolfroot WITH PASSWORD '123456';
 CREATE DATABASE wolf with owner=wolfroot ENCODING='UTF8';
 GRANT ALL PRIVILEGES ON DATABASE wolf to wolfroot;
--- 以 wolfroot身份登陆wolf数据库, 如果提示要输入密码, 请输入上面的密码.
-\c wolf wolfroot;
 ```
 
 * 创建表
@@ -60,7 +62,7 @@ GRANT ALL PRIVILEGES ON DATABASE wolf to wolfroot;
 使用脚本创建数据库表
 
 ```sql
-\i path/to/wolf/server/script/db.sql;
+\i path/to/wolf/server/script/db-psql.sql;
 ```
 
 查看创建的表:
@@ -90,18 +92,71 @@ GRANT ALL PRIVILEGES ON DATABASE wolf to wolfroot;
 (12 rows)
 ```
 
+###### MySQL
 
+* 安装MySQL
+
+请自行google安装方法.
+
+* 创建账号及数据库
+
+以mysql账号登陆mysql数据库, 执行以下脚本, 创建`wolfroot`用户及`wolf`数据库(请根据需要修改用户名及密码):
+
+```sql
+create database `wolf` CHARACTER SET utf8mb4;
+grant DELETE,EXECUTE,INSERT,SELECT,UPDATE
+on wolf.* to wolfroot@'127.0.0.1' IDENTIFIED BY '123456';
+grant DELETE,EXECUTE,INSERT,SELECT,UPDATE
+on wolf.* to wolfroot@'localhost' IDENTIFIED BY '123456';
+FLUSH PRIVILEGES;
+use wolf;
+```
+
+* 创建表
+
+使用脚本创建数据库表
+
+```sql
+source path/to/wolf/server/script/db-mysql.sql;
+```
+
+查看创建的表:
+
+```
+show tables;
+```
+
+输出类似下面的结果, 表示数据库表创建成功:
+
+```
+
++----------------+
+| Tables_in_wolf |
++----------------+
+| access_log     |
+| application    |
+| category       |
+| oauth_code     |
+| oauth_token    |
+| permission     |
+| resource       |
+| role           |
+| user           |
+| user_role      |
++----------------+
+10 rows in set (0.01 sec)
+```
 
 #### 2.服务器配置项
 
-* 服务器主要配置参数有3个:
+* 服务器主要配置参数有以下几个:
 
   * RBAC_ROOT_PASSWORD root账号及admin账号的默认密码. 默认为`123456`
   * RBAC_TOKEN_KEY 加密用户token使用的KEY, 强烈建议设置该值.
   * WOLF_CRYPT_KEY 加密应用Secret及OAuth2登陆用户ID使用的Key.
   * RBAC_TOKEN_EXPIRE_TIME `Agent` 登录接口返回的token的有效期, 默认为30天. 单位为秒.
   * CONSOLE_TOKEN_EXPIRE_TIME `Console` 登录接口返回的token的有效期, 默认为30天. 单位为秒.
-  * RBAC_SQL_URL 连接postgres数据库的数据库链接. 默认为: `postgres://wolfroot:123456@127.0.0.1:5432/wolf`
+  * RBAC_SQL_URL 连接数据库的数据库链接. 默认为: `postgres://wolfroot:123456@127.0.0.1:5432/wolf`
 
   以上三个配置, 可以在系统环境变量中配置, 也可以在启动时指定.
 
@@ -144,7 +199,7 @@ npm run start
 
 > listen at 0.0.0.0:12180 success!
 >
-> # 后面是一些初始化系统账号的输出信息
+> 后面是一些初始化系统账号的输出信息
 
 #### 4.启动Console
 

@@ -4,6 +4,7 @@ const userCache = require('../util/user-cache')
 const UserRoleModel = require('../model/user-role')
 const AccessDenyError = require('../errors/access-deny-error')
 const util = require('../util/util')
+const {arrayContains, like} = require('../util/op-util')
 const Op = require('sequelize').Op;
 const errors = require('../errors/errors')
 const roleFields = ['id', 'appID', 'name', 'description', 'permIDs', 'createTime'];
@@ -31,7 +32,7 @@ class Role extends BasicService {
     const key = this.getArg('key')
     const where = {appID: appId}
     if (key && key !== '') {
-      where[Op.or] = [{id: {[Op.regexp]: key}}, {name: {[Op.regexp]: key}}]
+      where[Op.or] = [like('id', key), like('name', key)]
     }
 
     const options = {offset, limit, where}
@@ -97,7 +98,7 @@ class Role extends BasicService {
   async delete() {
     const appID = this.getRequiredArg('appID')
     const roleID = this.getRequiredArg('id')
-    const where = {appID, roleIDs: { [Op.contains]: [roleID] }}
+    const where = {appID, roleIDs: arrayContains(roleID)}
     const existObject = await UserRoleModel.findOne({where})
     if (existObject) {
       this.log4js.error('Deleting the role(%s) failed, it has been used.', roleID)

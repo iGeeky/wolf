@@ -3,6 +3,7 @@ const CategoryModel = require('../model/category')
 const AccessDenyError = require('../errors/access-deny-error')
 const PermissionModel = require('../model/permission')
 const util = require('../util/util')
+const {like} = require('../util/op-util')
 const Op = require('sequelize').Op;
 const errors = require('../errors/errors')
 const _ = require('lodash')
@@ -23,7 +24,7 @@ class Category extends BasicService {
     const key = this.getArg('key')
     const where = {appID: appId}
     if (key && key !== '') {
-      where[Op.or] = [{name: {[Op.regexp]: key}}]
+      where[Op.or] = [like('name', key)]
     }
 
     const options = {offset, limit, where}

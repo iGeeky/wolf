@@ -17,7 +17,7 @@ function getListResponseSchema() {
                 properties: {
                     id: {"type":"string"},
                     name: {"type":"string"},
-                    description: {"type":"string"},
+                    description: {"type": ["string", "null"]},
                     createTime: {"type":"integer"},
                     updateTime: {"type":"integer"}
                 },

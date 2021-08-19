@@ -5,11 +5,11 @@ services:
     image: postgres:10.7
     restart: always
     environment:
-      POSTGRES_USER: root
+      POSTGRES_USER: wolfroot
       POSTGRES_PASSWORD: 123456
       POSTGRES_DB: wolf
     volumes:
-      - ../server/script/db.sql:/docker-entrypoint-initdb.d/db.sql:ro
+      - ../server/script/db-psql.sql:/docker-entrypoint-initdb.d/db.sql:ro
   server:
     container_name: wolf-server
     image: igeeky/wolf-server
@@ -22,7 +22,7 @@ services:
       RBAC_ROOT_PASSWORD: wolf-123456
       RBAC_TOKEN_KEY: f40215a5f25cbb6d36df07629aaf1172240fe48d
       WOLF_CRYPT_KEY: fbd4962351924792cb5e5b131435cd30b24e3570
-      RBAC_SQL_URL:  postgres://root:123456@database:5432/wolf
+      RBAC_SQL_URL:  postgres://wolfroot:123456@database:5432/wolf
       CLIENT_CHANGE_PWD: "no"
     command: npm run start
   agent-or:

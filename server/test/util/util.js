@@ -84,7 +84,7 @@ function getSimpleUserInfoSchema() {
         manager: {"type": ["string", "null"]},
         createTime: {"type":"integer"}
     },
-    required: ["id","username","nickname","email","appIDs","manager","createTime"]
+    required: ["id","username","nickname","email","appIDs","createTime"]
   }
   return userInfoSchema;
 }

@@ -81,7 +81,7 @@ log  init-password
 #### 访问管理后台(Console)
 
 * 地址: http://127.0.0.1:12180
-* 用户: root
+* 用户: wolfroot
 * 密码: wolf-123456
 
 
@@ -111,5 +111,5 @@ log  init-password
 #### 访问数据库
 
 ```bash
-docker exec -ti wolf-database psql --port=5432 --host=127.0.0.1 -U root -d wolf
+docker exec -ti wolf-database psql --port=5432 --host=127.0.0.1 -U wolfroot -d wolf
 ```
