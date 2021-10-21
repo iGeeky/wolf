@@ -5,7 +5,6 @@
     <breadcrumb id="breadcrumb-container" class="breadcrumb-container" />
 
     <div class="right-menu">
-      <!-- v-if="device!=='mobile'" -->
       <template>
         <lang-changer class="right-menu-item" />
         <search id="header-search" class="right-menu-item" />
@@ -71,6 +70,9 @@ export default {
       'device',
       'name',
     ]),
+  },
+  created() {
+    this.$store.dispatch('user/getLDAPOptions')
   },
   methods: {
     toggleSideBar() {

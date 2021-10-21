@@ -52,6 +52,14 @@ export async function getInfo() {
   })
 }
 
+export async function getLDAPOptions() {
+  return await request({
+    url: '/user/ldapOptions',
+    method: 'get',
+    params: { },
+  })
+}
+
 export async function listUsers(args) {
   return await request({
     url: '/user/list',

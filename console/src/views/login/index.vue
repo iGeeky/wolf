@@ -1,66 +1,75 @@
 <template>
-  <div class="login-container">
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
+  <div class="login-main">
+    <div class="login-container">
+      <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
 
-      <div class="title-container">
-        <h3 class="title">{{ $t('wolf.loginPromptLoginForm') }}</h3>
-      </div>
+        <div class="title-container">
+          <h3 class="title">{{ $t('wolf.loginPromptLoginForm') }}</h3>
+        </div>
 
-      <el-form-item prop="username">
-        <span class="svg-container">
-          <svg-icon icon-class="user" />
-        </span>
-        <el-input
-          ref="username"
-          v-model="loginForm.username"
-          :placeholder="$t('wolf.loginPromptUsername')"
-          name="username"
-          type="text"
-          tabindex="1"
-          autocomplete="on"
-        />
-      </el-form-item>
-
-      <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
-        <el-form-item prop="password">
+        <el-form-item prop="username">
           <span class="svg-container">
-            <svg-icon icon-class="password" />
+            <svg-icon icon-class="user" />
           </span>
           <el-input
-            :key="passwordType"
-            ref="password"
-            v-model="loginForm.password"
-            :type="passwordType"
-            :placeholder="$t('wolf.loginPromptPassword')"
-            name="password"
-            tabindex="2"
+            ref="username"
+            v-model="loginForm.username"
+            :placeholder="$t('wolf.loginPromptUsername')"
+            name="username"
+            type="text"
+            tabindex="1"
             autocomplete="on"
-            @keyup.native="checkCapslock"
-            @blur="capsTooltip = false"
-            @keyup.enter.native="handleLogin"
           />
-          <span class="show-pwd" @click="showPwd">
-            <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
-          </span>
         </el-form-item>
-      </el-tooltip>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">{{ $t('wolf.btnLogin') }}</el-button>
-    </el-form>
+        <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
+          <el-form-item prop="password">
+            <span class="svg-container">
+              <svg-icon icon-class="password" />
+            </span>
+            <el-input
+              :key="passwordType"
+              ref="password"
+              v-model="loginForm.password"
+              :type="passwordType"
+              :placeholder="$t('wolf.loginPromptPassword')"
+              name="password"
+              tabindex="2"
+              autocomplete="on"
+              @keyup.native="checkCapslock"
+              @blur="capsTooltip = false"
+              @keyup.enter.native="handleLogin"
+            />
+            <span class="show-pwd" @click="showPwd">
+              <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+            </span>
+          </el-form-item>
+        </el-tooltip>
 
-    <el-dialog title="Or connect with" :visible.sync="showDialog">
-      Can not be simulated on local, so please combine you own business simulation! ! !
-      <br>
-      <br>
-      <br>
-      <social-sign />
-    </el-dialog>
+        <el-form-item v-if="ldapOptions.supported" prop="ldapLogin">
+          <el-radio-group v-model="loginForm.ldapLogin" @change="ldapLoginChange">
+            <el-radio label="0">{{ $t('wolf.loginPromptStandardLogin') }}</el-radio>
+            <el-radio label="1"> {{ ldapOptions.label||'LDAP' }} </el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">{{ $t('wolf.btnLogin') }}</el-button>
+      </el-form>
+
+      <el-dialog title="Or connect with" :visible.sync="showDialog">
+        Can not be simulated on local, so please combine you own business simulation! ! !
+        <br>
+        <br>
+        <br>
+        <social-sign />
+      </el-dialog>
+    </div>
   </div>
 </template>
 
 <script>
 import { validUsername } from '@/utils/validate'
 import SocialSign from './components/SocialSignin'
+import { getLDAPOptions } from '@/api/user'
 
 export default {
   name: 'Login',
@@ -84,10 +93,15 @@ export default {
       loginForm: {
         username: '',
         password: '',
+        ldapLogin: '0',
+      },
+      ldapOptions: {
+
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }],
+        ldapLogin: [{ required: true }],
       },
       passwordType: 'password',
       capsTooltip: false,
@@ -110,9 +124,10 @@ export default {
     },
   },
   created() {
-    // window.addEventListener('storage', this.afterQRScan)
+    this.ldapOptionLoad()
   },
   mounted() {
+    this.loginForm.ldapLogin = localStorage.ldapLogin === undefined ? '0' : localStorage.ldapLogin
     if (this.loginForm.username === '') {
       this.$refs.username.focus()
     } else if (this.loginForm.password === '') {
@@ -150,6 +165,7 @@ export default {
         if (valid) {
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm)
+          // login(this.loginForm)
             .then((res) => {
               this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
               this.loading = false
@@ -163,6 +179,19 @@ export default {
           return false
         }
       })
+    },
+    async ldapOptionLoad() {
+      const res = await getLDAPOptions()
+      if (res.ok) {
+        this.ldapOptions = res.data
+        if (!this.ldapOptions.supported) {
+          this.loginForm.ldapLogin = '0'
+        }
+      }
+      console.log('ldapOptions: %s', JSON.stringify(this.ldapOptions))
+    },
+    ldapLoginChange(label) {
+      localStorage.setItem('ldapLogin', label)
     },
     getOtherQuery(query) {
       return Object.keys(query).reduce((acc, cur) => {
@@ -244,17 +273,30 @@ $bg:#2d3a4b;
 $dark_gray:#889aa4;
 $light_gray:#eee;
 
-.login-container {
-  min-height: 100%;
+.login-main {
   width: 100%;
+  height: 100%;
+  display: flex;
+  display: -webkit-flex;
+  justify-content: center;
+  align-items: center;
+  background: #f2f3f7;
+}
+
+.login-container {
+  // min-height: 100%;
+  // width: 100%;
+  display: flex;
   background-color: $bg;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px 0 rgba(0,0,0,0.37);
   overflow: hidden;
 
   .login-form {
     position: relative;
     width: 520px;
     max-width: 100%;
-    padding: 160px 35px 0;
+    padding: 15px 35px 0;
     margin: 0 auto;
     overflow: hidden;
   }
@@ -280,14 +322,24 @@ $light_gray:#eee;
   }
 
   .title-container {
-    position: relative;
+    // position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
     .title {
       font-size: 26px;
       color: $light_gray;
-      margin: 0px auto 40px auto;
+      margin: 10px auto 10px auto;
       text-align: center;
       font-weight: bold;
+    }
+
+    .title-gray {
+      font-size: 22px;
+      color: $light_gray;
+      margin: 10px auto 10px auto;
+      text-align: center;
     }
   }
 

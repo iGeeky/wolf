@@ -14,6 +14,6 @@ export function setToken(token) {
 }
 
 export function removeToken() {
-  console.log('>>> remoteToken ######## ')
+  console.log('>>> removeToken ######## ')
   return Cookies.remove(TokenKey)
 }

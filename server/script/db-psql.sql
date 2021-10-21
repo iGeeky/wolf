@@ -54,6 +54,7 @@ CREATE TABLE "user" (
   app_ids text[],
   manager text,
   status smallint DEFAULT 0,
+  auth_type smallint DEFAULT 1,
   profile jsonb default NULL,
   last_login bigint DEFAULT 0,
   create_time bigint NOT NULL,
@@ -68,6 +69,7 @@ CREATE INDEX idx_trgm_user_tel ON "user" USING GIN ("tel" gin_trgm_ops);
 CREATE INDEX idx_user_email ON "user"(email);
 CREATE INDEX idx_user_app_ids ON "user"(app_ids);
 COMMENT ON COLUMN "user".manager IS 'super,admin,NULL';
+COMMENT ON COLUMN "user".auth_type IS 'user authentication type, 1: password, 2: LDAP';
 
 
 CREATE TABLE "category" (

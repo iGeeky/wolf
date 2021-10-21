@@ -12,6 +12,7 @@ const IGNORE_URLS = {
   'GET:/wolf/ping': true,
   'POST:/wolf/user/login': true,
   'POST:/wolf/user/logout': true,
+  'GET:/wolf/user/ldapOptions': true,
 }
 
 function needCheckToken(ctx) {

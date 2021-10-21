@@ -78,7 +78,19 @@ body {
 	display: flex;
 	align-items: center;
 /*     border: 1px solid #d5cfcf; */
+}
 
+.form-item .ldapOption {
+	display: flex;
+	width: 100%;
+	align-content: center;
+	justify-content: center;
+	align-items: center;
+}
+
+.form-item .ldapOption .ldapOptionItem {
+	display: flex;
+	margin: 5px;
 }
 
 .form-item .input .input-text {
@@ -169,6 +181,18 @@ body {
 					<div class="label">Password:</div>
 					<div class="input"><input name="password" type="password" class="input-text" maxlength="64" length="30" value="<%= password %>"/></div>
 				</div>
+				<% if (ldapSupported) { %>
+				<div class="form-item">
+					<div class="input ldapOption">
+						<div class="ldapOptionItem">
+							<input type="radio" id="ldap" name="ldapLogin" value="1" <% if (ldapLogin != '0') { %> checked <% } %> /><%=ldapLabel%>
+						</div>
+						<div class="ldapOptionItem">
+							<input type="radio" id="standard" name="ldapLogin" value="0" <% if (ldapLogin == '0') { %> checked <% } %> />Standard
+						</div>
+					</div>
+				</div>
+				<% } %>
 				<div class="form-submit">
 					<input type="submit" name="submit" class="submit btn btn-block btn-primary" value="Sign in"/> 
 				</div>

@@ -1,2 +1,3 @@
 server/.nyc_output
 server/coverage
+server/log

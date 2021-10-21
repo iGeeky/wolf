@@ -11,6 +11,7 @@ const getters = {
   applications: state => state.user.applications || [],
   appIds: state => state.user.userInfo.appIDs || [],
   roles: state => state.user.roles,
+  ldapOptions: state => state.user.ldapOptions || {},
   globalRoutes: state => state.permission.routes,
   currentApp: state => state.currentApp.currentApp,
 }

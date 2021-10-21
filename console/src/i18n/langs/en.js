@@ -82,7 +82,8 @@ const en = {
 
     'loginPromptUsername': 'Username',
     'loginPromptPassword': 'Password',
-    'loginPromptLoginForm': 'Login Form',
+    'loginPromptLoginForm': 'Console Login',
+    'loginPromptStandardLogin': 'Standard',
 
     'userNewUser': 'New User',
     'userEditUser': 'Edit User',
@@ -238,6 +239,7 @@ const en = {
       'ERR_DUPLICATE_KEY_ERROR': 'Duplicate primary key or unique key',
       'ERR_METHOD_INVALID': 'HTTP Request Method is Invalid',
       'ERR_SERVER_ERROR': 'Server Internal Error',
+      'ERR_LDAP_CONFIG_NOT_FOUND': 'LDAP config not found',
 
       'ERR_USERNAME_MISSING': 'Username missing!',
       'ERR_PASSWORD_MISSING': 'Password missing!',

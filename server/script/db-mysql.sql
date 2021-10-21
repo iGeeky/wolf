@@ -36,6 +36,7 @@ CREATE TABLE `user` (
   app_ids text,
   manager varchar(32) comment 'super,admin,NULL',
   status smallint DEFAULT 0,
+  auth_type smallint DEFAULT 1 comment 'user authentication type, 1: password, 2: LDAP',
   profile text default NULL,
   last_login bigint DEFAULT 0,
   create_time bigint NOT NULL,
@@ -56,7 +57,7 @@ CREATE TABLE `category` (
   primary key(id),
   unique key(app_id, name)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin comment 'permisstion category';
-
+ 
 
 CREATE TABLE `permission` (
   id varchar(64),

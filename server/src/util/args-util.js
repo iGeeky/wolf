@@ -197,6 +197,16 @@ class ArgsHelper {
     return value
   }
 
+  getBoolArg(field, defaultValue = undefined) {
+    let value = this.getArg(field)
+    if (value == undefined) {
+      value = defaultValue
+    } else {
+      value = [true, 'true', 'yes', 'y', '1'].includes(value)
+    }
+    return value
+  }
+
   // get datetime(format: YYYY-MM-DD hh:mm:ss), convert to unixtime in second.
   getDatetimeAsUnixtime(field, defaultValue = undefined) {
     let value = this.getArg(field)

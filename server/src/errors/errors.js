@@ -21,6 +21,7 @@ exports.ERR_ROLE_ID_NOT_FOUND = 'ERR_ROLE_ID_NOT_FOUND'
 exports.ERR_CATEGORY_ID_NOT_FOUND = 'ERR_CATEGORY_ID_NOT_FOUND'
 exports.ERR_RESOURCE_ID_NOT_FOUND = 'ERR_RESOURCE_ID_NOT_FOUND'
 exports.ERR_METHOD_INVALID = 'ERR_METHOD_INVALID'
+exports.ERR_LDAP_CONFIG_NOT_FOUND = 'ERR_LDAP_CONFIG_NOT_FOUND'
 
 const msgs = {
   ERR_OBJECT_NOT_FOUND: 'Object not found',
@@ -46,6 +47,7 @@ const msgs = {
   ERR_CATEGORY_ID_NOT_FOUND: 'Category ID not found',
   ERR_RESOURCE_ID_NOT_FOUND: 'Resource ID not found',
   ERR_METHOD_INVALID: 'HTTP Request Method is Invalid',
+  ERR_LDAP_CONFIG_NOT_FOUND: 'LDAP config not found',
 }
 
 function errmsg(reason) {

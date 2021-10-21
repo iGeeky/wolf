@@ -20,7 +20,13 @@ const MatchType = {
   prefix: 'prefix',
 }
 
+const AuthType = {
+  PASSWORD: 1,
+  LDAP: 2,
+}
+
 exports.UserStatus = UserStatus
 exports.Manager = Manager
 exports.SystemPerm = SystemPerm
 exports.MatchType = MatchType
+exports.AuthType = AuthType

@@ -6,6 +6,7 @@ const ApplicationModel = require('../model/application')
 const constant = require('../util/constant')
 const util = require('../util/util')
 const userCache = require('../util/user-cache')
+const {ldapConfig} = require('../../conf/config')
 
 
 const userFields = ['id', 'username', 'nickname', 'email', 'appIDs',
@@ -49,6 +50,15 @@ class Rbac extends RbacPub {
     } else {
       error = `appid missing`
     }
+    let ldapSupported = false
+    let ldapLabel = ""
+    let ldapLoginDef = '0'
+    if (ldapConfig) {
+      ldapSupported = true
+      ldapLabel = ldapConfig.label
+      ldapLoginDef = '1'
+    }
+    const ldapLogin = this.getArg('ldapLogin', '1')
 
     await this.ctx.render('login', {
       returnTo,
@@ -57,6 +67,9 @@ class Rbac extends RbacPub {
       error,
       appid,
       appname,
+      ldapSupported,
+      ldapLabel,
+      ldapLogin,
     })
   }
 
@@ -78,6 +91,7 @@ class Rbac extends RbacPub {
     const password = this.getArg('password')
     const returnTo = this.getArg('return_to', '/')
     const appid = this.getArg('appid')
+    const ldapLogin = this.getBoolArg('ldapLogin')
 
     this.log4js.info('appid: %s, username %s login, return to url: %s', appid, username, returnTo)
     if (!username) {
@@ -97,22 +111,9 @@ class Rbac extends RbacPub {
       this.log4js.warn(`application id [%s] not found`, username)
       return {ok: false, reason: 'ERR_APPID_NOT_FOUND'}
     }
-
-    let userInfo = await UserModel.findOne({where: {username}})
-    if (!userInfo) { // user not exist
-      this.log4js.warn('rbac user [%s] login failed! user not exist', username)
-      return {ok: false, reason: 'ERR_USER_NOT_FOUND'}
-    }
-    this.log4js.info("userInfo.password: %s, request password: %s", userInfo.password, password)
-    // compare the password.
-    if (!userInfo.password || !util.comparePassword(password, userInfo.password)) {
-      this.log4js.warn('user [%s] login failed! password error', username)
-      return {ok: false, reason: 'ERR_PASSWORD_ERROR'}
-    }
-
-    if (userInfo.status === constant.UserStatus.Disabled) {
-      this.log4js.warn('user [%s] login failed! disabled', username)
-      return {ok: false, reason: 'ERR_USER_DISABLED'}
+    const {userInfo, err: loginErr} = await this.userLoginInternal(username, password, {ldapLogin})
+    if (loginErr) {
+      return {ok: false, reason: loginErr}
     }
 
     if (!userInfo.appIDs.includes(appid)) {
@@ -122,7 +123,6 @@ class Rbac extends RbacPub {
 
     userCache.flushUserCacheByID(userInfo.id, appid)
 
-    userInfo = userInfo.toJSON()
     const { token, expiresIn } = await this.tokenCreate(userInfo, appid)
     return {ok: true, token, expiresIn, userInfo}
   }

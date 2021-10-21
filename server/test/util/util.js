@@ -82,9 +82,10 @@ function getSimpleUserInfoSchema() {
         email: {"type": ["string", "null"]},
         appIDs: {"type":"array","items":{"type":"string"}},
         manager: {"type": ["string", "null"]},
+        authType: {"type": "integer"},
         createTime: {"type":"integer"}
     },
-    required: ["id","username","nickname","email","appIDs","createTime"]
+    required: ["id","username","nickname","email","authType", "appIDs","createTime"]
   }
   return userInfoSchema;
 }

@@ -1,4 +1,12 @@
 
+2021-10-22 0.5.0
+
+* Support LDAP authenticate
+
+2021-08-21 0.4.1
+
+* Support MySQL.
+
 2021-07-07 0.4.0
 
 * 服务端口从1008x修改为1218x(解决chrome访问失败的问题).

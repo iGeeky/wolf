@@ -13,7 +13,7 @@
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         {{ $t('wolf.search') }}
       </el-button>
-      <el-button class="filter-item" type="primary" @click="handleAdd">{{ $t('wolf.userNewUser') }}</el-button>
+      <el-button class="filter-item" type="primary" :disabled="ldapOptions.supported" @click="handleAdd">{{ $t('wolf.userNewUser') }}</el-button>
     </div>
     <el-table
       :data="users"
@@ -23,7 +23,7 @@
       fit
       highlight-current-row
     >
-      <el-table-column align="center" label="ID" min-width="5" show-overflow-tooltip>
+      <el-table-column align="center" label="ID" min-width="10" show-overflow-tooltip>
         <template slot-scope="scope">
           {{ scope.row.id }}
         </template>
@@ -54,7 +54,7 @@
       <el-table-column align="center" :label="$t('wolf.titleOperations')" min-width="25">
         <template slot-scope="scope">
           <el-tooltip class="item" effect="dark" content="Reset password" placement="top">
-            <el-button type="primary" size="small" @click="handleReset(scope)">{{ $t('wolf.btnReset') }}</el-button>
+            <el-button type="primary" size="small" :disabled="!userEditable(scope.row)" @click="handleReset(scope)">{{ $t('wolf.btnReset') }}</el-button>
           </el-tooltip>
           <el-button type="primary" size="small" @click="handleEdit(scope)">{{ $t('wolf.btnEdit') }}</el-button>
           <el-button type="danger" size="small" @click="handleDelete(scope)">{{ $t('wolf.btnDelete') }}</el-button>
@@ -65,18 +65,18 @@
       <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="listUsers" />
     </div>
     <el-dialog :visible.sync="dialogVisible" :title="dialogType==='edit'?$t('wolf.userEditUser'):$t('wolf.userNewUser')" custom-class="rbac-edit-dialog">
-      <el-form ref="user" :model="user" :rules="rules" label-width="120px" label-position="left">
+      <el-form ref="user" :model="user" :rules="rules()" label-width="120px" label-position="left">
         <el-form-item :label="$t('wolf.newUserLabelUsername')" prop="username">
-          <el-input v-model="user.username" :placeholder="$t('wolf.newUserPromptUsername')" />
+          <el-input v-model="user.username" :disabled="fieldDisabled(user, 'username')" :placeholder="$t('wolf.newUserPromptUsername')" />
         </el-form-item>
         <el-form-item :label="$t('wolf.newUserLabelNickname')" prop="nickname">
-          <el-input v-model="user.nickname" :placeholder="$t('wolf.newUserPromptNickname')" />
+          <el-input v-model="user.nickname" :disabled="fieldDisabled(user, 'nickname')" :placeholder="$t('wolf.newUserPromptNickname')" />
         </el-form-item>
         <el-form-item :label="$t('wolf.newUserLabelEmail')" prop="email">
-          <el-input v-model="user.email" :placeholder="$t('wolf.newUserPromptEmail')" />
+          <el-input v-model="user.email" :disabled="fieldDisabled(user, 'email')" :placeholder="$t('wolf.newUserPromptEmail')" />
         </el-form-item>
         <el-form-item :label="$t('wolf.newUserLabelTel')" prop="tel">
-          <el-input v-model="user.tel" :placeholder="$t('wolf.newUserPromptTel')" />
+          <el-input v-model="user.tel" :disabled="fieldDisabled(user, 'tel')" :placeholder="$t('wolf.newUserPromptTel')" />
         </el-form-item>
         <el-form-item :label="$t('wolf.labelApp')" prop="appIDs">
           <el-select v-model="user.appIDs" multiple filterable :placeholder="$t('wolf.newUserPromptAppID')" style="display: block">
@@ -121,6 +121,7 @@ const defaultUser = {
   tel: '',
   appIDs: [],
   manager: '',
+  authType: 1,
   routes: [],
   status: 0,
 }
@@ -149,36 +150,13 @@ export default {
         label: 'title',
       },
       appIdsRules: [],
-      // rules: {
-      // appIDs: [
-      //   { required: true, message: 'Please select a management application.', trigger: ['blur', 'change'] },
-      // ],
-      // },
     }
   },
   computed: {
     ...mapGetters([
       'applications',
+      'ldapOptions',
     ]),
-    rules() {
-      return {
-        username: [
-          { required: true, message: i18n.t('wolf.userRulesMessageUsernameRequired'), trigger: ['blur', 'change'] },
-          { min: 2, max: 32, message: i18n.t('wolf.pubRulesMessageLength_2_32'), trigger: ['blur', 'change'] },
-          { pattern: /^[a-zA-Z0-9_-]*$/, message: i18n.t('wolf.pubRulesMessageIDFormat'), trigger: ['blur', 'change'] },
-          { validator: this.validateUsername, trigger: ['blur', 'change'] },
-        ],
-        nickname: [
-          { required: true, message: i18n.t('wolf.userRulesMessageNicknameRequired'), trigger: ['blur', 'change'] },
-          { min: 2, max: 32, message: i18n.t('wolf.pubRulesMessageLength_2_32'), trigger: ['blur', 'change'] },
-        ],
-        email: [{ type: 'email', message: i18n.t('wolf.userRulesMessageEmailFormat'), trigger: ['blur', 'change'] }],
-        tel: [
-          { pattern: /^[\d- ]{6,15}$/, message: i18n.t('wolf.userRulesMessageTelFormat'), trigger: ['blur', 'change'] },
-        ],
-        appIDs: this.appIdsRules,
-      }
-    },
   },
   watch: {
     'user.manager': function(val) {
@@ -220,6 +198,38 @@ export default {
       return values
     },
 
+    rules() {
+      const rules_all = {
+        username: [
+          { required: true, message: i18n.t('wolf.userRulesMessageUsernameRequired'), trigger: ['blur', 'change'] },
+          { min: 2, max: 32, message: i18n.t('wolf.pubRulesMessageLength_2_32'), trigger: ['blur', 'change'] },
+          { pattern: /^[a-zA-Z0-9_-]*$/, message: i18n.t('wolf.pubRulesMessageIDFormat'), trigger: ['blur', 'change'] },
+          { validator: this.validateUsername, trigger: ['blur', 'change'] },
+        ],
+        nickname: [
+          { required: true, message: i18n.t('wolf.userRulesMessageNicknameRequired'), trigger: ['blur', 'change'] },
+          { min: 2, max: 32, message: i18n.t('wolf.pubRulesMessageLength_2_32'), trigger: ['blur', 'change'] },
+        ],
+        email: [{ type: 'email', message: i18n.t('wolf.userRulesMessageEmailFormat'), trigger: ['blur', 'change'] }],
+        tel: [
+          { pattern: /^[\d- ]{6,15}$/, message: i18n.t('wolf.userRulesMessageTelFormat'), trigger: ['blur', 'change'] },
+        ],
+        appIDs: this.appIdsRules,
+      }
+      let rules = {}
+      if (this.user && this.user.authType === 1) {
+        rules = rules_all
+      } else {
+        const syncedFields = this.ldapOptions.syncedFields || []
+        for (const field of Object.keys(rules_all)) {
+          if (!syncedFields.includes(field)) { // ignore
+            const rule = rules_all[field]
+            rules[field] = rule
+          }
+        }
+      }
+      return rules
+    },
     async validateUsername(rule, value, callback) {
       const res = await checkUsernameExist(value, this.user.id)
       if (res.ok && res.exist) {
@@ -239,6 +249,18 @@ export default {
     handleFilter() {
       this.listQuery.page = 1
       this.listUsers()
+    },
+    userEditable(user) {
+      return user.authType === 1
+    },
+    fieldDisabled(user, field) {
+      if (user.authType === 2) {
+        if (this.ldapOptions.syncedFields) {
+          const disabled = this.ldapOptions.syncedFields.includes(field)
+          return disabled
+        }
+      }
+      return false
     },
     handleAdd() {
       this.user = Object.assign({}, defaultUser)

@@ -10,6 +10,8 @@ const PermissionModel = require('../model/permission')
 const ApplicationModel = require('../model/application')
 const MethodInvalidError = require('../errors/method-invalid-error')
 const tokenUtil = require('../util/token-util')
+const {ldapLogin} = require('../ldap/LDAPClient');
+const constant = require('../util/constant')
 const Op = require('sequelize').Op;
 const _ = require('lodash')
 
@@ -213,6 +215,70 @@ class BasicService extends Service {
     }
 
     return { token, expiresIn }
+  }
+
+  async ldapUserLoginInternal(username, password) {
+    let {userInfo, err} = await ldapLogin(username, password)
+    if (err) {
+      return {err}
+    }
+    let existUserInfo = await UserModel.findByPk(userInfo.id)
+    if (existUserInfo) {
+      // update the user info
+      const update = {
+        nickname: userInfo.nickname,
+        email: userInfo.email,
+        username: userInfo.username,
+        updateTime: util.unixtime(),
+      }
+      const options = {
+        where: {id: userInfo.id},
+        minEffects: 0,
+      }
+      const result  = await UserModel.mustUpdate(update, options)
+      userInfo = result.newValues
+    } else {
+      // insert the new user info
+      userInfo.status = constant.UserStatus.Normal
+      userInfo.lastLogin = 0;
+      userInfo.authType = constant.AuthType.LDAP;
+      userInfo.createTime = util.unixtime();
+      userInfo.updateTime = util.unixtime();
+      userInfo = await UserModel.create(userInfo);
+      userInfo = userInfo.toJSON()
+    }
+
+    if (userInfo.status === constant.UserStatus.Disabled) {
+      this.log4js.warn('user [%s] login failed! disabled', username)
+      return {err: errors.ERR_USER_DISABLED}
+    }
+
+    return {userInfo}
+  }
+
+  async userLoginInternal(username, password, opts={}) {
+    if (opts.ldapLogin) {
+      return await this.ldapUserLoginInternal(username, password)
+    }
+
+    let userInfo = await UserModel.findOne({where: {username}})
+    if (!userInfo || userInfo.authType !== constant.AuthType.PASSWORD) { // user not exist or not a normal user
+      this.log4js.warn('user [%s] login failed! user not exist', username)
+      return {err: errors.ERR_USER_NOT_FOUND}
+    }
+
+    // compare the password.
+    if (!userInfo.password || !util.comparePassword(password, userInfo.password)) {
+      this.log4js.warn('user [%s] login failed! password error', username)
+      return {err: errors.ERR_PASSWORD_ERROR}
+    }
+
+    if (userInfo.status === constant.UserStatus.Disabled) {
+      this.log4js.warn('user [%s] login failed! disabled', username)
+      return {err: errors.ERR_USER_DISABLED}
+    }
+    userInfo = userInfo.toJSON()
+    return { userInfo };
   }
 }
 

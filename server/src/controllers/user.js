@@ -9,9 +9,10 @@ const errors = require('../errors/errors')
 const userCache = require('../util/user-cache')
 const constant = require('../util/constant')
 const util = require('../util/util')
+const {ldapConfig} = require('../../conf/config')
 const _ = require('lodash')
 
-const userFields = ['id', 'username', 'nickname', 'email', 'tel', 'appIDs', 'manager', 'status', 'lastLogin', 'profile', 'createTime'];
+const userFields = ['id', 'username', 'nickname', 'email', 'tel', 'appIDs', "authType", 'manager', 'status', 'lastLogin', 'profile', 'createTime'];
 const applicationFields = ['id', 'name', 'description', 'createTime'];
 
 
@@ -37,27 +38,6 @@ class User extends BasicService {
     }
   }
 
-  async userLogin(username, password) {
-    let userInfo = await UserModel.findOne({where: {username}})
-    if (!userInfo) { // user not exist
-      this.log4js.warn('user [%s] login failed! user not exist', username)
-      return {err: errors.ERR_USER_NOT_FOUND}
-    }
-
-    // compare the password.
-    this.log4js.info('password: %s', util.encodePassword(password))
-    if (!userInfo.password || !util.comparePassword(password, userInfo.password)) {
-      this.log4js.warn('user [%s] login failed! password error', username)
-      return {err: errors.ERR_PASSWORD_ERROR}
-    }
-
-    if (userInfo.status === constant.UserStatus.Disabled) {
-      this.log4js.warn('user [%s] login failed! disabled', username)
-      return {err: errors.ERR_USER_DISABLED}
-    }
-    userInfo = userInfo.toJSON()
-    return { userInfo };
-  }
 
   async userApplications(userInfo) {
     // console.log('>>> userInfo::', JSON.stringify(userInfo))
@@ -89,9 +69,10 @@ class User extends BasicService {
   async login() {
     const username = this.getRequiredArg('username')
     const password = this.getRequiredArg('password')
+    const ldapLogin = this.getBoolArg('ldapLogin')
 
-    this.log4js.info('### user[%s] login ...', username)
-    const {userInfo, err: loginErr} = await this.userLogin(username, password)
+    this.log4js.info('### user[%s] login ldapLogin=%s...', username, ldapLogin)
+    const {userInfo, err: loginErr} = await this.userLoginInternal(username, password, {ldapLogin})
 
     if (loginErr) {
       this.fail(200, loginErr)
@@ -120,6 +101,21 @@ class User extends BasicService {
     userInfo.appIDs = userInfo.appIDs || []
     const data = {'userInfo': util.filterFieldWhite(userInfo, userFields), applications}
 
+    this.success(data)
+  }
+
+  async ldapOptions() {
+    let supported = false
+    let label = 'LDAP'
+    let syncedFields = [] // fields synced from ldap
+    if (ldapConfig) {
+      supported = true
+      label = ldapConfig.label
+      if (ldapConfig.fieldsMap) {
+        syncedFields = Object.keys(ldapConfig.fieldsMap)
+      }
+    }
+    const data = {supported, label, syncedFields}
     this.success(data)
   }
 
@@ -175,6 +171,7 @@ class User extends BasicService {
     const password = values.password;
     values.password = util.encodePassword(password);
     values.lastLogin = 0;
+    values.authType = constant.AuthType.PASSWORD;
     values.createTime = util.unixtime();
     values.updateTime = util.unixtime();
     let userInfo = await UserModel.create(values);

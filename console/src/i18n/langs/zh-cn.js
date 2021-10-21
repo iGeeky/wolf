@@ -82,7 +82,8 @@ const zhcn = {
 
     'loginPromptUsername': '用户名',
     'loginPromptPassword': '密码',
-    'loginPromptLoginForm': '登录表单',
+    'loginPromptLoginForm': '控制台登录',
+    'loginPromptStandardLogin': '标准登录',
 
     'userNewUser': '新用户',
     'userEditUser': '编辑用户',
@@ -238,6 +239,7 @@ const zhcn = {
       'ERR_DUPLICATE_KEY_ERROR': '重复的主键或唯一键',
       'ERR_METHOD_INVALID': '非法的HTTP请求方法',
       'ERR_SERVER_ERROR': '服务器内部错误',
+      'ERR_LDAP_CONFIG_NOT_FOUND': '找不到LDAP配置',
 
       'ERR_USERNAME_MISSING': '缺少用户名',
       'ERR_PASSWORD_MISSING': '缺少密码',

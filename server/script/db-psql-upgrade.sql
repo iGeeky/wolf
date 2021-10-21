@@ -51,3 +51,8 @@ CREATE INDEX idx_oauth_token_user_id ON "oauth_token"(user_id);
 
 COMMENT ON COLUMN oauth_token.client_id IS 'client_id in oauth, which corresponds to application.id in this system';
 COMMENT ON COLUMN oauth_token.user_id IS 'ID of the user corresponding to client_id, mapped to user.id';
+
+-- upgrade to 0.5.x (ldap version)
+
+ALTER TABLE "user" ADD COLUMN auth_type smallint DEFAULT 1;
+COMMENT ON COLUMN "user".auth_type IS 'user authentication type, 1: password, 2: LDAP';

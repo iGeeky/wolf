@@ -1,13 +1,14 @@
-import { login, getInfo } from '@/api/user'
+import { login, getInfo, getLDAPOptions } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
-const _ = require('lodash'
-)
+const _ = require('lodash')
+
 const state = {
   token: getToken(),
   roles: [],
   userInfo: {},
   applications: [],
+  ldapOptions: {},
 }
 
 const mutations = {
@@ -21,7 +22,9 @@ const mutations = {
   SET_APPLICATIONS: (state, applications) => {
     state.applications = applications
   },
-
+  SET_LDAP_OPTIONS: (state, ldapOptions) => {
+    state.ldapOptions = ldapOptions
+  },
 }
 
 function checkCurrentApp(applications, rootState, dispatch) {
@@ -42,9 +45,9 @@ function checkCurrentApp(applications, rootState, dispatch) {
 const actions = {
   // user login
   login({ commit, rootState, dispatch }, userInfo) {
-    const { username, password } = userInfo
+    // const { username, password } = userInfo
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(res => {
+      login(userInfo).then(res => {
         if (res.ok) {
           const { data } = res
 
@@ -83,6 +86,19 @@ const actions = {
         commit('SET_USER_INFO', data.userInfo)
         commit('SET_APPLICATIONS', applications)
         checkCurrentApp(applications, rootState, dispatch)
+        resolve(data)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  getLDAPOptions({ commit, state }) {
+    return new Promise((resolve, reject) => {
+      getLDAPOptions().then(response => {
+        const { data } = response
+        // commit('SET_ROLES', roles)
+        commit('SET_LDAP_OPTIONS', data)
         resolve(data)
       }).catch(error => {
         reject(error)

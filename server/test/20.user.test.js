@@ -45,6 +45,7 @@ function getListResponseSchema() {
                     "appIDs",
                     "manager",
                     "status",
+                    "authType",
                     "lastLogin",
                     "profile",
                     "createTime"

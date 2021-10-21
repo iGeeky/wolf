@@ -16,6 +16,20 @@ const config = {
     accessTokenLifetime: parseInt(process.env.OAUTH_ACCESS_TOKEN_LIFETIME) || 3600 * 24 * 7, // 7 days
     refreshTokenLifetime: parseInt(process.env.OAUTH_REFRESH_TOKEN_LIFETIME) || 3600 * 24 * 30, // 30 days.
   },
+  ldapConfig: {
+    label: 'OpenLDAP',
+    url: 'ldap://127.0.0.1:389',
+    baseDn: 'dc=example,dc=org',
+    adminDn: 'cn=admin,dc=example,dc=org',
+    adminPassword: '123456',
+    userIdBase: 10000 * 100, // wolf user id = ldap user id + userIdBase
+    fieldsMap: { // key=wolf-fieldname, value=ldap-fieldname
+      id: 'uidNumber',
+      username: 'uid',
+      nickname: 'dn',
+      email: 'mail',
+    },
+  },
 }
 
 module.exports = config
