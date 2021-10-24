@@ -22,6 +22,7 @@ exports.ERR_CATEGORY_ID_NOT_FOUND = 'ERR_CATEGORY_ID_NOT_FOUND'
 exports.ERR_RESOURCE_ID_NOT_FOUND = 'ERR_RESOURCE_ID_NOT_FOUND'
 exports.ERR_METHOD_INVALID = 'ERR_METHOD_INVALID'
 exports.ERR_LDAP_CONFIG_NOT_FOUND = 'ERR_LDAP_CONFIG_NOT_FOUND'
+exports.ERR_NOT_ALLOWED_RESET_PWD = 'ERR_NOT_ALLOWED_RESET_PWD'
 
 const msgs = {
   ERR_OBJECT_NOT_FOUND: 'Object not found',
@@ -48,6 +49,7 @@ const msgs = {
   ERR_RESOURCE_ID_NOT_FOUND: 'Resource ID not found',
   ERR_METHOD_INVALID: 'HTTP Request Method is Invalid',
   ERR_LDAP_CONFIG_NOT_FOUND: 'LDAP config not found',
+  ERR_NOT_ALLOWED_RESET_PWD: 'Not allowed to reset password',
 }
 
 function errmsg(reason) {

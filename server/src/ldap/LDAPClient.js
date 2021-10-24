@@ -4,7 +4,15 @@ const errors = require('../errors/errors')
 const log4js = require('../util/log4js')
 const ldap = require('ldapjs');
 const crc = require('node-crc');
-const {ldapConfig} = require('../../conf/config')
+const config = require('../../conf/config')
+
+function crc48(value) {
+  const buf = Buffer.from(value)
+  const crc48hex = crc.crc32(buf).toString('hex') + crc.crc16(buf).toString('hex')
+  const crc48value = BigInt('0x' + crc48hex)
+  return crc48value
+}
+
 
 function idValueMapping(ldapUserId, userIdBase) {
   let userId = parseInt(ldapUserId)
@@ -12,11 +20,12 @@ function idValueMapping(ldapUserId, userIdBase) {
     // the wolf user id = ldapUserId + config.ldapConfig.userIdBase
     return userIdBase + userId
   }
-  userId = BigInt('0x' + crc.crc64(Buffer.from(`${userIdBase}:${ldapUserId}`)).toString("hex"))
+  userId = crc48(`${userIdBase}:${ldapUserId}`)
   return userId
 }
 
 async function ldapLogin(username, password) {
+  const ldapConfig = config.ldapConfig;
   if (!ldapConfig) {
     return {err: errors.ERR_LDAP_CONFIG_NOT_FOUND}
   }
@@ -41,16 +50,30 @@ async function ldapLogin(username, password) {
   try {
     ldapUser = await authenticate(options)
   } catch (ex) {
+    let errorType;
     if (ex instanceof ldap.InvalidCredentialsError) {
-      log4js.info("LDAP authenticate(%s) failed! ex: %s", username, ex)
-      return {err: errors.ERR_PASSWORD_ERROR}
+      errorType = 'InvalidCredentialsError'
     } else if (ex instanceof LdapAuthenticationError) {
-      log4js.warn("LDAP authenticate(%s) failed! ex: %s", username, ex)
-      return {err: errors.ERR_USER_NOT_FOUND}
+      errorType = 'LdapAuthenticationError'
     } else {
       if (ex.admin) {
         ex = ex.admin
       }
+      const exstr = ex.toString()
+      if (exstr.includes("InvalidCredentialsError")) {
+        errorType = 'InvalidCredentialsError'
+      } else if (exstr.includes("LdapAuthenticationError")) {
+        errorType = 'LdapAuthenticationError'
+      }
+    }
+
+    if (errorType === 'InvalidCredentialsError') {
+      log4js.info("LDAP authenticate(%s) failed! InvalidCredentialsError, detail: %s", username, ex)
+      return {err: errors.ERR_PASSWORD_ERROR}
+    } else if (errorType === 'LdapAuthenticationError') {
+      log4js.info("LDAP authenticate(%s) failed! LdapAuthenticationError, detail: %s", username, ex)
+      return {err: errors.ERR_USER_NOT_FOUND}
+    } else {
       log4js.error("LDAP authenticate(%s) failed! ex: %s", username, ex)
       return {err: errors.ERR_SERVER_ERROR}
     }

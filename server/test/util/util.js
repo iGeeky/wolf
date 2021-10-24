@@ -76,7 +76,7 @@ function getSimpleUserInfoSchema() {
   const userInfoSchema = {
     type: "object",
     properties: {
-        id: {"type":"integer"},
+        id: {"type": ["integer", "string"]},
         username: {"type":"string"},
         nickname: {"type":"string"},
         email: {"type": ["string", "null"]},

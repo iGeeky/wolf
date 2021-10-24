@@ -222,7 +222,8 @@ class BasicService extends Service {
     if (err) {
       return {err}
     }
-    let existUserInfo = await UserModel.findByPk(userInfo.id)
+    const options = {where: {id: userInfo.id}}
+    let existUserInfo = await UserModel.findOne(options)
     if (existUserInfo) {
       // update the user info
       const update = {
@@ -244,7 +245,7 @@ class BasicService extends Service {
       userInfo.authType = constant.AuthType.LDAP;
       userInfo.createTime = util.unixtime();
       userInfo.updateTime = util.unixtime();
-      userInfo = await UserModel.create(userInfo);
+      userInfo = await UserModel.create(userInfo)
       userInfo = userInfo.toJSON()
     }
 

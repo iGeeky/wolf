@@ -169,7 +169,12 @@ function mysqlCustomDefine(modelName, attributes, options) {
 }
 
 let dialectOptions = {}
-if (!isMysql) {
+if (isMysql) {
+  dialectOptions = {
+    supportBigNumbers: true,
+    // bigNumberStrings: true,
+  }
+} else {
   dialectOptions = {
     useUTC: false, // for reading from database
   }

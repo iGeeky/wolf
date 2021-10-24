@@ -116,7 +116,7 @@ class Rbac extends RbacPub {
       return {ok: false, reason: loginErr}
     }
 
-    if (!userInfo.appIDs.includes(appid)) {
+    if (!userInfo.appIDs || !userInfo.appIDs.includes(appid)) {
       this.log4js.warn('user [%s] login failed! user is not associated with the app', username)
       return {ok: false, reason: 'ERR_USER_APPIDS'}
     }

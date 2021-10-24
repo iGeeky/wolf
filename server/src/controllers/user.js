@@ -9,7 +9,7 @@ const errors = require('../errors/errors')
 const userCache = require('../util/user-cache')
 const constant = require('../util/constant')
 const util = require('../util/util')
-const {ldapConfig} = require('../../conf/config')
+const config = require('../../conf/config')
 const _ = require('lodash')
 
 const userFields = ['id', 'username', 'nickname', 'email', 'tel', 'appIDs', "authType", 'manager', 'status', 'lastLogin', 'profile', 'createTime'];
@@ -108,6 +108,7 @@ class User extends BasicService {
     let supported = false
     let label = 'LDAP'
     let syncedFields = [] // fields synced from ldap
+    const ldapConfig = config.ldapConfig;
     if (ldapConfig) {
       supported = true
       label = ldapConfig.label
@@ -229,6 +230,11 @@ class User extends BasicService {
   async resetPwd() {
     this.checkMethod('PUT')
     const id = this.getRequiredIntArg('id')
+    const userInfo = await UserModel.findByPk(id)
+    if (userInfo.authType !== constant.AuthType.PASSWORD) {
+      this.fail(400, errors.ERR_NOT_ALLOWED_RESET_PWD)
+      return
+    }
     const values = {}
     const password = util.randomString(12)
     values.password = util.encodePassword(password);
