@@ -2,6 +2,8 @@
 
 There are two ways to deploy, Docker can be used to deploy faster. It can also be deployed manually in all steps.
 
+The default is to log in with a password, if you want to log in with LDAP, please refer to [here](./ldap-config.md).
+
 ## A.Docker environment deployment
 
 #### 1.required environment
@@ -225,6 +227,9 @@ cnpm run dev
 Once the Console has been successfully started, it is now accessible using the root account. The password is `123456` or the one you specify when starting the server with the variable `RBAC_ROOT_PASSWORD`.
 
 #### 5.Configuring Agent
+
+Note: If you are using the `apisix` gateway, you can use the `wolf-rbac` plugin for [apisix](https://github.com/apache/apisix/blob/master/docs/en/latest/plugins/wolf-rbac.md) instead. This plugin also acts as an `Agent`.
+
 
 * Installing OpenResty
 

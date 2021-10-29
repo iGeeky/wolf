@@ -23,6 +23,7 @@ wolf是一个通用RBAC系统，适用于所有的HTTP应用．统一授权及�
 * 低耦合, 无侵入性, 支持新的应用不需要对应用进行任何修改与改造, 系统在代理层对资源权限进行管理
 * 自带管理后台(`console模块`)，可对`应用`，`用户`，`角色`, `权限`及`资源`进行管理
 * 支持 `OAuth 2.0` 授权, 方便其它应用使用 `wolf` 账号登陆
+* 支持2种用户认证方式: 密码认证, `LDAP`认证.
 * 支持`Restful`接口, 也支持后端渲染的`纯html`应用
 * 支持访问日志记录与查询, 以进行审计及问题追溯.
 * 丰富的测试用例,代码行数覆盖率90%以上.
@@ -80,8 +81,6 @@ wolf是一个通用RBAC系统，适用于所有的HTTP应用．统一授权及�
 * Console: VueJS, Element, Babel, NodeJS
 * Agent: OpenResty(ngx_lua)
 * Database: PostgreSQL.
-
-
 
 
 
@@ -145,6 +144,8 @@ wolf是一个通用RBAC系统，适用于所有的HTTP应用．统一授权及�
 ## Deployment
 
 [部署文档](./docs/deploy-cn.md)
+
+[LDAP配置](./docs/ldap-config-cn.md)
 
 [API文档](./docs/admin-api-cn.md)
 

@@ -2,6 +2,8 @@
 
 部署方式有两种, 可以采用Docker进行部署, 比较快速. 也可以所有步骤都手动部署.
 
+这里默认是使用密码登录, 如果要使用LDAP方式登录, 请参考[这里](./ldap-config-cn.md).
+
 ## A.Docker环境部署
 
 #### 1.必要环境
@@ -226,6 +228,8 @@ Console启动成功后, 可使用root账号进行访问了. 密码是`123456`或
 [Console的使用, 请参考这里](./)
 
 #### 5.配置Agent
+
+注意: 如果你在使用 `apisix` 网关, 可以直接使用 `apisix` 的 [wolf-rbac](https://github.com/apache/apisix/blob/master/docs/zh/latest/plugins/wolf-rbac.md) 插件. 该插件也相当于`Agent`的角色.
 
 * 安装OpenResty
 

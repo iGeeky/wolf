@@ -22,6 +22,7 @@ The system can be applied to a variety of platforms and systems. Unified account
 * Low coupling, non-intrusive, supports new applications without any modifications or changes to the application, the system manages resource rights at the proxy level
 * Management backend (`console module`) for `application`, `user`, `role`, `permission` and `resources` management
 * The `OAuth 2.0` authorization is supported and other applications can easily use `wolf` as an authentication source.
+* Support two types of user authentication: password authentication, `LDAP` authentication.
 * Supports `Restful` interface, also supports `pure html` applications for backend rendering
 * Support access logging and querying for auditing
 * Rich test cases with over 90% code line coverage.
@@ -142,6 +143,8 @@ The system can be applied to a variety of platforms and systems. Unified account
 ## Deployment
 
 [deployment document](./docs/deploy.md)
+
+[LDAP Configuration](./docs/ldap-config.md)
 
 [API documentation](./docs/admin-api.md)
 
