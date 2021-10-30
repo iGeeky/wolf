@@ -19,6 +19,7 @@
     "koa-oauth-server": "^1.0.1",
     "koa-router": "^7.4.0",
     "koa-static": "^5.0.0",
+    "koa-tree-router": "^0.8.0",
     "koa-views": "^6.2.0",
     "koa2-cors": "^2.0.6",
     "ldap-authentication": "^2.2.9",

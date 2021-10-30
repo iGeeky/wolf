@@ -36,10 +36,10 @@ async function getResource(appID, action, name) {
   }
   resource = await getResourceFromDb(appID, action, name)
   if (!resource) {
-    return {}
+    resourceCache.set(key, undefined)
+  } else {
+    resourceCache.set(key, resource)
   }
-
-  resourceCache.set(key, resource)
 
   return {resource, cached: 'miss'}
 }

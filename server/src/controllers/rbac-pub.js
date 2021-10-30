@@ -20,7 +20,7 @@ class RbacPub extends BasicService {
       return false;
     }
 
-    return true;
+    return config.rbacRecordAccessLog;
   }
 
   _writeAccessLog() {

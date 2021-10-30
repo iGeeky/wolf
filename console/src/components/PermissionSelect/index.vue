@@ -83,7 +83,7 @@ export default {
   },
   methods: {
     async listPermissions() {
-      const res = await listPermissions({ appID: this.currentApp, limit: 256 })
+      const res = await listPermissions({ appID: this.currentApp, limit: 512 })
       if (res && res.ok) {
         const permissions = res.data.permissions
         if (!this.multiple) {

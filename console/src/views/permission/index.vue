@@ -205,7 +205,7 @@ export default {
     },
 
     async listCategorys() {
-      const res = await listCategorys({ appID: this.currentApp, limit: 256 })
+      const res = await listCategorys({ appID: this.currentApp, limit: 512 })
       if (res.ok) {
         this.categorys = res.data.categorys
       }

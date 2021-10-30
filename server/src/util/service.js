@@ -92,7 +92,7 @@ class Service extends ArgsUtil {
       log4js.info('url: %s, bizMethod: %s', this.url, bizMethod)
     }
     let callMethod = bizMethod;
-    if (this[bizMethodEx] && typeof(this[bizMethodEx]) === 'function') {
+    if (bizMethodEx && this[bizMethodEx] && typeof(this[bizMethodEx]) === 'function') {
       callMethod = bizMethodEx
     }
     try {
