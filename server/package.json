@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "bcrypt-node": "^0.1.0",
+    "crc": "^3.8.0",
     "ejs": "^2.6.2",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.6.2",
@@ -30,7 +31,6 @@
     "moment": "^2.23.0",
     "mysql2": "^2.2.5",
     "node-cache": "^4.2.1",
-    "node-crc": "^2.0.11",
     "oauth2-server": "^3.0.1",
     "pg": "^7.7.1",
     "pg-escape": "^0.2.0",

@@ -3,16 +3,15 @@ const typeUtil = require('../util/type-util')
 const errors = require('../errors/errors')
 const log4js = require('../util/log4js')
 const ldap = require('ldapjs');
-const crc = require('node-crc');
+const { crc16, crc32 } = require('crc')
 const config = require('../../conf/config')
 
 function crc48(value) {
   const buf = Buffer.from(value)
-  const crc48hex = crc.crc32(buf).toString('hex') + crc.crc16(buf).toString('hex')
+  const crc48hex = crc32(buf).toString(16) + crc16(buf).toString(16)
   const crc48value = BigInt('0x' + crc48hex)
   return crc48value
 }
-
 
 function idValueMapping(ldapUserId, userIdBase) {
   let userId = parseInt(ldapUserId)
