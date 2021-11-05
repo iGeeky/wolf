@@ -13,7 +13,7 @@
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         {{ $t('wolf.search') }}
       </el-button>
-      <el-button class="filter-item" type="primary" :disabled="ldapOptions.supported" @click="handleAdd">{{ $t('wolf.userNewUser') }}</el-button>
+      <el-button class="filter-item" type="primary" :disabled="loginOptions.ldap.supported" @click="handleAdd">{{ $t('wolf.userNewUser') }}</el-button>
     </div>
     <el-table
       :data="users"
@@ -155,7 +155,7 @@ export default {
   computed: {
     ...mapGetters([
       'applications',
-      'ldapOptions',
+      'loginOptions',
     ]),
   },
   watch: {
@@ -220,7 +220,7 @@ export default {
       if (this.user && this.user.authType === 1) {
         rules = rules_all
       } else {
-        const syncedFields = this.ldapOptions.syncedFields || []
+        const syncedFields = this.loginOptions.ldap.syncedFields || []
         for (const field of Object.keys(rules_all)) {
           if (!syncedFields.includes(field)) { // ignore
             const rule = rules_all[field]
@@ -255,8 +255,8 @@ export default {
     },
     fieldDisabled(user, field) {
       if (user.authType === 2) {
-        if (this.ldapOptions.syncedFields) {
-          const disabled = this.ldapOptions.syncedFields.includes(field)
+        if (this.loginOptions.ldap.syncedFields) {
+          const disabled = this.loginOptions.ldap.syncedFields.includes(field)
           return disabled
         }
       }

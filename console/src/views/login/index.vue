@@ -46,10 +46,10 @@
           </el-form-item>
         </el-tooltip>
 
-        <el-form-item v-if="ldapOptions.supported" prop="ldapLogin">
-          <el-radio-group v-model="loginForm.ldapLogin" @change="ldapLoginChange">
-            <el-radio label="0">{{ $t('wolf.loginPromptStandardLogin') }}</el-radio>
-            <el-radio label="1"> {{ ldapOptions.label||'LDAP' }} </el-radio>
+        <el-form-item v-if="showAuthTypeOption" prop="authType">
+          <el-radio-group v-model="loginForm.authType" @change="authTypeChange">
+            <el-radio label="1">{{ $t('wolf.loginPromptStandardLogin') }}</el-radio>
+            <el-radio v-if="loginOptions.ldap.supported" label="2"> {{ loginOptions.ldap.label||'LDAP' }} </el-radio>
           </el-radio-group>
         </el-form-item>
         <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">{{ $t('wolf.btnLogin') }}</el-button>
@@ -69,7 +69,7 @@
 <script>
 import { validUsername } from '@/utils/validate'
 import SocialSign from './components/SocialSignin'
-import { getLDAPOptions } from '@/api/user'
+import { getLoginOptions } from '@/api/user'
 
 export default {
   name: 'Login',
@@ -93,15 +93,16 @@ export default {
       loginForm: {
         username: '',
         password: '',
-        ldapLogin: '0',
+        authType: '1',
       },
-      ldapOptions: {
-
+      loginOptions: {
+        password: {},
+        ldap: {},
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }],
-        ldapLogin: [{ required: true }],
+        authType: [{ required: true }],
       },
       passwordType: 'password',
       capsTooltip: false,
@@ -110,6 +111,14 @@ export default {
       redirect: undefined,
       otherQuery: {},
     }
+  },
+  computed: {
+    showAuthTypeOption() {
+      if (this.loginOptions.ldap && this.loginOptions.ldap.supported) {
+        return true
+      }
+      return false
+    },
   },
   watch: {
     $route: {
@@ -127,7 +136,7 @@ export default {
     this.ldapOptionLoad()
   },
   mounted() {
-    this.loginForm.ldapLogin = localStorage.ldapLogin === undefined ? '0' : localStorage.ldapLogin
+    this.loginForm.authType = localStorage.authType === undefined ? '1' : localStorage.authType
     if (this.loginForm.username === '') {
       this.$refs.username.focus()
     } else if (this.loginForm.password === '') {
@@ -181,17 +190,17 @@ export default {
       })
     },
     async ldapOptionLoad() {
-      const res = await getLDAPOptions()
+      const res = await getLoginOptions()
       if (res.ok) {
-        this.ldapOptions = res.data
-        if (!this.ldapOptions.supported) {
-          this.loginForm.ldapLogin = '0'
+        this.loginOptions = res.data
+        if (!this.loginOptions.ldap.supported) {
+          this.loginForm.authType = '1'
         }
       }
-      console.log('ldapOptions: %s', JSON.stringify(this.ldapOptions))
+      console.log('loginOptions: %s', JSON.stringify(this.loginOptions))
     },
-    ldapLoginChange(label) {
-      localStorage.setItem('ldapLogin', label)
+    authTypeChange(label) {
+      localStorage.setItem('authType', label)
     },
     getOtherQuery(query) {
       return Object.keys(query).reduce((acc, cur) => {

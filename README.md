@@ -27,7 +27,7 @@ The system can be applied to a variety of platforms and systems. Unified account
 * Support access logging and querying for auditing
 * Rich test cases with over 90% code line coverage.
 * Support `PostgreSQL` and `MySQL` databases.
-* APISIX gateway support[apache-apisix:wolf-rbac](https://github.com/apache/incubator-apisix/blob/master/doc/plugins/wolf-rbac-cn.md)
+* APISIX gateway support [apache-apisix:wolf-rbac](https://github.com/apache/incubator-apisix/blob/master/doc/plugins/wolf-rbac-cn.md)
 * The system has three main modules:
   * Wolf-Server, Service implementation, management backend functionality implementation
   * Wolf-Console, Management-backend's frontend code implementation

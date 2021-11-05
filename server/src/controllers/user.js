@@ -10,6 +10,7 @@ const userCache = require('../util/user-cache')
 const constant = require('../util/constant')
 const util = require('../util/util')
 const config = require('../../conf/config')
+const {ldapOptions} = require('./helper')
 const _ = require('lodash')
 
 const userFields = ['id', 'username', 'nickname', 'email', 'tel', 'appIDs', "authType", 'manager', 'status', 'lastLogin', 'profile', 'createTime'];
@@ -69,10 +70,10 @@ class User extends BasicService {
   async login() {
     const username = this.getRequiredArg('username')
     const password = this.getRequiredArg('password')
-    const ldapLogin = this.getBoolArg('ldapLogin')
+    const authType = this.getIntArg('authType', constant.AuthType.PASSWORD)
 
-    this.log4js.info('### user[%s] login ldapLogin=%s...', username, ldapLogin)
-    const {userInfo, err: loginErr} = await this.userLoginInternal(username, password, {ldapLogin})
+    this.log4js.info('### user[%s] login authType=%s...', username, authType)
+    const {userInfo, err: loginErr} = await this.userLoginInternal(username, password, {authType})
 
     if (loginErr) {
       this.fail(200, loginErr)
@@ -104,19 +105,11 @@ class User extends BasicService {
     this.success(data)
   }
 
-  async ldapOptions() {
-    let supported = false
-    let label = 'LDAP'
-    let syncedFields = [] // fields synced from ldap
-    const ldapConfig = config.ldapConfig;
-    if (ldapConfig) {
-      supported = true
-      label = ldapConfig.label
-      if (ldapConfig.fieldsMap) {
-        syncedFields = Object.keys(ldapConfig.fieldsMap)
-      }
+  async loginOptions() {
+    const data = {
+      password: {supported: true},
+      ldap: ldapOptions(),
     }
-    const data = {supported, label, syncedFields}
     this.success(data)
   }
 

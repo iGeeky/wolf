@@ -72,7 +72,7 @@ export default {
     ]),
   },
   created() {
-    this.$store.dispatch('user/getLDAPOptions')
+    this.$store.dispatch('user/getLoginOptions')
   },
   methods: {
     toggleSideBar() {

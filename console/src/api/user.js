@@ -52,9 +52,9 @@ export async function getInfo() {
   })
 }
 
-export async function getLDAPOptions() {
+export async function getLoginOptions() {
   return await request({
-    url: '/user/ldapOptions',
+    url: '/user/loginOptions',
     method: 'get',
     params: { },
   })

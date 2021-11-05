@@ -1,4 +1,4 @@
-import { login, getInfo, getLDAPOptions } from '@/api/user'
+import { login, getInfo, getLoginOptions } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 const _ = require('lodash')
@@ -8,7 +8,7 @@ const state = {
   roles: [],
   userInfo: {},
   applications: [],
-  ldapOptions: {},
+  loginOptions: {},
 }
 
 const mutations = {
@@ -22,8 +22,8 @@ const mutations = {
   SET_APPLICATIONS: (state, applications) => {
     state.applications = applications
   },
-  SET_LDAP_OPTIONS: (state, ldapOptions) => {
-    state.ldapOptions = ldapOptions
+  SET_LOGIN_OPTIONS: (state, loginOptions) => {
+    state.loginOptions = loginOptions
   },
 }
 
@@ -93,12 +93,12 @@ const actions = {
     })
   },
 
-  getLDAPOptions({ commit, state }) {
+  getLoginOptions({ commit, state }) {
     return new Promise((resolve, reject) => {
-      getLDAPOptions().then(response => {
+      getLoginOptions().then(response => {
         const { data } = response
         // commit('SET_ROLES', roles)
-        commit('SET_LDAP_OPTIONS', data)
+        commit('SET_LOGIN_OPTIONS', data)
         resolve(data)
       }).catch(error => {
         reject(error)

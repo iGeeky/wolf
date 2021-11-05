@@ -37,7 +37,7 @@
     "pg-native": "^3.0.0",
     "sequelize": "^6.6.5",
     "urlsafe-base64": "^1.0.0",
-    "validator": "^10.9.0"
+    "validator": ">=13.7.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.14.5",

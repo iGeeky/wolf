@@ -30,7 +30,7 @@ const ldapObjects = [
 
 setLdapEntities(ldapObjects)
 
-server.start(389, () => {
+server.start(1389, () => {
   ldapLogin('zhangsan', '123456').then(console.log)
 })
 

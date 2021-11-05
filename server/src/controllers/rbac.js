@@ -6,7 +6,7 @@ const ApplicationModel = require('../model/application')
 const constant = require('../util/constant')
 const util = require('../util/util')
 const userCache = require('../util/user-cache')
-const {ldapConfig} = require('../../conf/config')
+const {ldapOptions} = require('./helper')
 
 
 const userFields = ['id', 'username', 'nickname', 'email', 'appIDs',
@@ -50,15 +50,13 @@ class Rbac extends RbacPub {
     } else {
       error = `appid missing`
     }
-    let ldapSupported = false
-    let ldapLabel = ""
-    let ldapLoginDef = '0'
-    if (ldapConfig) {
-      ldapSupported = true
-      ldapLabel = ldapConfig.label
-      ldapLoginDef = '1'
+
+    let authTypeDef = '1'
+    let ldap = ldapOptions()
+    if (ldap.supported) {
+      authTypeDef = '2'
     }
-    const ldapLogin = this.getArg('ldapLogin', '1')
+    const authType = this.getArg('authType', authTypeDef)
 
     await this.ctx.render('login', {
       returnTo,
@@ -67,9 +65,8 @@ class Rbac extends RbacPub {
       error,
       appid,
       appname,
-      ldapSupported,
-      ldapLabel,
-      ldapLogin,
+      ldap,
+      authType,
     })
   }
 
@@ -91,7 +88,7 @@ class Rbac extends RbacPub {
     const password = this.getArg('password')
     const returnTo = this.getArg('return_to', '/')
     const appid = this.getArg('appid')
-    const ldapLogin = this.getBoolArg('ldapLogin')
+    const authType = this.getIntArg('authType', constant.AuthType.PASSWORD)
 
     this.log4js.info('appid: %s, username %s login, return to url: %s', appid, username, returnTo)
     if (!username) {
@@ -111,7 +108,7 @@ class Rbac extends RbacPub {
       this.log4js.warn(`application id [%s] not found`, username)
       return {ok: false, reason: 'ERR_APPID_NOT_FOUND'}
     }
-    const {userInfo, err: loginErr} = await this.userLoginInternal(username, password, {ldapLogin})
+    const {userInfo, err: loginErr} = await this.userLoginInternal(username, password, {authType})
     if (loginErr) {
       return {ok: false, reason: loginErr}
     }

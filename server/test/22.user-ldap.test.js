@@ -5,6 +5,12 @@ const config = require('../conf/config')
 const { server, setLdapEntities } = require('../src/ldap/LDAPMockServer')
 const { utils } = require('mocha')
 
+const AuthType = {
+  PASSWORD: 1,
+  LDAP: 2,
+}
+
+
 const headers = util.adminHeaders()
 
 function getListResponseSchema(minItems) {
@@ -24,27 +30,46 @@ function getListResponseSchema(minItems) {
   return schema
 }
 
-function getLdapOptionsSchema(enums) {
-  const dataSchema = {
+function getLoginOptions(ldapEnums) {
+  const ldapSchema = {
     type: "object",
     properties: {
-      supported: {type: "boolean", enum: [enums.supported]},
+      supported: {type: "boolean"},
       label: {"type":"string"},
       syncedFields: {"type": "array"},
     },
     required: ["supported","label", "syncedFields"]
   }
-  if (enums) {
-    util.setDefaultOfSchema(dataSchema, enums, ["supported","label", "syncedFields"])
+  const dataSchema = {
+    type: "object",
+    properties: {
+      password: {
+        type: "object",
+        properties: {
+          supported: {type: "boolean", enum: [true]},
+        },
+        required: ["supported"]
+      },
+      ldap: ldapSchema,
+    },
+    required: ["password","ldap"]
+  }
+  if (ldapEnums) {
+    util.setDefaultOfSchema(ldapSchema, ldapEnums, ["supported","label", "syncedFields"])
   }
   const schema = util.okSchema(dataSchema)
   return schema
 }
 
+function dynamic_clean_ldap_config() {
+  config.ldapConfig = undefined
+}
+
+
 function dynamic_set_ldap_config() {
   config.ldapConfig = {
     label: 'Mock LDAP',
-    url: 'ldap://127.0.0.1:389',
+    url: 'ldap://127.0.0.1:1389',
     baseDn: 'dc=example,dc=org',
     adminDn: 'cn=admin,dc=example,dc=org',
     adminPassword: '123456',
@@ -100,11 +125,11 @@ describe('user', function() {
   const username = 'ldaptest'
   const username2 = 'str-id'
   const password = '123456'
-  const ldapLogin = true
+  const authType = AuthType.LDAP
   const appIDs = ['test-appid-for-user-test', 'test-appid-for-user-test2']
 
   before(async function() {
-    await server.start(389);
+    await server.start(1389);
     for (let appID of appIDs) {
       const application = {id: appID, name: appID, description: ''}
       await util.addApplication(application, headers)
@@ -112,9 +137,10 @@ describe('user', function() {
   });
 
   it('ldap options, not supported', async function() {
-    const schema = getLdapOptionsSchema({"supported":false,"label":"LDAP","syncedFields":[]})
+    dynamic_clean_ldap_config()
+    const schema = getLoginOptions({"supported":false,"label":"LDAP","syncedFields":[]})
     const args = {}
-    const url = '/wolf/user/ldapOptions';
+    const url = '/wolf/user/loginOptions';
     await mocha.get({url, headers, args, schema})
   });
 
@@ -122,8 +148,7 @@ describe('user', function() {
     const schema = util.failSchema('ERR_LDAP_CONFIG_NOT_FOUND');
     const username = 'user-not-found'
     const password = 'password'
-    const ldapLogin = true
-    const body = {username, password, ldapLogin}
+    const body = {username, password, authType}
     const url = '/wolf/user/login';
 
     await mocha.post({url, headers, body, schema})
@@ -134,20 +159,19 @@ describe('user', function() {
     const schema = util.failSchema('ERR_USER_NOT_FOUND');
     const username = 'user-not-found'
     const password = 'password'
-    const ldapLogin = true
-    const body = {username, password, ldapLogin}
+    const body = {username, password, authType}
     const url = '/wolf/user/login';
 
     await mocha.post({url, headers, body, schema})
   });
 
   it('ldap options', async function() {
-    const schema = getLdapOptionsSchema({
+    const schema = getLoginOptions({
       "supported":true,"label":"Mock LDAP",
       "syncedFields":["id","username","nickname","email"]
     })
     const args = {}
-    const url = '/wolf/user/ldapOptions';
+    const url = '/wolf/user/loginOptions';
     await mocha.get({url, headers, args, schema})
   });
 
@@ -157,8 +181,7 @@ describe('user', function() {
     const schema = util.failSchema('ERR_PASSWORD_ERROR');
     const username = 'ldaptest'
     const password = 'password-error'
-    const ldapLogin = true
-    const body = {username, password, ldapLogin}
+    const body = {username, password, authType}
     const url = '/wolf/user/login';
 
     await mocha.post({url, headers, body, schema})
@@ -170,8 +193,7 @@ describe('user', function() {
     const schema = util.failSchema('ERR_SERVER_ERROR');
     const username = 'server-error'
     const password = 'password'
-    const ldapLogin = true
-    const body = {username, password, ldapLogin}
+    const body = {username, password, authType}
     const url = '/wolf/user/login';
 
     await mocha.post({url, headers, body, schema})
@@ -181,7 +203,7 @@ describe('user', function() {
     dynamic_set_ldap_config();
     dynamic_set_ldap_mock_entities()
     var schema = util.failSchema('ERR_ACCESS_DENIED');
-    var body = {username, password, ldapLogin}
+    var body = {username, password, authType}
     const url_login = '/wolf/user/login';
     await mocha.post({url: url_login, headers, body, schema, status: 401})
     // query user by name
@@ -198,7 +220,7 @@ describe('user', function() {
     await mocha.put({url: url_update_user, headers, body, schema})
 
     // loign success
-    var body = {username, password, ldapLogin}
+    var body = {username, password, authType}
     var schema = util.okSchema()
     await mocha.post({url: url_login, headers, body, schema})
   });
@@ -207,7 +229,7 @@ describe('user', function() {
     dynamic_set_ldap_config();
     dynamic_set_ldap_mock_entities()
     var schema = util.failSchema('ERR_ACCESS_DENIED');
-    var body = {username: username2, password, ldapLogin}
+    var body = {username: username2, password, authType}
     const url_login = '/wolf/user/login';
     await mocha.post({url: url_login, headers, body, schema, status: 401})
   });
@@ -228,7 +250,7 @@ describe('user', function() {
     }
     const url_login = '/wolf/user/login';
     const schema = util.failSchema('ERR_USER_NOT_FOUND')
-    var body = {username, password, ldapLogin: '0'}
+    var body = {username, password, authType: 1}
     await mocha.post({url: url_login, headers, body, schema})
   });
 
@@ -239,7 +261,7 @@ describe('user', function() {
 
     const schema = util.okSchema()
     const appid = appIDs[0];
-    var body = {username, password, ldapLogin, appid}
+    var body = {username, password, authType, appid}
     const url_login = '/wolf/rbac/login.rest';
     await mocha.post({url: url_login, headers, body, schema})
   });
@@ -251,7 +273,7 @@ describe('user', function() {
     await util.updateUserStatus(id, -1)
 
     const schema = util.failSchema('ERR_USER_DISABLED')
-    var body = {username, password, ldapLogin}
+    var body = {username, password, authType}
     const url_login = '/wolf/user/login';
     await mocha.post({url: url_login, headers, body, schema})
   });
@@ -264,7 +286,7 @@ describe('user', function() {
 
     const schema = util.failSchema('ERR_USER_DISABLED')
     const appid = appIDs[0];
-    var body = {username, password, ldapLogin, appid}
+    var body = {username, password, authType, appid}
     const url_login = '/wolf/rbac/login.rest';
     await mocha.post({url: url_login, headers, body, schema})
   });

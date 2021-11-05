@@ -257,11 +257,7 @@ class BasicService extends Service {
     return {userInfo}
   }
 
-  async userLoginInternal(username, password, opts={}) {
-    if (opts.ldapLogin) {
-      return await this.ldapUserLoginInternal(username, password)
-    }
-
+  async passwordUserLoginInternal(username, password) {
     let userInfo = await UserModel.findOne({where: {username}})
     if (!userInfo || userInfo.authType !== constant.AuthType.PASSWORD) { // user not exist or not a normal user
       this.log4js.warn('user [%s] login failed! user not exist', username)
@@ -280,6 +276,15 @@ class BasicService extends Service {
     }
     userInfo = userInfo.toJSON()
     return { userInfo };
+  }
+
+  async userLoginInternal(username, password, opts={}) {
+    switch(opts.authType) {
+    case constant.AuthType.LDAP:
+      return await this.ldapUserLoginInternal(username, password)
+    default:
+      return await this.passwordUserLoginInternal(username, password)
+    }
   }
 }
 
