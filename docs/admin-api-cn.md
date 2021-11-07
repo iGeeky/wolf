@@ -192,6 +192,7 @@ token过期时间默认为30天. 可通过环境变量 `CONSOLE_TOKEN_EXPIRE_TIM
 -------|-------|------|-----
 username | string | 是 | 用户名
 password | string | 是 | 密码
+authType | integer | 否 | 认证类型, 1: 密码, 2: LDAP
 
 #### `Response Body` 响应
 
@@ -208,6 +209,7 @@ applications | [SimpleApplication](#SimpleApplication)[] | 是 | 用户的应用
   * ERR_PASSWORD_ERROR 密码错误
   * ERR_USER_DISABLED 用户被禁用
   * ERR_ACCESS_DENIED 非管理员用户不能登录.
+  * ERR_LDAP_CONFIG_NOT_FOUND 在LDAP登录时,服务器未配置LDAP.
 
 #### 示例
 
@@ -2252,7 +2254,7 @@ Rbac登录接口
 appid | string | 是 | 应用ID
 username | string | 是 | 登录用户名
 password | string | 是 | 登录密码
-
+authType | integer | 否 | 认证类型, 1: 密码, 2: LDAP
 
 #### `Response Body` 响应
 
@@ -2270,6 +2272,7 @@ token | string | 是 | 登录token
   * `ERR_USER_NOT_FOUND` 用户不存在
   * `ERR_PASSWORD_ERROR` 密码错误
   * `ERR_USER_DISABLED` 用户被禁用
+  * `ERR_LDAP_CONFIG_NOT_FOUND` 在LDAP登录时,服务器未配置LDAP
 
 
 #### 示例

@@ -1,3 +1,4 @@
 server/.nyc_output
 server/coverage
 server/log
+build-docker-img-server-use-proxy.sh

@@ -191,6 +191,7 @@ Field | Type | Required | Description
 -------|-------|------|-----
 username | string | Yes | User name
 password | string | Yes | Password
+authType | integer | No | Authentication type, 1: Password, 2: LDAP
 
 #### Response Body
 
@@ -205,8 +206,9 @@ applications | [SimpleApplication](#SimpleApplication)[] | Yes | User's applicat
 * reason:
   * ERR_USER_NOT_FOUND: User do not exist
   * ERR_PASSWORD_ERROR: Password error
-  * ERR_USER_DISABLED User are disabled.
-  * ERR_ACCESS_DENIED Non-administrative users cannot log in.
+  * ERR_USER_DISABLED: User are disabled.
+  * ERR_ACCESS_DENIED: Non-administrative users cannot login.
+  * ERR_LDAP_CONFIG_NOT_FOUND: The server is not configured with LDAP when login with LDAP.
 
 #### example
 
@@ -2254,6 +2256,7 @@ Field | Type | Required | Description
 appid | string | Yes | Application ID
 username | string | Yes | Login User Name
 password | string | Yes | login password
+authType | integer | No | Authentication type, 1: Password, 2: LDAP
 
 
 #### Response Body
@@ -2272,7 +2275,7 @@ token | string | Yes | Login token
   * `ERR_USER_NOT_FOUND` User do not exist
   * `ERR_PASSWORD_ERROR` Password error
   * `ERR_USER_DISABLED` User are disabled.
-
+  * `ERR_LDAP_CONFIG_NOT_FOUND` The server is not configured with LDAP when login with LDAP.
 
 #### example
 
