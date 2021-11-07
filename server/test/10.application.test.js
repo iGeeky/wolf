@@ -218,7 +218,7 @@ describe('application', function() {
       const schema = util.failSchema('ERR_ACCESS_DENIED');
       const body = { id: 'id-not-exist' }
       const url = `/wolf/application`;
-      await mocha.delete({url, headers, body, status: 401, schema})
+      await mocha.delete({url, headers, body, status: 403, schema})
     });
 
 
@@ -226,7 +226,7 @@ describe('application', function() {
       const schema = util.failSchema('ERR_ACCESS_DENIED')
       const args = {id: 'id-not-exist'}
       const url = '/wolf/application/secret';
-      await mocha.get({url, headers, args, status: 401, schema})
+      await mocha.get({url, headers, args, status: 403, schema})
     });
 
     it('list', async function() {

@@ -27,7 +27,7 @@ module.exports = function() {
         ctx.status = 401
         ctx.body = json.fail('ERR_TOKEN_INVALID', err.message)
       } else if (err instanceof AccessDenyError) {
-        ctx.status = 401
+        ctx.status = 403
         ctx.body = json.fail('ERR_ACCESS_DENIED', err.message)
       } else if (err instanceof DataExistError) {
         ctx.status = 400

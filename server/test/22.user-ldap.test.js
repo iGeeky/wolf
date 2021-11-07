@@ -205,7 +205,7 @@ describe('user', function() {
     var schema = util.failSchema('ERR_ACCESS_DENIED');
     var body = {username, password, authType}
     const url_login = '/wolf/user/login';
-    await mocha.post({url: url_login, headers, body, schema, status: 401})
+    await mocha.post({url: url_login, headers, body, schema, status: 403})
     // query user by name
     var schema = getListResponseSchema(1)
     const res = await mocha.get({url: '/wolf/user/list', headers, args: {key: username}, schema})
@@ -231,7 +231,7 @@ describe('user', function() {
     var schema = util.failSchema('ERR_ACCESS_DENIED');
     var body = {username: username2, password, authType}
     const url_login = '/wolf/user/login';
-    await mocha.post({url: url_login, headers, body, schema, status: 401})
+    await mocha.post({url: url_login, headers, body, schema, status: 403})
   });
 
   it('reset password failed', async function() {

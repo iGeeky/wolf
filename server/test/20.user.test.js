@@ -108,7 +108,7 @@ describe('user', function() {
     const body = Object.assign({}, rootUserInfo)
     body.status = -1
     const url = '/wolf/user';
-    await mocha.put({url, headers, body, status: 401, schema})
+    await mocha.put({url, headers, body, status: 403, schema})
   });
 
   it('failed to update root user manager', async function() {
@@ -119,7 +119,7 @@ describe('user', function() {
     const body =  Object.assign({}, rootUserInfo)
     body.manager = 'admin'
     const url = '/wolf/user';
-    await mocha.put({url, headers, body, status: 401, schema})
+    await mocha.put({url, headers, body, status: 403, schema})
   });
 
   it('add', async function() {
@@ -294,7 +294,7 @@ describe('user', function() {
       const schema = util.failSchema('ERR_ACCESS_DENIED')
       const args = { }
       const url = `/wolf/user/info`;
-      const res = await mocha.get({url, headers, args, status: 401, schema})
+      const res = await mocha.get({url, headers, args, status: 403, schema})
     });
 
     it('enable admin', async function() {
@@ -308,7 +308,7 @@ describe('user', function() {
       const schema = util.failSchema('ERR_ACCESS_DENIED');
       const body = { id: 'id-not-exist' }
       const url = `/wolf/user`;
-      await mocha.delete({url, headers, body, status: 401, schema})
+      await mocha.delete({url, headers, body, status: 403, schema})
     });
 
     it('set roles failed!, access deny', async function() {
@@ -319,7 +319,7 @@ describe('user', function() {
       const body = {userID, appID, permIDs, roleIDs}
 
       const url = '/wolf/user-role/set';
-      await mocha.post({url, headers, body, status: 401, schema})
+      await mocha.post({url, headers, body, status: 403, schema})
     });
 
     it('reset admin password', async function() {

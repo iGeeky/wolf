@@ -144,7 +144,7 @@ describe('framework', function() {
         const schema = util.failSchema('ERR_ACCESS_DENIED');
         const body = { username, password}
         const url = `/wolf/user/login`;
-        await mocha.post({url, headers, body, status: 401, schema})
+        await mocha.post({url, headers, body, status: 403, schema})
       });
 
       after(async function() {
