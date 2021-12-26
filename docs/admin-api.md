@@ -1178,6 +1178,70 @@ curl http://127.0.0.1:12180/wolf/role \
 ```
 
 
+### Adding permissions to role
+
+Adding permissions to roles. Unlike the PUT method, this method only adds new permissions. The existing permissions remain unchanged.
+
+#### Method: PATCH
+#### URL: /wolf/role
+#### `Header` parameters: Requires a token of [`Console` login](#Login), passed through the `x-rbac-token` request header.
+#### `Request Body` parameters
+
+
+Field | Type | Required | Description
+-------|-------|------|-----
+appID | string | Yes | Application ID, the role can only belong to a certain application.
+id | string | Yes | Role ID, must be unique within the application
+permIDs | string[] | Yes | List of permission IDs to add to the role.
+
+#### Response Body
+
+* data:
+
+Field | Type | Required | Description
+-------|-------|------|-----
+role | [Role](#Role) | Yes | Modified role information
+
+#### example
+
+* Request
+
+```json
+curl http://127.0.0.1:12180/wolf/role \
+-H "Content-Type: application/json" \
+-H "x-rbac-token: $WOLF_TOKEN" \
+-X PUT \
+-d '{
+    "id": "test-role",
+    "appID": "restful",
+    "name": "role for test",
+    "description": "description of role",
+    "permIDs": ["PERM_YYY"]
+}'
+```
+
+* Response
+
+```json
+{
+  "ok": true,
+  "reason": "",
+  "data": {
+    "role": {
+      "id": "test-role",
+      "appID": "restful",
+      "name": "role for test",
+      "description": "description of role",
+      "permIDs": [
+        "PERM_XXX", "PERM_YYY"
+      ],
+      "createTime": 1588583707
+    }
+  }
+}
+```
+
+
 ### Role list query
 
 Query Role List Information

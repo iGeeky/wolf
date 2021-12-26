@@ -126,7 +126,7 @@ async function checkResponse(res, status, schema, match, notMatch, showSchema) {
 }
 
 const methods = {
-  get: true, put: true, post: true, delete: true,
+  get: true, put: true, patch: true, post: true, delete: true,
 }
 
 /**
@@ -211,6 +211,24 @@ async function put(options) {
 }
 
 /**
+   * http patch request
+   * @param {!options} options request options
+   *        url: request url
+   *        headers: request headers
+   *        body: request body for post,put,patch,delete request.
+   *        status: expect response status, default is 200.
+   *        schema: expect response body schema for restful response
+   *        match: regex pattern for matching response body.
+   *        notMatch: regex pattern for not matching response body.
+   * @return {res} http response object.
+   */
+ async function patch(options) {
+  options.method = 'patch'
+  return await http(options)
+}
+
+
+/**
    * http delete request
    * @param {!options} options request options
    *        url: request url
@@ -250,4 +268,5 @@ exports.http = http;
 exports.get = get;
 exports.post = post;
 exports.put = put;
+exports.patch = patch;
 exports.delete = delete_;

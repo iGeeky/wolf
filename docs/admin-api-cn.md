@@ -1176,6 +1176,67 @@ curl http://127.0.0.1:12180/wolf/role \
 }
 ```
 
+### 添加角色权限
+
+添加角色权限. 与PUT方法不同, 此方法只添加新的权限. 原有权限保持不变.
+
+#### 请求方法: PATCH
+#### 请求URL: /wolf/role
+#### `Header` 参数: 需要 [`Console`登录](#Login)的token, 通过 `x-rbac-token` 请求头传递.
+#### `Request Body`参数
+
+字段 | 类型 | 必填项 |说明
+-------|-------|------|-----
+appID | string | 是 | 应用ID, 不能修改
+id | string | 是 | 角色ID, 不能修改
+permIDs | string[] | 否 | 要给角色添加的权限ID列表.
+
+#### `Response Body` 响应
+
+* data:
+
+字段 | 类型 | 必填项 |说明
+-------|-------|------|-----
+role | [Role](#Role) | 是 | 修改后的角色信息
+
+#### 示例
+
+* 请求
+
+```json
+curl http://127.0.0.1:12180/wolf/role \
+-H "Content-Type: application/json" \
+-H "x-rbac-token: $WOLF_TOKEN" \
+-X PATCH \
+-d '{
+    "id": "test-role",
+    "appID": "restful",
+    "name": "role for test",
+    "description": "description of role",
+    "permIDs": ["PERM_YYY"]
+}'
+```
+
+* 响应
+
+```json
+{
+  "ok": true,
+  "reason": "",
+  "data": {
+    "role": {
+      "id": "test-role",
+      "appID": "restful",
+      "name": "role for test",
+      "description": "description of role",
+      "permIDs": [
+        "PERM_XXX", "PERM_YYY"
+      ],
+      "createTime": 1588583707
+    }
+  }
+}
+```
 
 ### 角色列表查询
 

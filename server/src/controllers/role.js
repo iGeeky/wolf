@@ -95,6 +95,35 @@ class Role extends BasicService {
     this.success(data);
   }
 
+
+  async patch() {
+    const fieldsMap = {
+      permIDs: {type: 'array'},
+    }
+    const appID = this.getRequiredArg('appID')
+    const id = this.getRequiredArg('id')
+    const values = this.getCheckedValues(fieldsMap)
+
+    await this.checkAppIDsExist([appID])
+    await RoleModel.checkExist({ appID, id }, errors.ERR_ROLE_ID_NOT_FOUND)
+    await this.checkPermIDsExist(appID, values.permIDs)
+
+    values.updateTime = util.unixtime();
+    const options = {where: {id, appID}}
+
+    if (values.permIDs) {
+      const roleInfo = await RoleModel.findOne(options)
+      if (roleInfo) {
+        const permIDs = roleInfo.toJSON().permIDs;
+        values.permIDs = values.permIDs.concat(permIDs)
+      }
+    }
+
+    const {newValues: role} = await RoleModel.mustUpdate(values, options)
+    const data = {'role': util.filterFieldWhite(role.toJSON(), roleFields)}
+    this.success(data);
+  }
+
   async delete() {
     const appID = this.getRequiredArg('appID')
     const roleID = this.getRequiredArg('id')

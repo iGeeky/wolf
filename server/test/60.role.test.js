@@ -15,15 +15,13 @@ function getAddResponseSchema() {
   return schema
 }
 
-function getListResponseSchema() {
+function getListResponseSchema(roleSchema={type: 'object'}) {
   const schema = util.okSchema({
     type: 'object',
     properties: {
       roles: {
         type: 'array',
-        items: {
-          type: 'object',
-        },
+        items: roleSchema,
         minItems: 1,
         maxItems: 1,
       },
@@ -165,6 +163,44 @@ describe('role', function() {
 
     const url = '/wolf/role';
     await mocha.put({url, headers, body, schema})
+  });
+
+  it('patch, add permissions', async function() {
+    const key = 'test-role-id'
+    const args = {appID, key}
+    const roleSchema2 = {
+      type: 'object',
+      properties: {
+        permIDs: { type: 'array', minItems: 2, maxItems: 2,}
+      }
+    }
+    const listSchema2 = getListResponseSchema(roleSchema2)
+    await mocha.get({url: '/wolf/role/list', headers, args, schema: listSchema2})
+
+    const permID = 'test-permid-fro-role-test10'
+    const permission = {id: permID, name: permID, description: '', appID}
+    await util.addPermission(permission, headers)
+
+    // Adding new permissions using the patch method
+    var schema = getAddResponseSchema();
+    const id = 'test-role-id'
+    const description = 'test-role-description:patch'
+    const permIDs = permIDMaps[appID]
+    permIDs.push(permID)
+    const body = {id, appID, description, permIDs: [permID]}
+    var url = '/wolf/role';
+    const res = await mocha.patch({url, headers, body, schema})
+    console.log("patch res: ", JSON.stringify(res.body))
+
+    const roleSchema3 = {
+      type: 'object',
+      properties: {
+        permIDs: { type: 'array', minItems: 3, maxItems: 3,}
+      }
+    }
+
+    const listSchema3 = getListResponseSchema(roleSchema3)
+    await mocha.get({url: '/wolf/role/list', headers, args, schema: listSchema3})
   });
 
   it('update failed, id not found', async function() {

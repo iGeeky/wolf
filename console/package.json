@@ -36,8 +36,8 @@
     "url": "https://github.com/iGeeky/wolf/issues"
   },
   "dependencies": {
-    "@vue/babel-preset-app": "^4.5.13",
-    "@vue/cli-service": "^4.5.13",
+    "@vue/babel-preset-app": "^4.5.15",
+    "@vue/cli-service": "^4.5.15",
     "axios": ">=0.21.1",
     "element-ui": "2.7.0",
     "fuse.js": "3.4.4",
@@ -58,9 +58,9 @@
     "@babel/core": "7.11.0",
     "@babel/eslint-parser": "^7.14.7",
     "@babel/register": "^7.14.5",
-    "@vue/cli-plugin-babel": "^4.5.13",
-    "@vue/cli-plugin-eslint": "^4.5.13",
-    "@vue/cli-service": "^4.5.13",
+    "@vue/cli-plugin-babel": "^4.5.15",
+    "@vue/cli-plugin-eslint": "^4.5.15",
+    "@vue/cli-service": "^4.5.15",
     "babel-core": "7.0.0-bridge.0",
     "eslint": "^7.0.0",
     "eslint-plugin-vue": "^7.13.0",
