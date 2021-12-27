@@ -1,3 +1,6 @@
+2021-12-29 0.5.2
+
+* `Console`: selection permission by transfer.
 
 2021-10-22 0.5.0
 

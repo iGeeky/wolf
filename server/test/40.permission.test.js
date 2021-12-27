@@ -15,7 +15,11 @@ function getAddResponseSchema() {
   return schema
 }
 
-function getListResponseSchema() {
+function getListResponseSchema(total = undefined) {
+  const totalSchema = {type: 'integer'}
+  if (total) {
+    totalSchema.enum = [total]
+  }
   const schema = util.okSchema({
     type: 'object',
     properties: {
@@ -25,7 +29,7 @@ function getListResponseSchema() {
           type: 'object',
         },
       },
-      total: {type: 'integer'},
+      total: totalSchema,
     },
     required: ['permissions', 'total'],
   })
@@ -189,6 +193,13 @@ describe('permission', function() {
     const res = await mocha.get({url, headers, args, schema})
   });
 
+
+  it('list by ids', async function() {
+    const schema = getListResponseSchema(total=2)
+    const url = '/wolf/permission/list'
+    const args = {appID, ids: 'test-permission-id,test-permission-id2'}
+    const res = await mocha.get({url, headers, args, schema})
+  });
 
   after(async function() {
     for (let appID of appIDs) {

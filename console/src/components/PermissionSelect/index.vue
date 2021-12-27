@@ -1,35 +1,42 @@
 <template>
-  <el-select
-    v-model="permIDs"
-    :placeholder="$t('wolf.promptChangePermission')"
-    size="small"
-    style="display: block"
-    :multiple="multiple"
-    :clearable="clearable"
-    :disabled="readonly"
-    filterable
-  >
-    <el-option-group
-      v-for="categoryPermission in categoryPermissions"
-      :key="categoryPermission.category"
-      :label="categoryPermission.category"
+  <div class="permission-select-container">
+    <el-select
+      v-model="limitedPermIDs"
+      :placeholder="$t('wolf.promptChangePermission')"
+      size="small"
+      :multiple="multiple"
+      :clearable="clearable"
+      :disabled="readonly || selectDisabled"
+      class="permission-select"
+      filterable
     >
-      <el-option
-        v-for="permission in categoryPermission.permissions"
-        :key="permission.id"
-        :label="permission.name"
-        :value="permission.id"
-      />
-    </el-option-group>
-  </el-select>
+      <el-option-group
+        v-for="categoryPermission in categoryPermissions"
+        :key="categoryPermission.category"
+        :label="categoryPermission.category"
+      >
+        <el-option
+          v-for="permission in categoryPermission.permissions"
+          :key="permission.id"
+          :label="permission.name"
+          :value="permission.id"
+        />
+      </el-option-group>
+    </el-select>
+    <el-button v-if="!readonly && multiple" plain @click="showTransferDialog()">{{ $t('wolf.btnEdit') }}</el-button>
+    <permission-transfer :value.sync="permIDs" :readonly="false" :all="allPermissions" :visible.sync="transferVisible" />
+  </div>
 </template>
 
 <script>
-import { listPermissions } from '@/api/permission'
-import i18n from '@/i18n/i18n'
+import PermissionTransfer from '@/components/PermissionTransfer'
+
+import { listPermissions, getSysPermissions } from '@/api/permission'
+// import i18n from '@/i18n/i18n'
 
 export default {
   name: 'PermissionSelect',
+  components: { PermissionTransfer },
   props: {
     value: {
       type: [Array, String],
@@ -51,6 +58,8 @@ export default {
   data: function() {
     return {
       categoryPermissions: [],
+      allPermissions: [],
+      transferVisible: false,
     }
   },
   computed: {
@@ -72,6 +81,35 @@ export default {
         this.$emit('update:value', value)
       },
     },
+    limitedPermIDs: {
+      get() {
+        if (this.selectDisabled) {
+          const tmpPermIDs = this.permIDs.slice(0, 16)
+          if (this.permIDs.length > 16) {
+            tmpPermIDs.push('...')
+          }
+          return tmpPermIDs
+        }
+        return this.permIDs
+      },
+      set(value) {
+        this.permIDs = value
+      },
+    },
+    selectDisabled: {
+      get() {
+        if (!this.multiple) { // for resource
+          return false
+        }
+        if (this.allPermissions && this.allPermissions.length >= 128) {
+          return true
+        }
+        if (this.permIDs && this.permIDs.length >= 128) {
+          return true
+        }
+        return false
+      },
+    },
   },
   watch: {
     currentApp: function(val) {
@@ -83,15 +121,15 @@ export default {
   },
   methods: {
     async listPermissions() {
-      const res = await listPermissions({ appID: this.currentApp, limit: 512 })
+      const res = await listPermissions({ appID: this.currentApp, limit: 10000 })
       if (res && res.ok) {
-        const permissions = res.data.permissions
+        let permissions = res.data.permissions
         if (!this.multiple) {
-          const denyAll = { id: 'DENY_ALL', name: i18n.t('wolf.labelDenyAll') }
-          const allowAll = { id: 'ALLOW_ALL', name: i18n.t('wolf.labelAllowAll') }
-          permissions.unshift(allowAll)
-          permissions.unshift(denyAll)
+          const sysPermissions = await getSysPermissions()
+          permissions = sysPermissions.concat(permissions)
         }
+        this.allPermissions = permissions
+
         const categoryPermissionMap = {}
         permissions.forEach(permission => {
           const category = permission.category ? permission.category.name : ''
@@ -113,6 +151,19 @@ export default {
         this.categoryPermissions = categoryPermissions
       }
     },
+    showTransferDialog() {
+      this.transferVisible = true
+    },
   },
 }
 </script>
+
+<style>
+  .permission-select-container {
+    display: flex;
+    flex-direction: row;
+  }
+  .permission-select {
+    width: 100%;
+  }
+</style>

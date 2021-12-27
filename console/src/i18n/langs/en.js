@@ -45,6 +45,11 @@ const en = {
     'pubRulesMessageLength_2_32': 'length must be between 2 and 32 characters',
     'pubRulesMessageIDFormat': 'only contain letters(a-zA-Z), numbers(0-9), underline(_), hyphen(-)',
 
+    'permTransferTitle': 'Choose permissions',
+    'permTransferFilterPrompt': 'permission ID or name',
+    'permTransferLabelAllPerm': 'All',
+    'permTransferLabelSelPerm': 'Selected',
+
     'appSearchPrompt': 'App ID or App Name',
     'appNewApplication': 'New Application',
     'appEditApplication': 'Edit Application',

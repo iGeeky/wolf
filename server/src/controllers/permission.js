@@ -24,12 +24,15 @@ class Permission extends BasicService {
     const offset = (page-1) * limit
     const order = this.getOrderByArgs('-id')
     const appId = this.getRequiredArg('appID')
+    const ids = this.getArrayArg('ids')
     const key = this.getArg('key')
     const where = {appID: appId}
     if (key && key !== '') {
       where[Op.or] = [like('id', key), like('name', key)]
     }
-
+    if (ids) {
+      where.id = {[Op.in]: ids}
+    }
     const options = {offset, limit, where, include: ['category']}
     if (order) {
       options.order = order;
