@@ -45,6 +45,11 @@ const zhcn = {
     'pubRulesMessageLength_2_32': '长度只能是2-32个字符',
     'pubRulesMessageIDFormat': '只能包含: 字母(a-zA-Z), 数字(0-9),下划线(_),连字符(-)',
 
+    'permTransferTitle': '选择权限',
+    'permTransferFilterPrompt': '权限ID或名称',
+    'permTransferLabelAllPerm': '所有权限',
+    'permTransferLabelSelPerm': '已选权限',
+
     'appSearchPrompt': '应用ID或名称',
     'appNewApplication': '新应用',
     'appEditApplication': '编辑应用',

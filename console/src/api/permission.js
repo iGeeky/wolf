@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import i18n from '@/i18n/i18n'
 import { checkExist } from '@/api/common'
 
 export async function addPermission(permission) {
@@ -33,6 +34,12 @@ export async function listPermissions(args) {
     method: 'get',
     params: args,
   })
+}
+
+export async function getSysPermissions() {
+  const denyAll = { id: 'DENY_ALL', name: i18n.t('wolf.labelDenyAll') }
+  const allowAll = { id: 'ALLOW_ALL', name: i18n.t('wolf.labelAllowAll') }
+  return [denyAll, allowAll]
 }
 
 export async function checkPermissionIDExist(appID, id) {

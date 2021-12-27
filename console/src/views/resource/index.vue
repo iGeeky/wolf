@@ -102,7 +102,7 @@ import PermissionSelect from '@/components/PermissionSelect'
 var _ = require('lodash')
 import { deepClone, format } from '@/utils'
 import { listResources, addResource, deleteResource, updateResource, checkResourceExist } from '@/api/resource'
-import { listPermissions } from '@/api/permission'
+import { listPermissions, getSysPermissions } from '@/api/permission'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import i18n from '@/i18n/i18n'
 
@@ -208,9 +208,11 @@ export default {
         this.total = res.data.total
         const resources = res.data.resources
         if (resources) {
-          const res = await listPermissions({ appID: this.currentApp, limit: 512 })
+          const permIDs = _.flatMap(resources, resource => resource.permID)
+          const res = await listPermissions({ appID: this.currentApp, ids: permIDs.join(','), limit: 512 })
           if (res.ok) {
-            this.permissions = res.data.permissions
+            const sysPermissions = await getSysPermissions()
+            this.permissions = sysPermissions.concat(res.data.permissions)
           }
           resources.forEach((resource) => {
             const matchTypeName = this.getMatchName(resource.matchType)
