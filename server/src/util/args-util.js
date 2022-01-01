@@ -54,7 +54,7 @@ class ArgsHelper {
       case 'PUT':
       case 'PATCH':
       case 'DELETE':
-        args = ctx.request.body
+        args = { ...args, ...ctx.request.body }
         // console.log('>>> ctx.request.body')
         break
       default: // GET, DELETE, others
