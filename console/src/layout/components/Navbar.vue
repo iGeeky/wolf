@@ -5,15 +5,13 @@
     <breadcrumb id="breadcrumb-container" class="breadcrumb-container" />
 
     <div class="right-menu">
-      <template>
-        <lang-changer class="right-menu-item" />
-        <search id="header-search" class="right-menu-item" />
-        <div class="right-menu-item hover-effect">
-          {{ $t('wolf.currentApp') }}:
-        </div>
-        <current-app class="current-app right-menu-item hover-effect" />
-        <screenfull id="screenfull" class="right-menu-item hover-effect" />
-      </template>
+      <lang-changer class="right-menu-item" />
+      <search id="header-search" class="right-menu-item" />
+      <div class="right-menu-item hover-effect">
+        {{ $t('wolf.currentApp') }}:
+      </div>
+      <current-app class="current-app right-menu-item hover-effect" />
+      <screenfull id="screenfull" class="right-menu-item hover-effect" />
 
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="right-menu-item">

@@ -92,7 +92,7 @@ class OAuth2 extends RbacPub {
       this._redirectToLogin('')
       return {}
     }
-    const tokenUserInfo = tokenUtil.tokenDecrypt(token)
+    const tokenUserInfo = await tokenUtil.tokenCheck(token)
     if (tokenUserInfo.error) { // failed
       this.log4js.warn('oauth2 request [%s %s] invalid! token [%s] decrypt failed!', ctx.method, ctx.path, token)
       this._redirectToLogin('')
@@ -131,7 +131,7 @@ class OAuth2 extends RbacPub {
     const token = getClientToken(ctx)
     let userInfo = null;
     if (token) {
-      const tokenUserInfo = tokenUtil.tokenDecrypt(token)
+      const tokenUserInfo = await tokenUtil.tokenCheck(token)
       if (!tokenUserInfo.error) { // failed
         userInfo = tokenUserInfo
         const appid = tokenUserInfo.appid

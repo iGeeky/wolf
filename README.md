@@ -80,6 +80,7 @@ The system can be applied to a variety of platforms and systems. Unified account
 * Console: VueJS, Element, Babel, NodeJS
 * Agent: OpenResty(ngx_lua)
 * Database: PostgreSQL.
+* Cache: Redis
 
 
 

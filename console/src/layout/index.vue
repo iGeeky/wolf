@@ -22,7 +22,7 @@ import ResizeMixin from './mixin/ResizeHandler'
 import { mapState } from 'vuex'
 
 export default {
-  name: 'Layout',
+  name: 'WolfLayout',
   components: {
     AppMain,
     Navbar,

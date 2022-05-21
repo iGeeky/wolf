@@ -29,7 +29,7 @@ service.interceptors.request.use(
     // do something with request error
     console.error(error) // for debug
     return Promise.reject(error)
-  }
+  },
 )
 
 function getI18nMessage(errmsg, reason) {
@@ -106,12 +106,12 @@ service.interceptors.response.use(
     })
 
     if (reason === 'ERR_TOKEN_INVALID') {
-      store.dispatch('user/logout')
+      // store.dispatch('user/logout')
       const toPath = router.fullPath || '/'
       router.push(`/login?redirect=${toPath}`)
     }
     return Promise.reject(error)
-  }
+  },
 )
 
 export default service

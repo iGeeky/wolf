@@ -29,6 +29,13 @@ module.exports = {
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',
   productionSourceMap: false,
+  css: {
+    loaderOptions: {
+      sass: {
+        implementation: require('sass'),
+      }
+    }
+  },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
     // it can be accessed in index.html to inject the correct title.
@@ -38,7 +45,9 @@ module.exports = {
         '@': resolve('src'),
       },
     },
+    // plugins: [new NodePolyfillPlugin()],
   },
+
   devServer: {
     host: '0.0.0.0',
     port: port, // CHANGE YOUR PORT HERE!
@@ -66,15 +75,15 @@ module.exports = {
       .end()
 
     // set preserveWhitespace
-    config.module
-      .rule('vue')
-      .use('vue-loader')
-      .loader('vue-loader')
-      .tap(options => {
-        options.compilerOptions.preserveWhitespace = true
-        return options
-      })
-      .end()
+    // config.module
+    //   .rule('vue')
+    //   .use('vue-loader')
+    //   .loader('vue-loader')
+    //   .tap(options => {
+    //     options.compilerOptions.preserveWhitespace = true
+    //     return options
+    //   })
+    //   .end()
 
     config
       // https://webpack.js.org/configuration/devtool/#development

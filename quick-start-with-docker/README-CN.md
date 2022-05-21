@@ -23,7 +23,7 @@ git clone https://github.com/iGeeky/wolf.git
 cd wolf/quick-start-with-docker
 
 # 使用docker命令, 启动wolf系统.
-docker-compose up -d database
+docker-compose up -d database cache
 # 启动docker容器
 # 强烈建议您修改`docker-compose.yaml`中的 `RBAC_TOKEN_KEY` 及 `WOLF_CRYPT_KEY` 环境变量值, 使用默认设置可能会使系统处于风险之中.
 docker-compose up -d server restful-demo agent-or agent-demo

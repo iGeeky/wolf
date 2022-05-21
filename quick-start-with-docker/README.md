@@ -23,7 +23,7 @@ git clone https://github.com/iGeeky/wolf.git
 cd wolf/quick-start-with-docker
 
 # startup the wolf system by docker.
-docker-compose up -d database
+docker-compose up -d database cache
 # Launch the docker container.
 # It is strongly recommended that you modify the `RBAC_TOKEN_KEY` and `WOLF_CRYPT_KEY` environment variables in `docker-compose.yaml`, using default settings may put the system at risk.
 docker-compose up -d server restful-demo agent-or agent-demo

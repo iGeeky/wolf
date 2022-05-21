@@ -2487,7 +2487,6 @@ curl http://127.0.0.1:12180/wolf/rbac/user_info \
 
 #### 响应
 
-由于wolf并不实际存储RBAC_TOKEN, 所以注销登录后, 只需要删除客户端token即可.
 操作完成后, 服务器将Cookie中的`x-rbac-token`设置为logouted. 并将302跳转到登录页面.
 
 

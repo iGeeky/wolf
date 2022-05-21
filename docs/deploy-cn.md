@@ -159,25 +159,13 @@ show tables;
   * RBAC_TOKEN_EXPIRE_TIME `Agent` 登录接口返回的token的有效期, 默认为30天. 单位为秒.
   * CONSOLE_TOKEN_EXPIRE_TIME `Console` 登录接口返回的token的有效期, 默认为30天. 单位为秒.
   * RBAC_SQL_URL 连接数据库的数据库链接. 默认为: `postgres://wolfroot:123456@127.0.0.1:5432/wolf`
+  * RBAC_REDIS_URL redis缓存的链接. 默认为: `redis://127.0.0.1:6379/0`
 
   以上三个配置, 可以在系统环境变量中配置, 也可以在启动时指定.
 
 #### 3.启动服务器
 
 请自行安装node及npm, 并设置合适的npm库镜像.
-
-* 重要: 先安装pg-native依赖项.
-
-```shell
-# 可参考: https://www.npmjs.com/package/pg-native
-On OS X: brew install postgres
-On Ubuntu/Debian: apt-get install libpq-dev g++ make
-On RHEL/CentOS: yum install postgresql-devel
-On Windows:
-Install Visual Studio C++ (successfully built with Express 2010). Express is free.
-Install PostgreSQL (http://www.postgresql.org/download/windows/)
-Add your Postgre Installation's bin folder to the system path (i.e. C:\Program Files\PostgreSQL\9.3\bin).
-```
 
 * 启动服务.
 
@@ -190,6 +178,9 @@ export RBAC_TOKEN_KEY=THE-NEW-TOKEN-KEY
 export WOLF_CRYPT_KEY=THE-NEW-CRYPT-KEY
 # 请根据你创建用户及数据库的实际情况进行修改.
 export RBAC_SQL_URL=postgres://wolfroot:123456@127.0.0.1:5432/wolf
+# 请根据redis的实际配置进行修改.
+export RBAC_REDIS_URL=redis://127.0.0.1:6379/0
+
 cd path/to/wolf/server
 # 安装依赖项(首次启动时执行)
 npm install

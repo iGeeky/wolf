@@ -83,6 +83,14 @@ class Rbac extends RbacPub {
     this.ctx.body = `wolf rbac index`
   }
 
+  _getClientToken() {
+    let token = this.ctx.request.headers['x-rbac-token']
+    if (!token) {
+      token = this.ctx.cookies.get('x-rbac-token')
+    }
+    return token
+  }
+
   async _loginPostInternal() {
     const username = this.getArg('username')
     const password = this.getArg('password')
@@ -195,6 +203,8 @@ class Rbac extends RbacPub {
 
   async logout() {
     const userInfo = this.ctx.userInfo;
+    const token = this._getClientToken()
+    await this.tokenDelete(token)
     this.log4js.info('-------- %s logout --------', JSON.stringify(userInfo))
     const maxAge = config.tokenExpireTime * 1000;
     this.ctx.cookies.set(

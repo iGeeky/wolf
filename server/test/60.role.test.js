@@ -190,7 +190,7 @@ describe('role', function() {
     const body = {id, appID, description, permIDs: [permID]}
     var url = '/wolf/role';
     const res = await mocha.patch({url, headers, body, schema})
-    console.log("patch res: ", JSON.stringify(res.body))
+    // console.log("patch res: ", JSON.stringify(res.body))
 
     const roleSchema3 = {
       type: 'object',

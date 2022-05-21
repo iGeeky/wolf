@@ -148,7 +148,7 @@ export function param(json) {
     Object.keys(json).map(key => {
       if (json[key] === undefined) return ''
       return encodeURIComponent(key) + '=' + encodeURIComponent(json[key])
-    })
+    }),
   ).join('&')
 }
 
@@ -168,7 +168,7 @@ export function param2Obj(url) {
         .replace(/&/g, '","')
         .replace(/=/g, '":"')
         .replace(/\+/g, ' ') +
-      '"}'
+      '"}',
   )
 }
 

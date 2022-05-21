@@ -1,13 +1,9 @@
-FROM node:12.10-alpine
+FROM node:14-alpine
 
+# g++ gcc libgcc libstdc++ linux-headers make
 
 COPY ./ /opt/wolf/server
 WORKDIR /opt/wolf/server
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories && \
-  apk --no-cache add postgresql-libs && \
-  apk --no-cache add \
-  g++ gcc libgcc libstdc++ linux-headers make python2 postgresql-dev
-RUN npm --registry https://registry.npm.taobao.org install --quiet node-gyp -g
 RUN npm --registry https://registry.npm.taobao.org install
 
 EXPOSE 12180

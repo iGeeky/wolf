@@ -11,7 +11,7 @@ const IGNORE_URLS = {
   'GET:/favicon.ico': true,
   'GET:/wolf/ping': true,
   'POST:/wolf/user/login': true,
-  'POST:/wolf/user/logout': true,
+  // 'POST:/wolf/user/logout': true,
   'GET:/wolf/user/loginOptions': true,
 }
 
@@ -64,7 +64,7 @@ module.exports = function() {
         log4js.error('request [%s %s] invalid! token missing', ctx.method, ctx.url)
         throw new TokenError('ERR_TOKEN_MISSING')
       }
-      const user = tokenUtil.tokenDecrypt(token)
+      const user = await tokenUtil.tokenCheck(token)
       if (user.error) { // failed
         log4js.error('request [%s %s] invalid! token decrypt failed!', ctx.method, ctx.path)
         throw new TokenError('ERR_TOKEN_INVALID')

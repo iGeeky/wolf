@@ -1,3 +1,11 @@
+2022-05-25 0.5.3
+
+* `Server`: save login token to redis.
+* `Server` & `Console` upgrade dependencies packages.
+* `NodeJS` upgraded to v14.17.3
+* `npm` upgraded to 6.14.13
+* Replaced `node-sass` with `sass`
+
 2021-12-29 0.5.2
 
 * `Console`: selection permission by transfer.

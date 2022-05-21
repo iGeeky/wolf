@@ -14,10 +14,10 @@
     <el-dialog :visible.sync="detailDialogVisible" :title="$t('wolf.roleDetailDialogTitle')" custom-class="rbac-edit-dialog">
       <el-form ref="user" :model="user" label-width="120px" label-position="left">
         <el-form-item :label="$t('wolf.roleDetailLabelUsername')" prop="username">
-          <el-input v-model="user.username" readonly />
+          <el-input v-model="_user.username" readonly />
         </el-form-item>
         <el-form-item :label="$t('wolf.roleDetailLabelNickname')" prop="nickname">
-          <el-input v-model="user.nickname" readonly />
+          <el-input v-model="_user.nickname" readonly />
         </el-form-item>
         <el-form-item :label="$t('wolf.labelApp')" prop="appIDs">
           <el-input v-model="currentApp" readonly />
@@ -76,6 +76,14 @@ export default {
         const intersection = Array.from(new Set(appIds.filter(v => loginUserAppIds.has(v))))
         return intersection
       }
+    },
+    _user: {
+      get() {
+        return this.user
+      },
+      set(value) {
+        this.$emit('update:user', value)
+      },
     },
   },
   created: function() {

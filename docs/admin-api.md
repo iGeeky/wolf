@@ -2492,7 +2492,6 @@ None
 
 #### Response
 
-Since wolf doesn't store RBAC_TOKEN, after logging out, you just need to delete the client token.
 After the operation, the server will set the `x-rbac-token` in the cookie to logouted. and redirected 302 to the login page.
 
 

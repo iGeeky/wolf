@@ -24,7 +24,7 @@ class User extends BasicService {
 
   async access(bizMethod) {
     const method = this.ctx.method
-    if (method !== 'GET' && this.ctx.userInfo && bizMethod !== 'checkExist') { // POST, PUT, DELETE
+    if (method !== 'GET' && this.ctx.userInfo && bizMethod !== 'checkExist' && bizMethod !== 'logout') { // POST, PUT, DELETE
       if (this.ctx.userInfo.manager !== constant.Manager.super) {
         this.log4js.error('access [%s] failed! user:%s have no permission to do this operation', bizMethod, this.ctx.userInfo.username)
         throw new AccessDenyError('ERR_NEED_SUPER_USER')
@@ -93,6 +93,12 @@ class User extends BasicService {
 
     const data = {token, 'userInfo': util.filterFieldWhite(userInfo, userFields), applications}
     this.success(data)
+  }
+
+  async logout() {
+    const token = this.ctx.request.headers['x-rbac-token']
+    await this.tokenDelete(token)
+    this.success({})
   }
 
   async info() {

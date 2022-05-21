@@ -81,7 +81,7 @@ wolf是一个通用RBAC系统，适用于所有的HTTP应用．统一授权及�
 * Console: VueJS, Element, Babel, NodeJS
 * Agent: OpenResty(ngx_lua)
 * Database: PostgreSQL.
-
+* Cache: Redis
 
 
 ## Getting Started

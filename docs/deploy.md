@@ -158,27 +158,14 @@ Output a result similar to the one below, indicating that the database table was
   * WOLF_CRYPT_KEY To encrypt the application Secret and OAuth2 login user ID keys.
   * RBAC_TOKEN_EXPIRE_TIME The expiration time of the token returned by the `Agent` login interface, the default is 30 days. The unit is seconds.
   * CONSOLE_TOKEN_EXPIRE_TIME The expiration time of the token returned by the `Console` login interface, the default is 30 days. The unit is seconds.
-  * RBAC_SQL_URL The database link to the database. The default is `postgres://wolfroot:123456@127.0.0.1:5432/wolf`
+  * RBAC_SQL_URL The link to the database. The default is `postgres://wolfroot:123456@127.0.0.1:5432/wolf`
+  * RBAC_REDIS_URL The link to the redis cache. Default is: `redis://127.0.0.1:6379/0`
 
   The above three configurations can be configured in the system environment variables or specified at startup.
 
 #### 3.startup server
 
 Please install node and npm yourself.
-
-
-* Important: Install the pg-native dependencies first.
-
-```shell
-# Refer to: https://www.npmjs.com/package/pg-native
-On OS X: brew install postgres
-On Ubuntu/Debian: apt-get install libpq-dev g++ make
-On RHEL/CentOS: yum install postgresql-devel
-On Windows:
-Install Visual Studio C++ (successfully built with Express 2010). Express is free.
-Install PostgreSQL (http://www.postgresql.org/download/windows/)
-Add your Postgre Installation's bin folder to the system path (i.e. C:\Program Files\PostgreSQL\9.3\bin).
-```
 
 * Startup service.
 
@@ -191,6 +178,9 @@ export RBAC_TOKEN_KEY=THE-NEW-TOKEN-KEY
 export WOLF_CRYPT_KEY=THE-NEW-CRYPT-KEY
 # Please make the changes according to the user and database you have created.
 export RBAC_SQL_URL=postgres://wolfroot:123456@127.0.0.1:5432/wolf
+# Please modify it according to the actual configuration of redis.
+export RBAC_REDIS_URL=redis://127.0.0.1:6379/0
+
 cd path/to/wolf/server
 # Installation dependencies (executed on first boot)
 npm install

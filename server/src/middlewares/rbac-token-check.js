@@ -52,7 +52,7 @@ module.exports = function() {
         log4js.error('rbac request [%s %s] invalid! token missing', ctx.method, ctx.url)
         throw new RbacTokenError('TOKEN MISSING')
       }
-      const tokenUserInfo = tokenUtil.tokenDecrypt(token)
+      const tokenUserInfo = await tokenUtil.tokenCheck(token)
       if (tokenUserInfo.error) { // failed
         log4js.error('rbac request [%s %s] invalid! token [%s] decrypt failed!', ctx.method, ctx.path, token)
         throw new RbacTokenError('TOKEN INVALID')

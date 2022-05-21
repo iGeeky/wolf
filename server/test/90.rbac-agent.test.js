@@ -350,6 +350,13 @@ describe('rbac', function() {
       const body = {}
       await mocha.post({url, headers, body, status: 302, match: 'location:/wolf/rbac/login.html\\?appid=unittest'})
     });
+
+    it('index failed. token invalid', async function() {
+      const url = '/wolf/rbac/index'
+      const args = {}
+      await mocha.get({url, headers, args, status: 401, match: 'ERR_TOKEN_INVALID'})
+    });
+
   });
 
   describe('rbac policy test', function() {

@@ -15,7 +15,6 @@ const constant = require('../util/constant')
 const Op = require('sequelize').Op;
 const _ = require('lodash')
 
-
 class BasicService extends Service {
   constructor(ctx, ObjectModel) {
     super(ctx)
@@ -204,7 +203,7 @@ class BasicService extends Service {
   }
 
   async tokenCreate(userInfo, appid) {
-    const { token, expiresIn } = tokenUtil.tokenEncrypt(userInfo, appid);
+    const tokenInfo = await tokenUtil.tokenCreate(userInfo, appid);
 
     const lastLogin = util.unixtime()
     try {
@@ -214,7 +213,11 @@ class BasicService extends Service {
       this.log4js.error('updateLastLoginTime failed! err:', ex)
     }
 
-    return { token, expiresIn }
+    return tokenInfo
+  }
+
+  async tokenDelete(token) {
+    await tokenUtil.tokenDelete(token);
   }
 
   async ldapUserLoginInternal(username, password) {

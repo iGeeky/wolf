@@ -340,6 +340,20 @@ describe('user', function() {
       await mocha.post({url, headers, body, status: 200, schema})
     });
 
+    it('logout success', async function() {
+      const schema = util.okSchema()
+      const body = {}
+      const url = `/wolf/user/logout`;
+      await mocha.post({url, headers, body, schema})
+    });
+
+    it('admin user info failed, logouted', async function() {
+      const schema = util.failSchema('ERR_TOKEN_INVALID')
+      const args = { }
+      const url = `/wolf/user/info`;
+      const res = await mocha.get({url, headers, args, status: 401, schema})
+    });
+
     it('old password login failed', async function() {
       if(!newPassword) {
         this.skip()

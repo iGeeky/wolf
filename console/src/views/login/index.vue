@@ -197,7 +197,7 @@ export default {
           this.loginForm.authType = '1'
         }
       }
-      console.log('loginOptions: %s', JSON.stringify(this.loginOptions))
+      // console.log('loginOptions: %s', JSON.stringify(this.loginOptions))
     },
     authTypeChange(label) {
       localStorage.setItem('authType', label)

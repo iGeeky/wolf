@@ -1,10 +1,10 @@
 <template>
   <el-form>
     <el-form-item label="Name">
-      <el-input v-model.trim="user.name" />
+      <el-input v-model.trim="_user.name" />
     </el-form-item>
     <el-form-item label="Email">
-      <el-input v-model.trim="user.email" />
+      <el-input v-model.trim="_user.email" />
     </el-form-item>
     <el-form-item>
       <el-button type="primary" @click="submit">Update</el-button>
@@ -22,6 +22,16 @@ export default {
           name: '',
           email: '',
         }
+      },
+    },
+  },
+  computed: {
+    _user: {
+      get() {
+        return this.user
+      },
+      set(value) {
+        this.$emit('update:user', value)
       },
     },
   },
