@@ -232,15 +232,15 @@ class ArgsHelper {
     return undefined
   }
 
-  //
   getOrderByArgs(defOrder) {
-    const argOrder = this.getArg('sort', defOrder)
+    let argOrder = this.getArg('sort', defOrder)
     if (argOrder) {
+      argOrder = argOrder.trim()
       if (argOrder.startsWith('+')) {
-        const field = argOrder.substring(1)
+        const field = argOrder.substring(1).trim()
         return [[field, 'ASC']]
       } else {
-        const field = argOrder.replace('-', '')
+        const field = argOrder.replace('-', '').trim()
         return [[field, 'DESC']]
       }
     }

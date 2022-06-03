@@ -1,6 +1,7 @@
 
 const mocha = require('./util/mocha')
 const util = require('./util/util')
+const chai = require('chai');
 
 const headers = util.adminHeaders()
 
@@ -193,6 +194,45 @@ describe('permission', function() {
     const res = await mocha.get({url, headers, args, schema})
   });
 
+  it('list order by +id', async function() {
+    const schema = getListResponseSchema(total=2)
+    const url = '/wolf/permission/list'
+    const args = {appID, sort:'+id'}
+    const res = await mocha.get({url, headers, args, schema})
+    const data = res.body.data
+    const firstPermission = data.permissions[0]
+    chai.assert.equal(firstPermission.id, 'test-permission-id', `expect first permission.id to be 'test-permission-id'`);
+  });
+
+  it('list order by -id', async function() {
+    const schema = getListResponseSchema(total=2)
+    const url = '/wolf/permission/list'
+    const args = {appID, sort:'-id'}
+    const res = await mocha.get({url, headers, args, schema})
+    const data = res.body.data
+    const firstPermission = data.permissions[0]
+    chai.assert.equal(firstPermission.id, 'test-permission-id2', `expect first permission.id to be 'test-permission-id2'`);
+  });
+
+  it('list order by +name', async function() {
+    const schema = getListResponseSchema(total=2)
+    const url = '/wolf/permission/list'
+    const args = {appID, sort:' +name'}
+    const res = await mocha.get({url, headers, args, schema})
+    const data = res.body.data
+    const firstPermission = data.permissions[0]
+    chai.assert.equal(firstPermission.name, 'test-permission-name2', `expect first permission.id to be 'test-permission-name2'`);
+  });
+
+  it('list order by -name', async function() {
+    const schema = getListResponseSchema(total=2)
+    const url = '/wolf/permission/list'
+    const args = {appID, sort:' -name'}
+    const res = await mocha.get({url, headers, args, schema})
+    const data = res.body.data
+    const firstPermission = data.permissions[0]
+    chai.assert.equal(firstPermission.name, 'test-permission-name:updated', `expect first permission.id to be 'test-permission-name:updated'`);
+  });
 
   it('list by ids', async function() {
     const schema = getListResponseSchema(total=2)
