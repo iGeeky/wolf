@@ -1,10 +1,12 @@
-const NodeCache = require( 'node-cache' );
 const config = require('../../conf/config')
 const UserModel = require('../model/user')
+const {WolfCache} = require('./wolf-cache')
 const UserRoleModel = require('../model/user-role')
 const RoleModel = require('../model/role')
-const userCache = new NodeCache({stdTTL: config.memCacheTTLSecond, checkperiod: 60*5});
 const log4js = require('./log4js')
+
+const keyPrefix = 'wolfuser:'
+const userCache = new WolfCache(keyPrefix)
 
 
 async function getUserInfoFromDbById(userId, appId) {
@@ -52,29 +54,33 @@ async function getUserInfoFromDbById(userId, appId) {
 
 
 async function getUserInfoById(userId, appId) {
-  const key = `user:${userId}-${appId}`
-  let userInfo = userCache.get(key);
+  const key = `${keyPrefix}:${userId}-${appId}`
+  let userInfo = await userCache.get(key);
   if (userInfo) {
+    if (userInfo === '#') {
+      userInfo = undefined
+    }
     return {userInfo, cached: 'hit'}
   }
   userInfo = await getUserInfoFromDbById(userId, appId)
   if (!userInfo) {
+    await userCache.set(key, '#')
     return {}
   }
 
-  userCache.set(key, userInfo)
+  await userCache.set(key, userInfo)
 
   return {userInfo, cached: 'miss'}
 }
 
-function flushUserCache() {
-  userCache.flushAll();
+async function flushUserCache() {
+  await userCache.flushAll();
   log4js.info("---- userCache.flushAll ----")
 }
 
-function flushUserCacheByID(userId, appId){
-  const key = `user:${userId}-${appId}`
-  userCache.del(key)
+async function flushUserCacheByID(userId, appId){
+  const key = `${keyPrefix}:${userId}-${appId}`
+  await userCache.del(key)
   log4js.info("---- userCache.del(%s) ----", key)
 }
 

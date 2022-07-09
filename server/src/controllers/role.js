@@ -18,7 +18,7 @@ class Role extends BasicService {
   async log(bizMethod) {
     if (bizMethod === 'post' || bizMethod === 'put' || bizMethod === 'delete') {
       this.log4js.info('---- url: %s, method: %s, flush user cache ----', this.url, bizMethod)
-      userCache.flushUserCache();
+      await userCache.flushUserCache();
     }
   }
 

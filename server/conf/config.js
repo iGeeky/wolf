@@ -6,6 +6,7 @@ const config = {
   consoleTokenExpireTime: parseInt(process.env.CONSOLE_TOKEN_EXPIRE_TIME) || 3600 * 24 * 30,
   rbacRecordAccessLog: (process.env.RBAC_RECORD_ACCESS_LOG || 'yes') === 'yes',
   memCacheTTLSecond: 600,
+  memCacheByRedis: (process.env.MEM_CACHE_BY_REDIS || 'no') === 'yes',
   clientChangePassword: (process.env.CLIENT_CHANGE_PWD || 'yes') === 'yes',
   database: {
     url: process.env.RBAC_SQL_URL || 'postgres://wolfroot:123456@127.0.0.1:5432/wolf',

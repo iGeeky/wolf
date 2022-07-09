@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node app.js",
-    "test": "./node_modules/.bin/nyc --reporter=html mocha test/*.test.js --exit --timeout 10000"
+    "test": "./node_modules/.bin/nyc --reporter=html mocha test/*.test.js --exit --timeout 10000",
+    "test4redis": "MEM_CACHE_BY_REDIS=yes ./node_modules/.bin/nyc --reporter=html mocha test/*.test.js --exit --timeout 10000"
   },
   "dependencies": {
     "bcrypt-node": "^0.1.0",

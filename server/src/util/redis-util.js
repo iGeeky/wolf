@@ -47,7 +47,7 @@ class WolfRedisClient {
         }
       }
     }
-    const methods = ['set', 'get', 'del', 'incr', 'incrBy']
+    const methods = ['set', 'get', 'del', 'incr', 'incrBy', 'keys']
     for (let method of methods) {
       mockMethod(method)
     }

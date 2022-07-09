@@ -35,7 +35,7 @@ class User extends BasicService {
   async log(bizMethod) {
     if (bizMethod === 'put' || bizMethod === 'delete') {
       this.log4js.info('---- url: %s, method: %s, flush user cache ----', this.url, bizMethod)
-      userCache.flushUserCache();
+      await userCache.flushUserCache();
     }
   }
 

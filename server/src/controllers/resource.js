@@ -34,7 +34,7 @@ class Resource extends BasicService {
   async log(bizMethod) {
     if (bizMethod === 'post' || bizMethod === 'put' || bizMethod === 'delete') {
       this.log4js.info('---- url: %s, method: %s, flush resource cache ----', this.url, bizMethod)
-      resourceCache.flushResourceCache();
+      await resourceCache.flushResourceCache();
     }
   }
 
