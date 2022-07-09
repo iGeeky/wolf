@@ -217,7 +217,7 @@ describe('user', function() {
     const username = 'root'
     const body = {username}
     const url = '/wolf/user';
-    const res = await mocha.delete({url, headers, body, status:401, schema})
+    const res = await mocha.delete({url, headers, body, status:403, schema})
   });
 
   it('list', async function() {

@@ -88,52 +88,52 @@
 
 * u-none
 	* GET /
-		* 401
+		* 403
 	* GET /test
-		* 401
+		* 403
 	* GET /public
 		* 200
 * u-index
 	* GET /
 		* 200
 	* GET /user
-		* 401
+		* 403
 * u-user-get
 	* GET /v1/user
 		* 200
 	* GET /v1/user/info
-		* 401
+		* 403
 	* PUT /v1/user
-		* 401
+		* 403
 * u-user-all
 	* GET /v1/user
-		* 401
+		* 403
 	* GET /v1/user/info
 		* 200
 	* GET /v1/user2
 		* 200
 	* GET /v1/user/test.js
-		* 401
+		* 403
 * u-js
 	* POST /static/js/test.js
-		* 401
+		* 403
 	* GET /static/js/test.js
 		* 200
 	* GET /static/js/img.jpg
-		* 401
+		* 403
 * u-role-test
 	* GET /
 		* 200
 	* GET /test
-		* 401
+		* 403
 	* GET /v1/user
 		* 200
 	* PUT /v1/user
-		* 401
+		* 403
 	* GET /v1/user/info
-		* 401
+		* 403
 	* GET /v1/user/user.jpg
-		* 401
+		* 403
 	* GET /v1/user/test.js
 		* 200
 	* GET /public/test
@@ -145,4 +145,4 @@
 	* PUT /v1/system
 		* 200
 	* DELETE /v1/system
-		* 401
+		* 403

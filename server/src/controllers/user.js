@@ -273,7 +273,7 @@ class User extends BasicService {
 
     if (userInfo.manager === constant.Manager.super) {
       this.log4js.error('delete super user {id:%s, username:%s} failed!', userInfo.id, userInfo.username)
-      this.fail2(401, errors.ERR_PERMISSION_DENY, `Can't delete 'super' user`)
+      this.fail2(403, errors.ERR_PERMISSION_DENY, `Can't delete 'super' user`)
       return
     }
 

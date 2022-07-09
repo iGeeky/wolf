@@ -1,12 +1,12 @@
 const NodeCache = require( 'node-cache' );
 const config = require('../../conf/config')
 const ResourceModel = require('../model/resource')
-const resourceCache = new NodeCache({stdTTL: config.memCacheTTLSecond, checkperiod: 60*5});
 const constant = require('./constant')
 const Sequelize = require('sequelize')
 const Op = require('sequelize').Op;
 const log4js = require('./log4js')
 
+const resourceCache = new NodeCache({stdTTL: config.memCacheTTLSecond, checkperiod: 60*5});
 
 async function getResourceFromDb(appID, action, name) {
   const where = {appID: appID}

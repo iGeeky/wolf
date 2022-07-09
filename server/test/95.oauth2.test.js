@@ -506,7 +506,7 @@ describe('oauth2', function() {
       const headers = {}
       headers['authorization'] = `${refreshTokenInfo1.token_type} ${refreshTokenInfo1.access_token}`
       const schema = util.failSchema("Access failure. resource '/resource/path' not exist")
-      await mocha.get({url: accessCheckUrl, headers, args, status: 401, schema})
+      await mocha.get({url: accessCheckUrl, headers, args, status: 403, schema})
     });
 
     it('userInfo failed, token expired', async function() {
@@ -559,7 +559,7 @@ describe('oauth2', function() {
       const headers = {}
       headers['authorization'] = `${passwordTokenInfo.token_type} ${passwordTokenInfo.access_token}`
       const schema = util.failSchema("Access failure. resource '/resource/path' not exist")
-      await mocha.get({url: accessCheckUrl, headers, args, status: 401, schema})
+      await mocha.get({url: accessCheckUrl, headers, args, status: 403, schema})
     });
 
     it('token by password failed, User not found', async function() {
