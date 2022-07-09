@@ -11,6 +11,7 @@
     "bcrypt-node": "^0.1.0",
     "crc": "^4.1.1",
     "ejs": "^3.1.8",
+    "ioredis": "^5.1.0",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.4",
     "koa-bodyparser": "^4.3.0",
@@ -35,7 +36,6 @@
     "oauth2-server": "^3.1.1",
     "pg": "^8.7.3",
     "pg-escape": "^0.2.0",
-    "redis": "^4.1.0",
     "sequelize": "^6.19.2",
     "urlsafe-base64": "^1.0.0",
     "validator": ">=13.7.0"

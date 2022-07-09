@@ -44,7 +44,7 @@ async function tokenCreate(userInfo, appid) {
   const token = tokenInfo.token
   const expiresIn = tokenInfo.expiresIn
   // Because the key already contains all the information.
-  const res = await redisClient.set(`wtk:${token}`, '1', {'EX': expiresIn});
+  const res = await redisClient.set(`wtk:${token}`, '1', 'EX', expiresIn);
   if (res !== 'OK') {
     throw new Error('redis set error');
   }

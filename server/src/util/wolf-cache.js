@@ -15,7 +15,7 @@ class RedisCache {
     } else if (value && typeof value !== 'string') {
       value = JSON.stringify(value)
     }
-    await this.redisClient.set(key, value, { 'EX': this.stdTTL })
+    await this.redisClient.set(key, value, 'EX', this.stdTTL )
   }
 
   async get(key) {

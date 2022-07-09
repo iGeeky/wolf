@@ -13,6 +13,7 @@ const config = {
   },
   redis: {
     url: process.env.RBAC_REDIS_URL || 'redis://127.0.0.1:6379/0',
+    // cluster: [{ port: 6379, host: '127.0.0.1' }],
   },
   oauthOptions: {
     allowEmptyState: false,
