@@ -160,6 +160,7 @@ show tables;
   * CONSOLE_TOKEN_EXPIRE_TIME `Console` 登录接口返回的token的有效期, 默认为30天. 单位为秒.
   * RBAC_SQL_URL 连接数据库的数据库链接. 默认为: `postgres://wolfroot:123456@127.0.0.1:5432/wolf`
   * RBAC_REDIS_URL redis缓存的链接. 默认为: `redis://127.0.0.1:6379/0`
+  * MEM_CACHE_BY_REDIS 使用redis作为对象缓存. 默认为`no`. 当要部署多节点的`wolf`服务时,可使用redis作为对象缓存,解决缓存不一致问题.
 
   以上三个配置, 可以在系统环境变量中配置, 也可以在启动时指定.
 

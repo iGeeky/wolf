@@ -160,6 +160,7 @@ Output a result similar to the one below, indicating that the database table was
   * CONSOLE_TOKEN_EXPIRE_TIME The expiration time of the token returned by the `Console` login interface, the default is 30 days. The unit is seconds.
   * RBAC_SQL_URL The link to the database. The default is `postgres://wolfroot:123456@127.0.0.1:5432/wolf`
   * RBAC_REDIS_URL The link to the redis cache. Default is: `redis://127.0.0.1:6379/0`
+  * MEM_CACHE_BY_REDIS Use redis as object cache. Default is `no`. When deploying a multi-node `wolf` service, you can use redis as the object cache to solve the cache inconsistency problem.
 
   The above three configurations can be configured in the system environment variables or specified at startup.
 

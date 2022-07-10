@@ -1,3 +1,9 @@
+2022-07-10 0.5.4
+
+* `Server` Replacing the redis library with ioredis
+* `Server` Support for redis as object cache
+* `Server` Return 403 http status code when accessing resources without permission
+
 2022-05-25 0.5.3
 
 * `Server`: save login token to redis.

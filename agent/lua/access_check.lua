@@ -156,7 +156,7 @@ local function access_check()
 		---
 	else
 		-- no permission.
-		if status == ngx.HTTP_UNAUTHORIZED then
+		if status == ngx.HTTP_UNAUTHORIZED or status == ngx.HTTP_FORBIDDEN then
 			if reason == "ERR_TOKEN_INVALID" then
                 url_redirect(login_url, url_args_as_args())
             else
