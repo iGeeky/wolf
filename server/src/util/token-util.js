@@ -3,9 +3,15 @@ const config = require('../../conf/config')
 const jwt = require('jsonwebtoken')
 const log4js = require('./log4js')
 const {redisClient} = require('./redis-util')
+const cryptor = require('./cryptor')
 const ERR_TOKEN_INVALID = 'ERR_TOKEN_INVALID'
 
 const tokenVersion = 2
+
+function tkey(token) {
+  const key = cryptor.md5hex(token)
+  return `wtk:${key}`
+}
 
 function tokenEncrypt(userInfo, appid) {
   const tokenKey = config.tokenKey
@@ -43,8 +49,8 @@ async function tokenCreate(userInfo, appid) {
   const tokenInfo = tokenEncrypt(userInfo, appid)
   const token = tokenInfo.token
   const expiresIn = tokenInfo.expiresIn
-  // Because the key already contains all the information.
-  const res = await redisClient.set(`wtk:${token}`, '1', 'EX', expiresIn);
+  const key = tkey(token)
+  const res = await redisClient.set(key, token, 'EX', expiresIn);
   if (res !== 'OK') {
     throw new Error('redis set error');
   }
@@ -56,15 +62,17 @@ async function tokenCheck(token) {
   if(user.error) {
     return user
   }
-  const res = await redisClient.get(`wtk:${token}`);
-  if (res !== '1') {
+  const key = tkey(token)
+  const res = await redisClient.get(key);
+  if (!res || res !== token) {
     return { error: ERR_TOKEN_INVALID }
   }
   return user
 }
 
 async function tokenDelete(token) {
-  const res = await redisClient.del(`wtk:${token}`);
+  const key = tkey(token)
+  const res = await redisClient.del(key);
   if (res !== 1) {
     throw new Error('redis delete error');
   }

@@ -1,3 +1,8 @@
+2022-08-01 0.5.5
+
+* `Server` Save the token via md5 key.
+* `Server` Remove the RedisCache keys call
+
 2022-07-10 0.5.4
 
 * `Server` Replacing the redis library with ioredis
