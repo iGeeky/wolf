@@ -1,6 +1,9 @@
 const config = require('../../conf/config')
 const NodeCache = require( 'node-cache' );
 const { redisClient } = require('./redis-util')
+const log4js = require('./log4js')
+
+const keyListPrefix = 'setkeys'
 
 class RedisCache {
   constructor(redisClient, args = { stdTTL: 60 * 10 }) {
@@ -16,6 +19,9 @@ class RedisCache {
       value = JSON.stringify(value)
     }
     await this.redisClient.set(key, value, 'EX', this.stdTTL )
+    const skey = `${this.prefix}:${keyListPrefix}` 
+    await this.redisClient.sadd(skey, key)
+    await this.redisClient.expire(skey, this.stdTTL * 1000)
   }
 
   async get(key) {
@@ -35,10 +41,15 @@ class RedisCache {
   }
 
   async flushAll() {
-    const keys = await this.redisClient.keys(this.prefix + '*')
+    const skey = `${this.prefix}:${keyListPrefix}` 
+    const keys = await this.redisClient.smembers(skey)
+    const delKeys = []
     for (const key of keys) {
-      this.redisClient.del(key)
+      delKeys.push(['del', key])
     }
+    await this.redisClient.multi(delKeys).exec()
+    log4js.info("---- RedisCache.flushAll() ---- %s", JSON.stringify(keys))
+    await this.redisClient.del(skey)
   }
 }
 
