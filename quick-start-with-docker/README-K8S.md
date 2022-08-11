@@ -3,221 +3,78 @@
 
 [k8s 部署](./README-K8S-CN.md)
 
-### 1. Create the postgres-deploy.yaml file
-The content and description of the `postgres-deploy.yaml` file are as follows:
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  namespace: default
-  name: postgres-wolf
-  labels:
-    app: postgres-wolf
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: postgres-wolf
-  template:
-    metadata:
-      labels:
-        app: postgres-wolf
-    spec:
-      containers:
-        - name: postgres-wolf
-          image: postgres:11.4
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 5432
-              name: http
-              protocol: TCP
-          env:
-            - name: TZ
-              value: Asia/Shanghai
-              # username to connect to the database
-            - name: POSTGRES_USER
-              value: root
-              # password to connect to the database
-            - name: POSTGRES_PASSWORD
-              value: "R0FSCY2pcuAlWhmp"
-              # if you specify a database name, the database is automatically created
-            - name: POSTGRES_DB
-              value: wolf
-          resources:
-            requests:
-              cpu: 500m
-              memory: 500Mi
-          volumeMounts:
-            - name: data
-              mountPath: /var/lib/postgresql/data
-      volumes:
-        - name: data
-          # The temporary directory is used here, and the data will be lost after the container is restarted
-          # In order to persist data, it is recommended to mount PVC
-          emptyDir: {}
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  namespace: default
-  name: postgres-wolf
-  labels:
-    app: postgres-wolf
-spec:
-  ports:
-    - name: port
-      port: 5432
-      protocol: TCP
-      targetPort: 5432
-  selector:
-    app: postgres-wolf
-  type: ClusterIP
-
-
-```
-#### Depolying Postgres in k8s
+### 1. Create the namespace
 
 ```shell
-kubectl apply -f postgres-deploy.yaml
-```
-Using the following command to see if the pod is working properly
+cd wolf/quick-start-with-docker
+
+# create the namespace
+kubectl create namespace wolf
+# check that the namespace exists
+kubectl get ns |grep wolf
+## the output
+wolf              Active   68s
+````
+
+### 2. Deploying Postgres
+
+
 ```shell
-[root@node01 ~]# kubectl get pod -n default
-NAME                                     READY   STATUS    RESTARTS   AGE
-postgres-wolf-54d8dbfbf-9t629            1/1     Running   0          42m
+## Create the database
+kubectl apply -f k8s/wolf-database.yaml
+
+## Check if the status of the newly started pod is okay
+kubectl get pods -n wolf
+
+## The output
+NAME                             READY   STATUS    RESTARTS   AGE
+wolf-database-5549df4cc8-gkfrv   1/1     Running   0          22s
 ```
+
 #### Initialization data
 
-Using the following command to copy [db.sql](../server/script/db.sql) into container, `db.sql` needs to be in the current directory
+Using the following command to copy [db-psql.sql](../server/script/db-psql.sql) into container.
 
 ```shell
-kubectl cp db.sql postgres-wolf-54d8dbfbf-9t629:/
+export DB_POD_NAME=`kubectl get pods -n wolf |grep wolf-database | awk '{print $1}'`
+
+# copy db-psql.sql
+kubectl cp -n wolf ../server/script/db-psql.sql ${DB_POD_NAME}:/
+
+# Execute the `db-psql.sql` script with the following command
+kubectl exec ${DB_POD_NAME} -n wolf -- psql -h 127.0.0.1 -d wolf -U wolfroot -f /db-psql.sql
 ```
-Execute the `db.sql` script with the following command
+
+### 3. Deploying Redis
+
+
 ```shell
-kubectl exec postgres-wolf-54d8dbfbf-9t629 -- psql  -d wolf  -f /db.sql
+## Create the redis
+kubectl apply -f k8s/wolf-cache.yaml
+
+## Check if the status of the newly started pod is okay
+kubectl get pods -n wolf |grep wolf-cache
+
+## The output:
+wolf-cache-6bc766fbdd-5llxc      1/1     Running     2          21m
 ```
-> Note that `postgres-wolf-54d8dbfbf-9t629` is the name of the pod
-> 
-> If there is external postgres, you do not need to deploy the above postgres
 
+### 4. Deploying wolf-server
 
-### 2. Create the wolf-deploy.yaml file
-The content and description of the `wolf-deploy.yaml` file are as follows:
-```yaml
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  namespace: default
-  name: wolf-config
-data:
-  # The default password for root and admin accounts. The default is 123456
-  RBAC_ROOT_PASSWORD: "wolf-123456"
-  # To encrypt the KEY used by the user token, it is highly recommended to set this value
-  RBAC_TOKEN_KEY: "f40215a5f25cbb6d36df07629aaf1172240fe48d"
-  # To encrypt the application Secret and OAuth2 login user ID keys
-  WOLF_CRYPT_KEY: "fbd4962351924792cb5e5b131435cd30b24e3570"
-  # The database link to the postgres database
-  RBAC_SQL_URL: "postgres://root:R0FSCY2pcuAlWhmp@postgres-wolf:5432/wolf"
-  CLIENT_CHANGE_PWD: "no"
-
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  labels:
-    app: wolf-server
-  name: wolf-server
-  namespace: default
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: wolf-server
-  template:
-    metadata:
-      labels:
-        app: wolf-server
-    spec:
-      containers:
-        - name: wolf-server
-          image: igeeky/wolf-server
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 12180
-              name: http
-              protocol: TCP
-          env:
-            - name: TZ
-              value: Asia/Shanghai
-            - name: RBAC_ROOT_PASSWORD
-              valueFrom:
-                configMapKeyRef:
-                  name: wolf-config
-                  key: RBAC_ROOT_PASSWORD
-            - name: RBAC_TOKEN_KEY
-              valueFrom:
-                configMapKeyRef:
-                  name: wolf-config
-                  key: RBAC_TOKEN_KEY
-            - name: WOLF_CRYPT_KEY
-              valueFrom:
-                configMapKeyRef:
-                  name: wolf-config
-                  key: WOLF_CRYPT_KEY
-            - name: RBAC_SQL_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: wolf-config
-                  key: RBAC_SQL_URL
-            - name: CLIENT_CHANGE_PWD
-              valueFrom:
-                configMapKeyRef:
-                  name: wolf-config
-                  key: CLIENT_CHANGE_PWD
-          resources:
-            requests:
-              cpu: 200m
-              memory: 500Mi
-
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: wolf-server
-  namespace: default
-  labels:
-    app: wolf-server
-spec:
-  ports:
-    - name: port
-      port: 80
-      protocol: TCP
-      targetPort: 12180
-  selector:
-    app: wolf-server
-  type: ClusterIP
-
-
-```
-#### 2. Deploying wolf-server in k8s
 ```shell
-kubectl apply -f wolf-deploy.yaml
-```
-Using the following command to see if the pod is working properly
-```shell
-[root@node01 ~]# kubectl get pod -n default
-NAME                                     READY   STATUS    RESTARTS   AGE
-postgres-wolf-54d8dbfbf-9t629            1/1     Running   0          42m
-wolf-server-b8f588587-xv97t              1/1     Running   0          2m
+## Create the wolf-server
+kubectl apply -f k8s/wolf-server.yaml
+
+## Check if the status of the newly started pod is okay
+kubectl get pods -n wolf |grep wolf-server
+
+## The output:
+wolf-server-6854bcfb96-cz7rj     1/1     Running   0          8m16s
 ```
 
 After wolf-server is running normally, you can temporarily expose the service in the following ways:
 ```shell
-kubectl port-forward service/wolf-server 12180:80
+kubectl port-forward service/wolf-server -n wolf 12180:80
 ```
 **It is recommended to expose services through ingress**
 

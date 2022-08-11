@@ -1,0 +1,107 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: wolf
+  name: wolf-config
+data:
+  # The default password for root and admin accounts. The default is 123456
+  RBAC_ROOT_PASSWORD: "wolf-123456"
+  # To encrypt the KEY used by the user token, it is highly recommended to set this value
+  RBAC_TOKEN_KEY: "f40215a5f25cbb6d36df07629aaf1172240fe48d"
+  # To encrypt the application Secret and OAuth2 login user ID keys
+  WOLF_CRYPT_KEY: "fbd4962351924792cb5e5b131435cd30b24e3570"
+  # The database link to the postgres database
+  RBAC_SQL_URL: "postgres://wolfroot:R0FSCY2pcuAlWhmp@wolf-database:5432/wolf"
+  # The redis url to the redis cache.
+  RBAC_REDIS_URL: "redis://wolf-cache:6379/0"
+  # Used redis as a memory cache.
+  MEM_CACHE_BY_REDIS: "yes"
+  CLIENT_CHANGE_PWD: "no"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: wolf-server
+  name: wolf-server
+  namespace: wolf
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wolf-server
+  template:
+    metadata:
+      labels:
+        app: wolf-server
+    spec:
+      containers:
+        - name: wolf-server
+          image: igeeky/wolf-server
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 12180
+              name: http
+              protocol: TCP
+          env:
+            - name: TZ
+              value: Asia/Shanghai
+            - name: RBAC_ROOT_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: wolf-config
+                  key: RBAC_ROOT_PASSWORD
+            - name: RBAC_TOKEN_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: wolf-config
+                  key: RBAC_TOKEN_KEY
+            - name: WOLF_CRYPT_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: wolf-config
+                  key: WOLF_CRYPT_KEY
+            - name: RBAC_SQL_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: wolf-config
+                  key: RBAC_SQL_URL
+            - name: CLIENT_CHANGE_PWD
+              valueFrom:
+                configMapKeyRef:
+                  name: wolf-config
+                  key: CLIENT_CHANGE_PWD
+            - name: RBAC_REDIS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: wolf-config
+                  key: RBAC_REDIS_URL
+            - name: MEM_CACHE_BY_REDIS
+              valueFrom:
+                configMapKeyRef:
+                  name: wolf-config
+                  key: MEM_CACHE_BY_REDIS
+          resources:
+            requests:
+              cpu: 500m
+              memory: 500Mi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wolf-server
+  namespace: wolf
+  labels:
+    app: wolf-server
+spec:
+  ports:
+    - name: port
+      port: 80
+      protocol: TCP
+      targetPort: 12180
+  selector:
+    app: wolf-server
+  type: ClusterIP

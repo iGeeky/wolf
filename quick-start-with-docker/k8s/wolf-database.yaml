@@ -1,0 +1,68 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: wolf
+  name: wolf-database
+  labels:
+    app: wolf-database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wolf-database
+  template:
+    metadata:
+      labels:
+        app: wolf-database
+    spec:
+      containers:
+        - name: wolf-database
+          image: postgres:13
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5432
+              name: http
+              protocol: TCP
+          env:
+            - name: TZ
+              value: Asia/Shanghai
+              # username to connect to the database
+            - name: POSTGRES_USER
+              value: wolfroot
+              # password to connect to the database
+            - name: POSTGRES_PASSWORD
+              value: "R0FSCY2pcuAlWhmp"
+              # if you specify a database name, the database is automatically created
+            - name: POSTGRES_DB
+              value: wolf
+          resources:
+            requests:
+              cpu: 500m
+              memory: 500Mi
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: data
+          # The temporary directory is used here, and the data will be lost after the container is restarted
+          # In order to persist data, it is recommended to mount PVC
+          emptyDir: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: wolf
+  name: wolf-database
+  labels:
+    app: wolf-database
+spec:
+  ports:
+    - name: port
+      port: 5432
+      protocol: TCP
+      targetPort: 5432
+  selector:
+    app: wolf-database
+  type: ClusterIP

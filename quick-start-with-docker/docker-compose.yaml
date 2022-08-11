@@ -2,7 +2,7 @@ version: '3'
 services:
   database:
     container_name: wolf-database
-    image: postgres:10.7
+    image: postgres:13
     restart: always
     environment:
       POSTGRES_USER: wolfroot

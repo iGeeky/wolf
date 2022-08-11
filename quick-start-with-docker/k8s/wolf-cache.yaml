@@ -1,0 +1,59 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: wolf
+  name: wolf-cache
+  labels:
+    app: wolf-cache
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wolf-cache
+  template:
+    metadata:
+      labels:
+        app: wolf-cache
+    spec:
+      containers:
+        - name: wolf-cache
+          image: redis:5.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 6379
+              name: http
+              protocol: TCP
+          env:
+            - name: TZ
+              value: Asia/Shanghai
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          volumeMounts:
+            - name: data
+              mountPath: /data
+      volumes:
+        - name: data
+          # The temporary directory is used here, and the data will be lost after the container is restarted
+          # In order to persist data, it is recommended to mount PVC
+          emptyDir: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: wolf
+  name: wolf-cache
+  labels:
+    app: wolf-cache
+spec:
+  ports:
+    - name: port
+      port: 6379
+      protocol: TCP
+      targetPort: 6379
+  selector:
+    app: wolf-cache
+  type: ClusterIP
