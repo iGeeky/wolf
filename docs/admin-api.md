@@ -893,6 +893,7 @@ Query the user list information
 Field | Type | Required | Description
 -------|-------|------|-----
 key | string | No | Search for username,nickname,tel field.
+username | string | No | Use username for exact user matching.
 sort | string | No | Sort field, e.g.: -id: means sort by id descending order. +name: Indicates ascending order by name.
 page | integer | No | Page number, incremental from 1, default is 1
 limit | integer | No | Page size, default is 10

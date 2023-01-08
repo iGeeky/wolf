@@ -12,7 +12,7 @@ const config = {
     url: process.env.RBAC_SQL_URL || 'postgres://wolfroot:123456@127.0.0.1:5432/wolf',
   },
   redis: {
-    url: process.env.RBAC_REDIS_URL || 'redis://127.0.0.1:6379/0',
+    url: process.env.RBAC_REDIS_URL || 'redis://:audit123456@127.0.0.1:6379/0',
     // cluster: [{ port: 6379, host: '127.0.0.1' }],
   },
   oauthOptions: {

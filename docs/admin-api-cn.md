@@ -892,6 +892,7 @@ curl "http://127.0.0.1:12180/wolf/user/info" \
 字段 | 类型 | 必填项 |说明
 -------|-------|------|-----
 key | string | 否 | 搜索username,nickname,tel字段.
+username | string | 是 | 使用username进行精确匹配用户.
 sort | string | 否 | 排序字段, 如: -id: 表示以id降序排序. +name: 表示以name升序排序.
 page | integer | 否 | 页码, 从1开始递增, 默认为1
 limit | integer | 否 | 页大小, 默认为10

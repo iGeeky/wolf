@@ -28,7 +28,7 @@ function getUserInfoResponseSchema() {
   return schema
 }
 
-function getListResponseSchema() {
+function getListResponseSchema(total=1) {
   const schema = util.okSchema({
     type: "object",
     properties: {
@@ -52,7 +52,7 @@ function getListResponseSchema() {
                 ]
             }
         },
-        total: {"type":"integer"}
+        total: {"type":"integer", "enum": [total]}
     },
     required: ["userInfos","total"]
   })
@@ -63,6 +63,7 @@ describe('user', function() {
   let id = null;
   let rootUserInfo = null;
   const username = 'test-user-username'
+  const username2 = 'user-username'
   const appIDs = ['test-appid-for-user-test']
   const appIDs2 = ['test-appid-for-user-test', 'test-appid-for-user-test2']
 
@@ -221,9 +222,23 @@ describe('user', function() {
   });
 
   it('list', async function() {
-    const schema = getListResponseSchema()
+    const schema = getListResponseSchema(2)
     const url = '/wolf/user/list'
     const args = {key: username}
+    await mocha.get({url, headers, args, schema})
+  });
+
+  it('list by username', async function() {
+    const schema = getListResponseSchema(1)
+    const url = '/wolf/user/list'
+    const args = {username}
+    await mocha.get({url, headers, args, schema})
+  });
+
+  it('list by username, not found', async function() {
+    const schema = getListResponseSchema(0)
+    const url = '/wolf/user/list'
+    const args = {username: username2}
     await mocha.get({url, headers, args, schema})
   });
 

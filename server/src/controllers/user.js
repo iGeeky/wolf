@@ -126,11 +126,14 @@ class User extends BasicService {
     const offset = (page-1) * limit
     const order = this.getOrderByArgs('-id')
     const key = this.getArg('key')
+    const username = this.getArg('username')
     const where = {}
     if (key && key !== '') {
       where[Op.or] = [like('username', key), like('nickname', key), like('tel', key)]
     }
-
+    if (username && username !== '') {
+      where.username = username
+    }
     const userInfo = this.ctx.userInfo
     if (userInfo.manager === constant.Manager.admin) {
       const appIds = userInfo.appIDs || []
