@@ -1,19 +1,19 @@
 [中文](deploy-cn.md)
 
-There are two ways to deploy, Docker can be used to deploy faster. It can also be deployed manually in all steps.
+There are two ways to deploy the system: using Docker or manually.
 
-The default is to log in with a password, if you want to log in with LDAP, please refer to [here](./ldap-config.md).
+The default login method is password-based, and if you want to log in with LDAP, please refer to the [LDAP Configuration Guide](./ldap-config.md).
 
-## A.Docker environment deployment
+## A. Docker Environment Deployment
 
-#### 1.required environment
+#### 1. Required Environment
 
-* docker
-* docker-compose
-* node 12+
-* npm
+- Docker
+- Docker Compose
+- Node.js 12+
+- npm
 
-#### 2.Building the docker image
+#### 2. Building the Docker Image
 
 ```shell
 cd path/to/wolf
@@ -24,7 +24,7 @@ After a successful build, you can view the image using the following command:
 
 `docker images |grep wolf`
 
-The output is approximately as follows:
+The output should look similar to this:
 
 ```
 igeeky/wolf-agent         0.1.10              c8013cdbc95d        1 hours ago         101MB
@@ -33,25 +33,25 @@ igeeky/wolf-server        0.1.10              25ee3cb46296        7 hours ago   
 igeeky/wolf-server        latest              25ee3cb46296        7 hours ago         143MB
 ```
 
-#### 3.Starting the docker image with docker-compose
+#### 3.Starting the Docker Image with Docker Compose
 
-[Reference here](../quick-start-with-docker/README.md)
+For instructions, please refer to: [Quick Start with Docker.](../quick-start-with-docker/README.md)
 
 ## B.Manual deployment
 
 #### 1.Initializing the database
 
-Choose between `PostgreSQL` and `MySQL` databases, we recommend using `PostgreSQL`.
+You can choose between `PostgreSQL` and `MySQL` databases, and we recommend using PostgreSQL.
 
 ###### PostgreSQL
 
 * Installing PostgreSQL
 
-Please google the installation method yourself.
+You can find the installation method by searching on Google.
 
 * Create accounts and databases
 
-Login to the postgres database with a postgres account and execute the following script to create the `wolfroot` user and `wolf` database (please change the username and password as needed):
+To create the `wolfroot` user and `wolf` database (with custom username and password if needed), log in to the PostgreSQL database with a PostgreSQL account and execute the following script:
 
 ```sql
 CREATE USER wolfroot WITH PASSWORD '123456';
@@ -67,13 +67,13 @@ Creating database tables using scripts
 \i path/to/wolf/server/script/db-psql.sql;
 ```
 
-View the created table:
+To view the created table, run the following command:
 
 ```
 \d
 ```
 
-Output a result similar to the one below, indicating that the database table was created successfully:
+The output should look similar to this, indicating a successful creation of the database table:
 
 ```
                List of relations
@@ -98,11 +98,11 @@ Output a result similar to the one below, indicating that the database table was
 
 * Installing MySQL
 
-Please google the installation method yourself.
+Please search for the installation method on your own.
 
-* Create accounts and databases
+* Create Accounts and Databases
 
-Login to the mysql database with a mysql account and execute the following script to create the `wolfroot` user and `wolf` database (please change the username and password as needed):
+Login to the MySQL database using a MySQL account and run the following script to create the `wolfroot` user and `wolf` database (change the username and password as needed):
 
 ```sql
 create database `wolf` CHARACTER SET utf8mb4;
@@ -114,21 +114,21 @@ FLUSH PRIVILEGES;
 use wolf;
 ```
 
-* Creation tables
+* Creating Tables
 
-Creating database tables using scripts
+Create the database tables using the following script:
 
 ```sql
 source path/to/wolf/server/script/db-mysql.sql;
 ```
 
-View the created table:
+Run the following command to view the created tables:
 
 ```
 show tables;
 ```
 
-Output a result similar to the one below, indicating that the database table was created successfully:
+The output should be similar to the following, indicating that the database tables have been successfully created:
 
 ```
 
@@ -149,26 +149,26 @@ Output a result similar to the one below, indicating that the database table was
 10 rows in set (0.01 sec)
 ```
 
-#### 2.Server configuration items
+#### 2.Server Configuration Items
 
-* The main configuration parameters of the server are the following:
+- The main configuration parameters of the server are as follows:
 
-  * RBAC_ROOT_PASSWORD The default password for root and admin accounts. The default is `123456`.
-  * RBAC_TOKEN_KEY To encrypt the KEY used by the user token, it is highly recommended to set this value.
-  * WOLF_CRYPT_KEY To encrypt the application Secret and OAuth2 login user ID keys.
-  * RBAC_TOKEN_EXPIRE_TIME The expiration time of the token returned by the `Agent` login interface, the default is 30 days. The unit is seconds.
-  * CONSOLE_TOKEN_EXPIRE_TIME The expiration time of the token returned by the `Console` login interface, the default is 30 days. The unit is seconds.
-  * RBAC_SQL_URL The link to the database. The default is `postgres://wolfroot:123456@127.0.0.1:5432/wolf`
-  * RBAC_REDIS_URL The link to the redis cache. Default is: `redis://127.0.0.1:6379/0`
-  * MEM_CACHE_BY_REDIS Use redis as object cache. Default is `no`. When deploying a multi-node `wolf` service, you can use redis as the object cache to solve the cache inconsistency problem.
+  * `RBAC_ROOT_PASSWORD`: The default password for the root and admin accounts. The default value is `123456`.
+  * `RBAC_TOKEN_KEY`: A key used to encrypt the user token. It is highly recommended to set this value.
+  * `WOLF_CRYPT_KEY`: A key used to encrypt the application secret and OAuth2 login user ID keys.
+  * `RBAC_TOKEN_EXPIRE_TIME`: The expiration time of the token returned by the `Agent` login interface. The default is 30 days and the unit is seconds.
+  * `CONSOLE_TOKEN_EXPIRE_TIME`: The expiration time of the token returned by the Console login interface. The default is 30 days and the unit is seconds.
+  * `RBAC_SQL_URL`: The link to the database. The default value is `postgres://wolfroot:123456@127.0.0.1:5432/wolf`.
+  * `RBAC_REDIS_URL`: The link to the redis cache. The default value is `redis://127.0.0.1:6379/0`.
+  * `MEM_CACHE_BY_REDIS`: Use redis as the object cache. The default is no. When deploying a multi-node wolf service, you can use redis as the object cache to resolve cache inconsistency issues.
 
-  The above three configurations can be configured in the system environment variables or specified at startup.
+  These configurations can be set in the system environment variables or specified at startup.
 
-#### 3.startup server
+#### 3.Starting the Server
 
 Please install node and npm yourself.
 
-* Startup service.
+* Starting the Service
 
 ```shell
 # Set the initial password for wolf's root and admin accounts.
@@ -189,13 +189,13 @@ npm install
 npm run start
 ```
 
-**If you start successfully, you should see a similar output:**
+**If the service starts successfully, you should see output similar to the following:**
 
 > listen at 0.0.0.0:12180 success!
 >
 > The following are some initialized system account output information
 
-#### 4.Startup Console
+#### 4.Start the Console
 
 ```shell
 cd path/to/wolf/console
@@ -205,30 +205,30 @@ npm install
 cnpm run dev
 ```
 
-**Compile, when started successfully, you should see a similar output:**
+**After compiling the Console, if it starts successfully, you should see an output similar to the following:**
 
 ```
- DONE  Compiled successfully in 1000ms    
+ DONE  Compiled successfully in 1000ms
 
   App running at:
   - Local:   http://localhost:12188/
   - Network: http://192.168.x.x:12188/
 ```
 
-Once the Console has been successfully started, it is now accessible using the root account. The password is `123456` or the one you specify when starting the server with the variable `RBAC_ROOT_PASSWORD`.
+You can now access the Console using the root account. The password is `123456` or the one you specified when starting the server with the `RBAC_ROOT_PASSWORD` environment variable.
 
-#### 5.Configuring Agent
+#### 5.Configuring the Agent
 
-Note: If you are using the `apisix` gateway, you can use the `wolf-rbac` plugin for [apisix](https://github.com/apache/apisix/blob/master/docs/en/latest/plugins/wolf-rbac.md) instead. This plugin also acts as an `Agent`.
+Note: If you are using the `apisix` gateway, you may prefer to use the `wolf-rbac` plugin for [apisix](https://github.com/apache/apisix/blob/master/docs/en/latest/plugins/wolf-rbac.md) instead of using an Agent. This plugin also acts as an Agent.
 
 
 * Installing OpenResty
 
-Please google the installation method yourself.
+Please search for the installation method yourself.
 
-- Create applications in Console, and the corresponding users, roles, permissions, resources, etc.
+* Create applications in the Console, along with corresponding users, roles, permissions, resources, etc.
 
-* Add Agent configuration to nginx.conf (or the subconfiguration it contains) (the following configuration assumes Wolf's code is in the `/opt` directory)
+* Add the Agent configuration to nginx.conf (or the sub-configurations that it contains). The following configuration assumes that the Wolf code is located in the `/opt` directory:
 
 ```nginx
 # The following configuration is within the HTTP node.
@@ -288,7 +288,7 @@ server {
 
 
 
-#### 6.Startup Agent(Nginx)
+#### 6.Startup the Agent(Nginx)
 
 ```
 # Test.
@@ -297,4 +297,4 @@ path/to/nginx/sbin/nginx -t
 path/to/nginx/sbin/nginx 
 ```
 
-Once started, you can access the application at: `http://127.0.0.1:12182`. You will need to enter a username and password to access the application.
+Once started, you can access the application at `http://127.0.0.1:12182`. You will need to enter a username and password to access the application.
