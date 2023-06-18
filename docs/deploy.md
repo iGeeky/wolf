@@ -157,7 +157,8 @@ The output should be similar to the following, indicating that the database tabl
   * `RBAC_TOKEN_KEY`: A key used to encrypt the user token. It is highly recommended to set this value.
   * `WOLF_CRYPT_KEY`: A key used to encrypt the application secret and OAuth2 login user ID keys.
   * `RBAC_TOKEN_EXPIRE_TIME`: The expiration time of the token returned by the `Agent` login interface. The default is 30 days and the unit is seconds.
-  * `CONSOLE_TOKEN_EXPIRE_TIME`: The expiration time of the token returned by the Console login interface. The default is 30 days and the unit is seconds.
+  * `CONSOLE_TOKEN_EXPIRE_TIME`: The expiration time of the token returned by the `Console` login interface. The default is 30 days and the unit is seconds.
+  * `CONSOLE_LOGIN_WITH_CAPTCHA`: Controls whether Captcha verification is used for `Console` login. If the console is deployed on a public network, it is recommended to enable this feature to improve security. The environment variable can be set to `yes` or `no`, with a default value of `no`.
   * `RBAC_SQL_URL`: The link to the database. The default value is `postgres://wolfroot:123456@127.0.0.1:5432/wolf`.
   * `RBAC_REDIS_URL`: The link to the redis cache. The default value is `redis://127.0.0.1:6379/0`.
   * `MEM_CACHE_BY_REDIS`: Use redis as the object cache. The default is no. When deploying a multi-node wolf service, you can use redis as the object cache to resolve cache inconsistency issues.

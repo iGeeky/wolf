@@ -60,6 +60,14 @@ export async function getLoginOptions() {
   })
 }
 
+export async function getCaptchaData() {
+  return await request({
+    url: '/captcha',
+    method: 'get',
+    params: { },
+  })
+}
+
 export async function listUsers(args) {
   return await request({
     url: '/user/list',

@@ -158,6 +158,7 @@ show tables;
   * WOLF_CRYPT_KEY 加密应用Secret及OAuth2登陆用户ID使用的Key.
   * RBAC_TOKEN_EXPIRE_TIME `Agent` 登录接口返回的token的有效期, 默认为30天. 单位为秒.
   * CONSOLE_TOKEN_EXPIRE_TIME `Console` 登录接口返回的token的有效期, 默认为30天. 单位为秒.
+  * CONSOLE_LOGIN_WITH_CAPTCHA 控制 `Console` 登录是否使用 Captcha 验证码。如果控制台部署在公网上，建议开启该功能以提高安全性。该环境变量的取值为 yes 或 no，默认为 no。
   * RBAC_SQL_URL 连接数据库的数据库链接. 默认为: `postgres://wolfroot:123456@127.0.0.1:5432/wolf`
   * RBAC_REDIS_URL redis缓存的链接. 默认为: `redis://127.0.0.1:6379/0`
   * MEM_CACHE_BY_REDIS 使用redis作为对象缓存. 默认为`no`. 当要部署多节点的`wolf`服务时,可使用redis作为对象缓存,解决缓存不一致问题.

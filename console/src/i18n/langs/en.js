@@ -87,6 +87,7 @@ const en = {
 
     'loginPromptUsername': 'Username',
     'loginPromptPassword': 'Password',
+    'loginPromptCaptcha': 'Captcha',
     'loginPromptLoginForm': 'Console Login',
     'loginPromptStandardLogin': 'Standard',
 
@@ -248,6 +249,7 @@ const en = {
 
       'ERR_USERNAME_MISSING': 'Username missing!',
       'ERR_PASSWORD_MISSING': 'Password missing!',
+      'ERR_CAPTCHA_INVALID': 'captcha error',
       'ERR_APPID_NOT_FOUND': 'Appid not found!',
       'ERR_USER_NOT_FOUND': 'User not found',
       'ERR_PASSWORD_ERROR': 'Password error',

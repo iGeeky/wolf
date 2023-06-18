@@ -3,6 +3,7 @@ const UserModel = require('../model/user')
 const AccessDenyError = require('../errors/access-deny-error')
 const ApplicationModel = require('../model/application')
 const UserRoleModel = require('../model/user-role')
+const {captchaValidate} = require('../util/captcha-util');
 const {like} = require('../util/op-util')
 const Op = require('sequelize').Op;
 const errors = require('../errors/errors')
@@ -71,6 +72,15 @@ class User extends BasicService {
     const username = this.getRequiredArg('username')
     const password = this.getRequiredArg('password')
     const authType = this.getIntArg('authType', constant.AuthType.PASSWORD)
+    if (config.consoleLoginWithCaptcha) {
+      const cid = this.getRequiredArg('cid');
+      const captchaText = this.getRequiredArg('captchaText')
+      const {valid, errmsg} = await captchaValidate(cid, captchaText)
+      if (!valid) {
+        this.fail(200, errmsg);
+        return
+      }
+    }
 
     this.log4js.info('### user[%s] login authType=%s...', username, authType)
     const {userInfo, err: loginErr} = await this.userLoginInternal(username, password, {authType})
@@ -115,6 +125,7 @@ class User extends BasicService {
     const data = {
       password: {supported: true},
       ldap: ldapOptions(),
+      consoleLoginWithCaptcha: config.consoleLoginWithCaptcha,
     }
     this.success(data)
   }

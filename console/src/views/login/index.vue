@@ -45,6 +45,23 @@
             </span>
           </el-form-item>
         </el-tooltip>
+        <el-form-item v-if="captchaData.cid" prop="captchaText">
+          <div class="captcha">
+            <el-input
+              v-model="loginForm.captchaText"
+              :placeholder="$t('wolf.loginPromptCaptcha')"
+              name="captchaText"
+              tabindex="3"
+              minlength="4"
+              maxlength="6"
+            />
+            <div class="captchaImage" v-html="captchaData.captcha" />
+            <div v-if="countdownNum > 0" class="refresh-icon">
+              {{ countdownNum }}
+            </div>
+            <svg-icon v-else icon-class="refresh" class="refresh-icon" @click="loadCaptchaData" />
+          </div>
+        </el-form-item>
 
         <el-form-item v-if="showAuthTypeOption" prop="authType">
           <el-radio-group v-model="loginForm.authType" @change="authTypeChange">
@@ -69,7 +86,7 @@
 <script>
 import { validUsername } from '@/utils/validate'
 import SocialSign from './components/SocialSignin'
-import { getLoginOptions } from '@/api/user'
+import { getLoginOptions, getCaptchaData } from '@/api/user'
 
 export default {
   name: 'Login',
@@ -89,25 +106,40 @@ export default {
         callback()
       }
     }
+    const validateCaptcha = (rule, value, callback) => {
+      if (!value || value.length < 4) {
+        callback(new Error('Please enter the correct captcha'))
+      } else {
+        callback()
+      }
+    }
     return {
       loginForm: {
         username: '',
         password: '',
+        captchaText: '',
         authType: '1',
       },
       loginOptions: {
         password: {},
         ldap: {},
+        consoleLoginWithCaptcha: false,
+      },
+      captchaData: {
+        cid: '',
+        captcha: '',
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }],
+        captchaText: [{ required: true, trigger: 'blur', validator: validateCaptcha }],
         authType: [{ required: true }],
       },
       passwordType: 'password',
       capsTooltip: false,
       loading: false,
       showDialog: false,
+      countdownNum: 0,
       redirect: undefined,
       otherQuery: {},
     }
@@ -147,6 +179,24 @@ export default {
     // window.removeEventListener('storage', this.afterQRScan)
   },
   methods: {
+    countdown(num) {
+      this.countdownNum = num
+      const timer = setInterval(() => {
+        this.countdownNum--
+        if (this.countdownNum < 0) {
+          clearInterval(timer)
+        }
+      }, 1000)
+
+      return {
+        stop: function() {
+          clearInterval(timer)
+        },
+        getNum: function() {
+          return this.countdownNum
+        },
+      }
+    },
     checkCapslock({ shiftKey, key } = {}) {
       if (key && key.length === 1) {
         if (shiftKey && (key >= 'a' && key <= 'z') || !shiftKey && (key >= 'A' && key <= 'Z')) {
@@ -173,18 +223,26 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('user/login', this.loginForm)
+          const loginForm = { ...this.loginForm }
+          if (this.captchaData.cid) {
+            loginForm.cid = this.captchaData.cid
+          }
+          this.$store.dispatch('user/login', loginForm)
           // login(this.loginForm)
             .then((res) => {
+              this.loginForm.captchaText = ''
               this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
               this.loading = false
             })
             .catch((err) => {
+              this.loginForm.captchaText = ''
+              this.loadCaptchaData()
               this.loading = false
               console.error('login failed! err: ', err)
             })
         } else {
           console.error('error submit!!')
+          this.loadCaptchaData()
           return false
         }
       })
@@ -196,8 +254,18 @@ export default {
         if (!this.loginOptions.ldap.supported) {
           this.loginForm.authType = '1'
         }
+        await this.loadCaptchaData()
       }
       // console.log('loginOptions: %s', JSON.stringify(this.loginOptions))
+    },
+    async loadCaptchaData() {
+      this.countdownCounter = this.countdown(10)
+      if (this.loginOptions.consoleLoginWithCaptcha) {
+        const res = await getCaptchaData()
+        if (res.ok) {
+          this.captchaData = res.data
+        }
+      }
     },
     authTypeChange(label) {
       localStorage.setItem('authType', label)
@@ -308,6 +376,33 @@ $light_gray:#eee;
     padding: 15px 35px 0;
     margin: 0 auto;
     overflow: hidden;
+
+    .captcha {
+      display: flex;
+      height: 40px;
+      -webkit-box-orient: horizontal;
+      -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+      flex-direction: row;
+
+      .captchaImage {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .refresh-icon {
+        display: flex;
+        width: 50px;
+        height: 40px;
+        align-items: center;
+        justify-content: center;
+        background: #060a10;
+        border-radius: 5px;
+        font-size: 25px;
+        color: #fbfbfb;
+      }
+    }
   }
 
   .tips {

@@ -13,6 +13,7 @@ const IGNORE_URLS = {
   'POST:/wolf/user/login': true,
   // 'POST:/wolf/user/logout': true,
   'GET:/wolf/user/loginOptions': true,
+  'GET:/wolf/captcha': true,
 }
 
 function needCheckToken(ctx) {

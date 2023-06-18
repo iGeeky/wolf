@@ -87,6 +87,7 @@ const zhcn = {
 
     'loginPromptUsername': '用户名',
     'loginPromptPassword': '密码',
+    'loginPromptCaptcha': '验证码',
     'loginPromptLoginForm': '控制台登录',
     'loginPromptStandardLogin': '标准登录',
 
@@ -248,6 +249,7 @@ const zhcn = {
 
       'ERR_USERNAME_MISSING': '缺少用户名',
       'ERR_PASSWORD_MISSING': '缺少密码',
+      'ERR_CAPTCHA_INVALID': '验证码错误',
       'ERR_APPID_NOT_FOUND': 'Appid不存在',
       'ERR_USER_NOT_FOUND': '用户不存在',
       'ERR_PASSWORD_ERROR': '密码错误',
