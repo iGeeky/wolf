@@ -2,11 +2,10 @@
 
 ## Introduction
 
-Wolf is a universal Role-Based Access Control (RBAC) system, designed to provide unified authorization and access control for all HTTP applications. 
+Wolf is a versatile Role-Based Access Control (RBAC) authority system, suitable for all HTTP applications, offering unified authorization and access control functionalities.
 
-Every company usually has different backend services and management systems, each with their own account system and permission management module, leading to repeated development and resource waste. Additionally, the lack of a unified account number can cause administrative confusion, especially when systems are developed by different teams.
+It addresses the common issue within companies where various backend services and their corresponding management interfaces have disparate account systems and authority modules. This redundancy leads to resource wastage and management disarray, particularly when different teams develop these systems. Wolf enables a consolidated account and authorization management across diverse platforms and systems without necessitating any modifications to existing systems.
 
-However, with Wolf, a variety of platforms and systems can benefit from a unified account number and authorization, without the need for additional development work.
 
 ## Community
 
@@ -16,51 +15,52 @@ However, with Wolf, a variety of platforms and systems can benefit from a unifie
 
 ## Features
 
-- Language-independent: Wolf can be used with any HTTP program, including but not limited to: pure static web pages, JSP, PHP, ASP, Python, Node.js, and other web systems.
-- Low coupling and non-intrusive: Wolf supports new applications without any modifications or changes to the application, and it manages resource rights at the proxy level.
-- Management backend (`Console Module`) for managing `Applications`, `Users`, `Roles`, `Permissions`, and `Resources`.
-- Supports `OAuth 2.0` authorization and can be easily used as an authentication source by other applications.
-- Supports two types of user authentication: password authentication and `LDAP` authentication.
-- Supports `RESTful` interfaces and also supports pure HTML applications for backend rendering.
-- Supports access logging and querying for auditing.
-- Rich test cases with over 90% code line coverage.
-- Supports `PostgreSQL` and `MySQL` databases.
-- APISIX gateway support [Apache APISIX: Wolf-RBAC](https://github.com/apache/incubator-apisix/blob/master/doc/plugins/wolf-rbac-cn.md)
-- The system has three main modules:
-  * Wolf-Server: implements service and management backend functionality.
-  * Wolf-Console: implements the frontend code for the management backend.
-  * Wolf-Agent: implements the RBAC access check agent.
-- The system contains the following entity objects:
-  * `Application`: supports multiple applications. Different applications can have different permissions, roles, and resources. You can view the RBAC object relationship diagram under the application.
-  * `User`: shared by all applications. Objects that can be authorized for users include:
-    * Administrator privileges: users set as administrators can log in to the "Console" to manage the backend and manage the application.
-    * Application list: can assign zero to multiple applications to a user. The meaning of the application list varies depending on the type of user:
-      * For administrative users, these applications can be managed.
-      * For non-administrative users, these applications can be accessed and used.
-    * Roles: multiple roles can be assigned to the user, and the permissions the user ends up with are a collection of permissions from all roles.
-    * Permission: the system can assign permissions directly to users. Although this approach is not usually supported in standard RBAC models, Wolf supports it.
-  * `Role`: can contain a set of permissions.
-  * `Category`: is a way to classify (group) permissions for easy management, usually by large functional modules. In the system's Permissions selection box, permissions will be grouped by category.
-  * `Permission`: is a one-to-many relationship with resources, where one resource can have one permission or multiple resources can use the same permission.
-  * `Resource`: Currently, it mainly handles HTTP requests. The unique resource is determined by the `Match Type`, `Name`, and `Action` properties. The four most important groups of a resource are:
-    * `Match Type`: URL match type, supports three types: `equals match`, `suffix match`, and `prefix match`.
-    * `Name`: Refers to the requested HTTP URL. If it's an `equals match` or `prefix match`, it usually starts with `/`. If it's a `suffix match`, it's usually a common resource suffix, such as `.jpg`, `.js`, *no wildcards or regulars are supported*.
-    * `Action`: Refers to the requested `HTTP Method`. The method `ALL` matches all methods.
-    * `Permission`: Specifies the permissions required to access the resource. There are two built-in permissions: `Allow All` means that all users have access, and `Deny All` means that all users cannot access.
-  * `Audit Log`: An audit log that records all accesses to the system (including `Wolf-Console` and applications managed by the system). The following key information is recorded:
-    * User ID, User Name, User Nickname
-    * Access date, time, and IP of the visitor
-    * HTTP method and URL
-    * Match on resources
-    * The status code of the access response
-    * Request args parameter or request body (only `Wolf-Console` records are supported).
-* The resource matching method supports different priorities, with the following priority rules:
-  * `Match Type` priority from high to low: `equals match`, `suffix match`, `prefix match`.
-  * `Action` means `HTTP Method`. `ALL` has lower priority. Other methods (such as `GET`, `POST`, `PUT`) have the same priority, but all have higher priority than `ALL`.
-  * `Name` means `HTTP URL`. The priority is related to the URL length. The longer the URL, the higher the priority.
+- **Language Independent**: Compatible with any HTTP-enabled application, including static web pages, JSP, PHP, ASP, Python, Node.js, and other web systems.
+- **Low Coupling & Non-intrusive**: Facilitates the integration of new applications without requiring modifications, managing resource permissions at a proxy layer.
+- **Integrated Management Console** (`console` module): Manages applications, users, roles, permissions, and resources.
+- **OAuth 2.0 Support**: Enables login with Wolf account for seamless application integration.
+- **Dual Authentication Modes**: Supports password and LDAP authentication.
+- **Comprehensive Application Support**: Accommodates Restful interfaces and purely HTML applications rendered on the backend.
+- **Access Logging**: Facilitates auditing and troubleshooting through detailed access logs.
+- **Extensive Testing**: Code coverage exceeding 90%.
+- **Database Compatibility**: Works with PostgreSQL and MySQL.
+- **APISIX Gateway Support**: Integrates with [Apache APISIX: Wolf-RBAC](https://github.com/apache/apisix/blob/master/docs/en/latest/plugins/wolf-rbac.md)
+- The system encompasses three primary modules:
+  * `Wolf-Server`: Implements service and backend functionalities.
+  * `Wolf-Console`: Frontend code for management.
+  * `Wolf-Agent`: Access Check proxy for RBAC.
+- Entity Objects in the System:
+  * **Applications**: Supports multiple applications with distinct permissions, roles, and resources, and enables visualization of RBAC object relationship charts.
+  * **Users**: A unified user base across the entire system. User-specific authorizations include:
+    * **Administrator Permissions**: Administrators can log into the **Console** for backend management and oversee applications.
+    * **Application List**: Users can be associated with a variety of applications. For administrators, this means management capabilities; for non-administrators, this implies login and usage rights.
+    * **Roles**: Users can be assigned multiple roles, accumulating a comprehensive set of permissions from each role.
+    * **Permissions**: Direct permission assignments are possible, deviating from typical RBAC models to enhance flexibility.
+  * **Roles**: Encompasses a collection of permissions, structuring user access and capabilities.
+  * **Permission Categories**: Organizes permissions into manageable groups, typically aligned with major functional modules for easier navigation and assignment.
+  * **Permission**: Establishes a one-to-many relationship with resources, allowing singular or shared permissions across multiple resources.
+  * **Resources**: Primarily associated with HTTP requests, characterized by a unique combination of **match type**, **name**, and **action**. Key attributes include:
+    * **Match Type**: Defines how URLs are matched, including exact, suffix, and prefix matching methods.
+    * **Name**: The specific HTTP URL, with conventions based on the match type.
+    * **Action**: The HTTP method applicable, with **ALL** encompassing all methods.
+    * **Permission**: Refers to the permissions required to access a resource. The system has two built-in permissions: **Allow All** means all users can access, **Deny All** means no user can access.
+  * **Audit Log**: A comprehensive record of all system interactions, including user details, access metrics, and resource matches, supporting robust auditing and issue tracing.
+* The resource matching method accommodates various priorities, governed by the following set of rules:
+  * **Match Type Priority**: The order of priority for match types is as follows:
+    * **Equals Match**: This type holds the highest priority.
+    * **Suffix Match**: Ranked next in priority, focusing on URL suffixes.
+    * **Prefix Match**: The lowest in priority, emphasizing URL prefixes.
+  * **Action** (Representing HTTP Method):
+    * The term 'Action' corresponds to the HTTP Method used.
+    * **ALL**: This method is given the lowest priority among the HTTP methods.
+    * **Specific Methods** (e.g., GET, POST, PUT): These methods share an equal level of priority, each ranking higher than the 'ALL' method.
+  * **Name** (Indicating HTTP URL):
+    * 'Name' refers to the HTTP URL.
+    * The priority is based on URL length; a longer URL signifies a higher priority.
 
 
-**Note: The URL in this article refers only to the path section of the URL standard, not the domain name, port, and parameters section.**
+
+**Note: The URL references herein are confined to the path component of the standard URL structure, excluding domain, port, and parameter details**
 
 ## Architecture
 
@@ -75,11 +75,11 @@ However, with Wolf, a variety of platforms and systems can benefit from a unifie
 
 ## Technologies
 
-- Server: NodeJS, KOA, Sequelize, JWT
-- Console: VueJS, Element, Babel, NodeJS
-- Agent: OpenResty (ngx_lua)
-- Database: PostgreSQL
-- Cache: Redis
+- **Server**: Utilizes NodeJS, KOA, Sequelize, JWT
+- **Console**: Employs VueJS, Element, Babel, NodeJS
+- **Agent**: Powered by OpenResty(ngx_lua)
+- **Database**: Supports PostgreSQL.
+- **Cache**: Incorporates Redis.
 
 
 
