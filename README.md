@@ -1,4 +1,5 @@
 [Chinese](README-CN.md)
+[Japanese](README-JA.md)
 
 ## Introduction
 
