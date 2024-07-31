@@ -1,18 +1,11 @@
-[Chinese](README-CN.md)
-[Japanese](README-JA.md)
+[中文](README-CN.md)
+[日本語（にほんご）](README-JA.md)
 
 ## Introduction
 
 Wolf is a versatile Role-Based Access Control (RBAC) authority system, suitable for all HTTP applications, offering unified authorization and access control functionalities.
 
 It addresses the common issue within companies where various backend services and their corresponding management interfaces have disparate account systems and authority modules. This redundancy leads to resource wastage and management disarray, particularly when different teams develop these systems. Wolf enables a consolidated account and authorization management across diverse platforms and systems without necessitating any modifications to existing systems.
-
-
-## Community
-
-- QQ Group: 85892505
-
-
 
 ## Features
 

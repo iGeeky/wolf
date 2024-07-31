@@ -1,5 +1,5 @@
 [English](README.md)
-[Japanese](README-JA.md)
+[日本語（にほんご）](README-JA.md)
 
 ## Introductions
 
@@ -13,9 +13,7 @@ Wolf系统可以应用于各种平台和系统之上，实现统一的账号和�
 
 * QQ群: 85892505
 
-
 ## Features
-
 
 * 语言无关：任何HTTP程序都可以使用，包括但不限于纯静态网页、JSP、PHP、ASP、Python、Node.js等Web系统。
 * 低耦合、无侵入性：支持新的应用接入时无需对应用进行任何修改或改造，系统在代理层对资源权限进行管理。
