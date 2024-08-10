@@ -161,7 +161,7 @@ class Rbac extends RbacPub {
 
     const returnTo = this.getArg('return_to', '/')
 
-    const maxAge = config.tokenExpireTime * 1000;
+    const maxAge = config.rbacTokenExpireTime * 1000;
     this.ctx.cookies.set('x-rbac-token', res.token,
       {
         maxAge: maxAge,
@@ -194,6 +194,11 @@ class Rbac extends RbacPub {
   async noPermission() {
     const args = this.getArgs();
     this.log4js.info('---- no permission args: %s', JSON.stringify(args))
+    let username = args.username; // 使用 let 代替 const
+    if (!username) {
+      username = '-';
+      args.username = username;
+    }
     await this.ctx.render('no_permission', args)
   }
 
@@ -206,7 +211,7 @@ class Rbac extends RbacPub {
     const token = this._getClientToken()
     await this.tokenDelete(token)
     this.log4js.info('-------- %s logout --------', JSON.stringify(userInfo))
-    const maxAge = config.tokenExpireTime * 1000;
+    const maxAge = config.rbacTokenExpireTime * 1000;
     this.ctx.cookies.set(
       'x-rbac-token', 'logouted',
       {
