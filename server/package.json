@@ -26,6 +26,7 @@
     "koa-views": "^8.0.0",
     "koa2-cors": "^2.0.6",
     "ldap-authentication": "^2.2.9",
+    "ldapjs": "^3.0.7",
     "lodash": "^4.17.21",
     "log4js": "^6.4.7",
     "md5": "^2.3.0",

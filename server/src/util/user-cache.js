@@ -8,14 +8,43 @@ const log4js = require('./log4js')
 const keyPrefix = 'wolfuser:'
 const userCache = new WolfCache(keyPrefix)
 
-
-async function getUserInfoFromDbById(userId, appId) {
-  let userInfo = await UserModel.findByPk(userId);
+async function getUserInfoFromDbByName(username) {
+  let userInfo = await UserModel.findOne({where: {username}})
   if (!userInfo) {
-    log4js.error('getUserInfoFromDbById(userId:%d, appId:%d) failed! not found', userId, appId)
+    log4js.error('getUserInfoFromDbByName(username:%s) failed! not found', username)
     return null;
   }
-  userInfo = userInfo.toJSON()
+  return userInfo.toJSON()
+}
+
+async function getUserInfoByName(username) {
+  const key = `${keyPrefix}:n:${username}`
+  let userInfo = await userCache.get(key);
+  if (userInfo) {
+    if (userInfo === '#') {
+      userInfo = undefined
+    }
+    return {userInfo, cached: 'hit'}
+  }
+  userInfo = await getUserInfoFromDbByName(username)
+  if (!userInfo) {
+    await userCache.set(key, '#')
+    return {}
+  }
+  await userCache.set(key, userInfo)
+  // This userInfo is not have permIDs and roleIDs, can not be used for rbac check
+  return {userInfo, cached: 'miss'}
+}
+
+async function getUserInfoFromDbById(userId, appId, userInfo=null) {
+  if (!userInfo) {
+    userInfo = await UserModel.findByPk(userId);
+    if (!userInfo) {
+      log4js.error('getUserInfoFromDbById(userId:%d, appId:%d) failed! not found', userId, appId)
+      return null;
+    }
+    userInfo = userInfo.toJSON()
+  }
 
   const permissions = {}
   userInfo.permissions = permissions;
@@ -53,7 +82,7 @@ async function getUserInfoFromDbById(userId, appId) {
 }
 
 
-async function getUserInfoById(userId, appId) {
+async function getUserInfoById(userId, appId, originUserInfo=null) {
   const key = `${keyPrefix}:${userId}-${appId}`
   let userInfo = await userCache.get(key);
   if (userInfo) {
@@ -62,7 +91,7 @@ async function getUserInfoById(userId, appId) {
     }
     return {userInfo, cached: 'hit'}
   }
-  userInfo = await getUserInfoFromDbById(userId, appId)
+  userInfo = await getUserInfoFromDbById(userId, appId, originUserInfo)
   if (!userInfo) {
     await userCache.set(key, '#')
     return {}
@@ -87,3 +116,4 @@ async function flushUserCacheByID(userId, appId){
 exports.getUserInfoById = getUserInfoById;
 exports.flushUserCache = flushUserCache;
 exports.flushUserCacheByID = flushUserCacheByID;
+exports.getUserInfoByName = getUserInfoByName;
