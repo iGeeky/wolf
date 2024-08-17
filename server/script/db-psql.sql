@@ -1,4 +1,3 @@
-
 -- you can change the password on initial the database.
 /**
 CREATE USER wolfroot WITH PASSWORD '123456';
@@ -111,6 +110,9 @@ CREATE TABLE "resource" (
   priority bigint DEFAULT 0,
   action text DEFAULT 'ALL',
   perm_id text,
+  hosts text[],
+  remote_addrs text[],
+  exprs text[],
   create_time bigint NOT NULL,
   update_time bigint NOT NULL,
   primary key(id)
@@ -123,9 +125,13 @@ COMMENT ON COLUMN resource.match_type IS 'The name match type, includes the foll
 1. equal, equal match
 2. suffix, suffix matching
 3. prefix, prefix matching (maximum matching principle)
+4. radixtree, radixtree matching
 When matching, equal matches first, if not matched,
-Use suffix match, then prefix';
+Use suffix match, then prefix. radixtree is incompatible with other types and uses its own matching algorithm.';
 COMMENT ON COLUMN resource.action IS 'for http resource, action is http method: GET, HEAD, POST, OPTIONS, DELETE, PUT, PATCH, ALL means includes all.';
+COMMENT ON COLUMN resource.hosts IS 'Array of host names for which this resource is valid';
+COMMENT ON COLUMN resource.remote_addrs IS 'Array of remote addresses (IP or CIDR) allowed to access this resource';
+COMMENT ON COLUMN resource.exprs IS 'Array of expressions for additional matching conditions';
 
 
 CREATE TABLE "role" (

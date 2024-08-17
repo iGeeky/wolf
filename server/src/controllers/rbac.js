@@ -5,7 +5,7 @@ const UserModel = require('../model/user')
 const ApplicationModel = require('../model/application')
 const constant = require('../util/constant')
 const util = require('../util/util')
-const userCache = require('../util/user-cache')
+const userCache = require('../service/user-cache')
 const {ldapOptions} = require('./helper')
 
 
@@ -178,10 +178,11 @@ class Rbac extends RbacPub {
     const appID = this.ctx.appid || this.getRequiredStringArg('appID');
     const action = this.getRequiredStringArg('action')
     const resName = this.getRequiredStringArg('resName')
+    const query = this.getObjectArg('query')
 
     const userInfo = this.ctx.userInfo
     try {
-      await this._accessCheckInternal(userInfo, appID, action, resName)
+      await this._accessCheckInternal(userInfo, appID, action, resName, query)
     } finally {
       try{
         this._writeAccessLog();

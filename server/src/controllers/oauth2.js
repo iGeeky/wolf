@@ -11,7 +11,7 @@ const OAuthError = OAuth2Server.OAuthError;
 const ServerError = OAuth2Server.ServerError;
 const InvalidTokenError = OAuth2Server.InvalidTokenError;
 const tokenUtil = require('../util/token-util')
-const userCache = require('../util/user-cache')
+const userCache = require('../service/user-cache')
 
 const oauthTokenFields = ["client_id","user_id","access_token","refresh_token","token_type","expires_in"]
 
@@ -201,9 +201,10 @@ class OAuth2 extends RbacPub {
       const appID = this.ctx.appid
       const action = this.getRequiredStringArg('action')
       const resName = this.getRequiredStringArg('resName')
+      const query = this.getObjectArg('query')
       const userInfo = this.ctx.userInfo
       try {
-        await this._accessCheckInternal(userInfo, appID, action, resName)
+        await this._accessCheckInternal(userInfo, appID, action, resName, query)
       } finally {
         try{
           this._writeAccessLog();

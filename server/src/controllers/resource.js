@@ -1,13 +1,14 @@
 const BasicService = require('./basic-service')
 const ResourceModel = require('../model/resource')
-const resourceCache = require('../util/resource-cache')
+const resourceCache = require('../service/resource-cache')
 const constant = require('../util/constant')
 const util = require('../util/util')
 const {like} = require('../util/op-util')
 const Op = require('sequelize').Op;
 const errors = require('../errors/errors')
 const _ = require('lodash')
-const resourceFields = ['id', 'appID', 'matchType', 'name', 'priority', 'action', 'permID', 'createTime'];
+const config = require('../../conf/config')
+const resourceFields = ['id', 'appID', 'matchType', 'name', 'priority', 'action', 'permID', 'hosts', 'remoteAddrs', 'exprs', 'createTime'];
 
 
 function getPriority(values) {
@@ -31,6 +32,15 @@ class Resource extends BasicService {
   constructor(ctx) {
     super(ctx, ResourceModel)
   }
+
+  _getMatchTypeEnums() {
+    if (config.rbacAccessCheckByRadixTree) {
+      return ['radixtree']
+    } else {
+      return [constant.MatchType.equal, constant.MatchType.suffix, constant.MatchType.prefix]
+    }
+  }
+
   async log(bizMethod) {
     if (bizMethod === 'post' || bizMethod === 'put' || bizMethod === 'delete') {
       this.log4js.info('---- url: %s, method: %s, flush resource cache ----', this.url, bizMethod)
@@ -68,10 +78,13 @@ class Resource extends BasicService {
   async post() {
     const fieldsMap = {
       appID: {type: 'string', required: true},
-      matchType: {type: 'string', required: true, enums: [constant.MatchType.equal, constant.MatchType.suffix, constant.MatchType.prefix]},
+      matchType: {type: 'string', required: true, enums: this._getMatchTypeEnums()},
       name: {type: 'string', required: true},
       action: {type: 'string', required: true, enums: ['ALL', 'GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'OPTIONS', 'PATCH']},
       permID: {type: 'string', required: true},
+      hosts: {type: 'array'},
+      remoteAddrs: {type: 'array'},
+      exprs: {type: 'array'},
     }
 
     const values = this.getCheckedValues(fieldsMap)
@@ -90,10 +103,13 @@ class Resource extends BasicService {
 
   async put() {
     const fieldsMap = {
-      matchType: {type: 'string', required: true, enums: [constant.MatchType.equal, constant.MatchType.suffix, constant.MatchType.prefix]},
+      matchType: {type: 'string', required: true, enums: this._getMatchTypeEnums()},
       name: {type: 'string', required: true},
       action: {type: 'string', required: true, enums: ['GET', 'HEAD', 'POST', 'OPTIONS', 'DELETE', 'PUT', 'PATCH', 'ALL']},
       permID: {type: 'string', required: true},
+      hosts: {type: 'array'},
+      remoteAddrs: {type: 'array'},
+      exprs: {type: 'array'},
     }
     const id = this.getRequiredArg('id')
     const values = this.getCheckedValues(fieldsMap)
@@ -117,7 +133,66 @@ class Resource extends BasicService {
   async deleteByAppId() {
     await this.deleteBy(['appID'])
   }
+
+  async upgradeMatchTypeToRadixTree() {
+    if (!config.rbacAccessCheckByRadixTree) {
+      this.log4js.info('rbacAccessCheckByRadixTree(RBAC_ACCESS_CHECK_BY_RADIX_TREE) is not set, skipping upgrade');
+      this.fail(400, 'rbacAccessCheckByRadixTree is false, skipping upgrade');
+      return;
+    }
+    const resources = await ResourceModel.findAll();
+    const currentTime = util.unixtime();
+    let upgradedCount = 0;
+    for (const resource of resources) {
+      if (resource.matchType !== constant.MatchType.radixtree) {
+        let newName = resource.name;
+
+        switch (resource.matchType) {
+          case constant.MatchType.equal:
+            // 直接修改matchType，不改变name
+            break;
+          case constant.MatchType.suffix:
+            newName = '**' + newName;
+            break;
+          case constant.MatchType.prefix:
+            newName = newName + '**';
+            break;
+        }
+
+        // 更新资源记录
+        await ResourceModel.update(
+          {
+            matchType: constant.MatchType.radixtree,
+            name: newName,
+            updateTime: currentTime
+          },
+          {
+            where: { id: resource.id }
+          }
+        );
+
+        this.log4js.info(`Upgraded resource: ${resource.id} from ${resource.matchType} to radixtree. New name: ${newName}`);
+        upgradedCount++;
+      }
+    }
+
+    this.log4js.info('Finished upgrading resources to radixtree');
+    await resourceCache.initRadixTreeCache();
+    this.success({message: `Finished upgrading resources to radixtree, upgraded count: ${upgradedCount}`});
+  }
+
+  async flushCache() {
+    await resourceCache.flushCacheImmediately();
+    this.success({message: 'Flushed resource cache'});
+  }
+
+  async options() {
+    const data = {
+      rbacAccessCheckByRadixTree: config.rbacAccessCheckByRadixTree,
+    }
+    this.success(data)
+  }
+
 }
 
 module.exports = Resource
-

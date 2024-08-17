@@ -9,6 +9,8 @@ const config = {
   memCacheTTLSecond: 600,
   memCacheByRedis: (process.env.MEM_CACHE_BY_REDIS || 'no') === 'yes',
   clientChangePassword: (process.env.CLIENT_CHANGE_PWD || 'yes') === 'yes',
+  rbacAccessCheckByRadixTree: (process.env.RBAC_ACCESS_CHECK_BY_RADIX_TREE || 'no') === 'yes',
+  rbacInitRadixTreeInitDelay: parseFloat(process.env.RBAC_INIT_RADIX_TREE_INIT_DELAY) || 0.1,
   database: {
     url: process.env.RBAC_SQL_URL || 'postgres://wolfroot:123456@127.0.0.1:5432/wolf',
   },

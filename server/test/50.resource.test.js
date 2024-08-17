@@ -1,4 +1,3 @@
-
 const mocha = require('./util/mocha')
 const util = require('./util/util')
 
@@ -54,8 +53,14 @@ let resource = null;
 describe('resource', function() {
   const appID = 'test-app-id-for-resource'
   const appIDs = [appID]
+  let addResource = null;
+  let updateResource = null;
 
   before(async function() {
+    const rbacAccessCheckByRadixTree = await util.getRbacAccessCheckByRadixTree(headers)
+    const resourceOpFuncs = util.getResourceOpFuncs(rbacAccessCheckByRadixTree)
+    addResource = resourceOpFuncs.addResource
+    updateResource = resourceOpFuncs.updateResource
     for (let appID of appIDs) {
       const application = {id: appID, name: appID, description: ''}
       await util.addApplication(application, headers)
@@ -63,12 +68,9 @@ describe('resource', function() {
   });
 
   /*
-  * `Match Type`优先级从高到低, 依次是: 精确匹配, 后缀匹配, 前缀匹配.
   * `Action` 即`HTTP Method`.  `ALL`优先级比较低, 其它方法(如`GET`, `POST`, `PUT`)优先级相同, 但都比`ALL`高.
   * `Name` 即`HTTP URL`.  优先级与URL长度有关, URL越长优先级越高.
   */
-  const resources = [ ]
-  const matchTypes = ['equal', 'suffix', 'prefix']
   const actions = ['ALL', 'GET', 'POST', 'PUT']
   function getNames(matchType) {
     let names = null;
@@ -80,6 +82,8 @@ describe('resource', function() {
     return names
   }
 
+  // matchTypes 优先级从高到低, 依次是: 精确匹配, 后缀匹配, 前缀匹配.
+  const matchTypes = ['equal', 'suffix', 'prefix']
   it('add', async function() {
     this.timeout(1000 * 40);
 
@@ -92,13 +96,13 @@ describe('resource', function() {
 
     const body = {appID, matchType, name, action, permID}
     const url = '/wolf/resource';
-    const res = await mocha.post({url, headers, body, schema})
+    const res = await addResource(url, headers, body, schema)
     resource = res.body.data.resource;
 
     // add second
+    body.matchType = matchType
     body.name = '/default/02'
-    await mocha.post({url, headers, body, schema})
-
+    await addResource(url, headers, body, schema)
 
     for (let i=0; i < matchTypes.length; i++) {
       const matchType = matchTypes[i];
@@ -111,12 +115,11 @@ describe('resource', function() {
           // add permission for test
           await mocha.post({url: '/wolf/permission', headers, body: {id: permID, name: permID, appID}})
           const body = {appID, matchType, name, action, permID}
-          await mocha.post({url, headers, body, schema})
+          await addResource(url, headers, body, schema)
         }
       }
     }
   });
-
 
   it('add success, permission: ALLOW_ALL', async function() {
     const schema = getAddResponseSchema()
@@ -126,7 +129,7 @@ describe('resource', function() {
     const permID = 'ALLOW_ALL'
     const body = {appID, matchType, name, action, permID}
     const url = '/wolf/resource';
-    await mocha.post({url, headers, body, schema})
+    await addResource(url, headers, body, schema)
   });
 
   it('add success, permission: DENY_ALL', async function() {
@@ -137,7 +140,7 @@ describe('resource', function() {
     const permID = 'DENY_ALL'
     const body = {appID, matchType, name, action, permID}
     const url = '/wolf/resource';
-    await mocha.post({url, headers, body, schema})
+    await addResource(url, headers, body, schema)
   });
 
   it('add failed, appID not found', async function() {
@@ -150,7 +153,7 @@ describe('resource', function() {
 
     const body = {appID: 'not-exist-app-id', matchType, name, action, permID}
     const url = '/wolf/resource';
-    await mocha.post({url, headers, body, status: 400, schema})
+    await addResource(url, headers, body, schema, 400)
   });
 
   it('add failed, resource exists', async function() {
@@ -162,7 +165,7 @@ describe('resource', function() {
 
     const body = {appID, matchType, name, action, permID}
     const url = '/wolf/resource';
-    await mocha.post({url, headers, body, status: 400, schema})
+    await addResource(url, headers, body, schema, 400)
   });
 
   it('add failed, permission id not found', async function() {
@@ -173,9 +176,8 @@ describe('resource', function() {
     const permID = 'not-exist-perm-id'
     const body = {appID, matchType, name, action, permID}
     const url = '/wolf/resource';
-    await mocha.post({url, headers, body, status: 400, schema})
+    await addResource(url, headers, body, schema, 400)
   });
-
 
   it('update', async function() {
     if (!resource) {
@@ -189,7 +191,7 @@ describe('resource', function() {
     const permID = 'PERM_DEFAULT'
     const body = {id, matchType, name, action, permID}
     const url = '/wolf/resource';
-    await mocha.put({url, headers, body, schema})
+    await updateResource(url, headers, body, schema)
   });
 
   it('update failed, id not found', async function() {
@@ -201,7 +203,7 @@ describe('resource', function() {
     const permID = 'PERM_DEFAULT'
     const body = {id, matchType, name, action, permID}
     const url = '/wolf/resource';
-    await mocha.put({url, headers, body, status: 400, schema})
+    await updateResource(url, headers, body, schema, 400)
   });
 
   it('update failed, resource exists', async function() {
@@ -213,7 +215,7 @@ describe('resource', function() {
     const permID = 'PERM_DEFAULT'
     const body = {id, matchType, name, action, permID}
     const url = '/wolf/resource';
-    await mocha.put({url, headers, body, status: 400, schema})
+    await updateResource(url, headers, body, schema, 400)
   });
 
   it('update failed, permission id not found', async function() {
@@ -225,7 +227,7 @@ describe('resource', function() {
     const permID = 'not-exist-perm-id'
     const body = {id, matchType, name, action, permID}
     const url = '/wolf/resource';
-    await mocha.put({url, headers, body, status: 400, schema})
+    await updateResource(url, headers, body, schema, 400)
   });
 
   it('list', async function() {

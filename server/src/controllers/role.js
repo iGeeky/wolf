@@ -1,6 +1,6 @@
 const BasicService = require('./basic-service')
 const RoleModel = require('../model/role')
-const userCache = require('../util/user-cache')
+const userCache = require('../service/user-cache')
 const UserRoleModel = require('../model/user-role')
 const AccessDenyError = require('../errors/access-deny-error')
 const util = require('../util/util')

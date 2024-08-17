@@ -3,7 +3,7 @@ const UserRoleModel = require('../model/user-role')
 const AccessDenyError = require('../errors/access-deny-error')
 const constant = require('../util/constant')
 const util = require('../util/util')
-const userCache = require('../util/user-cache')
+const userCache = require('../service/user-cache')
 const userRoleFields = ['userID', 'appID', 'permIDs', 'roleIDs', 'createTime'];
 
 function getDefaultUserRole(userId, appId) {

@@ -1,4 +1,3 @@
-
 -- you can change the password on initial the database.
 /**
 create database `wolf` CHARACTER SET utf8mb4;
@@ -80,19 +79,22 @@ CREATE TABLE `resource` (
 1. equal, equal match
 2. suffix, suffix matching
 3. prefix, prefix matching (maximum matching principle)
+4. radixtree, radixtree matching
 When matching, equal matches first, if not matched,
-Use suffix match, then prefix',
+Use suffix match, then prefix. radixtree is incompatible with other types and uses its own matching algorithm.',
   name varchar(256) NOT NULL,
   name_len smallint DEFAULT 0,
   priority bigint DEFAULT 0,
   action varchar(16) NOT NULL comment 'for http resource, action is http method: GET, HEAD, POST, OPTIONS, DELETE, PUT, PATCH, ALL means includes all.',
   perm_id varchar(64),
+  hosts text,
+  remote_addrs text,
+  exprs text,
   create_time bigint NOT NULL,
   update_time bigint NOT NULL,
   primary key(id),
   unique key(app_id,`match_type`,`name`, action)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
-
 
 
 CREATE TABLE `role` (
@@ -179,4 +181,3 @@ CREATE TABLE oauth_token (
   unique key(refresh_token),
   index(user_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
-

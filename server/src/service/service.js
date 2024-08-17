@@ -1,8 +1,8 @@
 
-const log4js = require('./log4js')
-const ArgsUtil = require('./args-util')
-const Sequelize = require('./sequelize')
-const json = require('./ok-json')
+const log4js = require('../util/log4js')
+const ArgsUtil = require('../util/args-util')
+const Sequelize = require('../util/sequelize')
+const json = require('../util/ok-json')
 const errors = require('../errors/errors')
 const config = require('../../conf/config')
 

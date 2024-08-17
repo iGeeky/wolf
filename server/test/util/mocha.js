@@ -5,8 +5,12 @@ const json = require('./json')
 const schemaGen = require('./schema-gen')
 const argv = require('minimist')(process.argv.slice(2));
 
+// ... 其他导入 ...
+const { startServer } = require('../../app.js')
+
 let request = null;
 let server = null;
+let serverInst = null;
 
 // --server 'http://127.0.0.1:12180'
 if (argv.server) { // remote mode. access by chai-http
@@ -19,7 +23,21 @@ if (argv.server) { // remote mode. access by chai-http
   if (!process.env.PORT) {
     process.env.PORT = 12386;
   }
-  server = require('../../app.js')
+  
+  // 在测试开始前启动服务器
+  before(async function() {
+    this.timeout(5000); // 增加超时时间，以防服务器启动较慢
+    serverInst = await startServer();
+  });
+
+  // 在测试结束后关闭服务器
+  after(function(done) {
+    if (serverInst) {
+      serverInst.close(done);
+    } else {
+      done();
+    }
+  });
 }
 
 function isArray(value) {
@@ -50,7 +68,7 @@ async function httpRequest(method, url, headers, args, body) {
   } else {
     data = body;
   }
-  const req = request(server)[method](url)
+  const req = request(serverInst)[method](url)
   setHeaders(req, headers)
   let res = {}
   if (method === 'get' && args) {

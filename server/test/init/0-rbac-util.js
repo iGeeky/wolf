@@ -14,7 +14,14 @@ function rbacInit(data, userPassword, opts={}) {
   const headers = util.adminHeaders()
   let application = null;
   let ignore = false;
+  let addResource = null;
   const categoryMap = {}
+  before(async function() {
+    const rbacAccessCheckByRadixTree = await util.getRbacAccessCheckByRadixTree(headers)
+    const resourceOpFuncs = util.getResourceOpFuncs(rbacAccessCheckByRadixTree)
+    addResource = resourceOpFuncs.addResource
+  });
+
   it('check exist', async function() {
     if(data.applications && data.applications.length > 0) {
       application = data.applications[0];
@@ -115,12 +122,13 @@ function rbacInit(data, userPassword, opts={}) {
     if (ignore || !application || !data.resources) {
       this.skip();
     }
-
+    const schema = util.okSchema({type: "object"})
     for (const resource of data.resources) {
       const url = '/wolf/resource';
       resource.appID = application.id;
-      await mocha.post({url, headers, body: resource})
+      await addResource(url, headers, resource, schema)
     }
+    await mocha.post({url: '/wolf/resource/flushCache', headers, body: {}})
   });
 }
 

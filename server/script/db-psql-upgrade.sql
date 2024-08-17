@@ -56,3 +56,15 @@ COMMENT ON COLUMN oauth_token.user_id IS 'ID of the user corresponding to client
 
 ALTER TABLE "user" ADD COLUMN auth_type smallint DEFAULT 1;
 COMMENT ON COLUMN "user".auth_type IS 'user authentication type, 1: password, 2: LDAP';
+
+-- upgrade to 0.6.x (radix router version)
+
+-- Add new columns to the resource table
+ALTER TABLE "resource" ADD COLUMN hosts text[];
+ALTER TABLE "resource" ADD COLUMN remote_addrs text[];
+ALTER TABLE "resource" ADD COLUMN exprs text[];
+
+-- Add comments for the new columns
+COMMENT ON COLUMN resource.hosts IS 'Array of host names for which this resource is valid';
+COMMENT ON COLUMN resource.remote_addrs IS 'Array of remote addresses (IP or CIDR) allowed to access this resource';
+COMMENT ON COLUMN resource.exprs IS 'Array of expressions for additional matching conditions';

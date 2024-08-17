@@ -14,6 +14,9 @@ const model = Sequelize.define('resource', {
   priority: { type: Seq.INTEGER },
   action: { type: Seq.TEXT },
   permID: { type: Seq.TEXT, field: 'perm_id' },
+  hosts: { type: Seq.ARRAY(Seq.TEXT) },
+  remoteAddrs: { type: Seq.ARRAY(Seq.TEXT), field: 'remote_addrs' },
+  exprs: { type: Seq.ARRAY(Seq.TEXT) },
   createTime: { type: Seq.INTEGER, field: 'create_time' },
   updateTime: { type: Seq.INTEGER, field: 'update_time' },
 }, {

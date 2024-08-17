@@ -1,9 +1,9 @@
 const config = require('../../conf/config')
 const UserModel = require('../model/user')
-const {WolfCache} = require('./wolf-cache')
+const {WolfCache} = require('../util/wolf-cache')
 const UserRoleModel = require('../model/user-role')
 const RoleModel = require('../model/role')
-const log4js = require('./log4js')
+const log4js = require('../util/log4js')
 
 const keyPrefix = 'wolfuser:'
 const userCache = new WolfCache(keyPrefix)

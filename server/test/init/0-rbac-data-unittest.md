@@ -110,7 +110,7 @@
 		* 403
 	* GET /v1/user/info
 		* 200
-	* GET /v1/user2
+	* GET /v1/user/2
 		* 200
 	* GET /v1/user/test.js
 		* 403

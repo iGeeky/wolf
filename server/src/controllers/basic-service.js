@@ -1,6 +1,6 @@
 const config = require('../../conf/config')
 const util = require('../util/util')
-const Service = require('../util/service')
+const Service = require('../service/service')
 const errors = require('../errors/errors')
 const UserModel = require('../model/user')
 const UserRoleModel = require('../model/user-role')

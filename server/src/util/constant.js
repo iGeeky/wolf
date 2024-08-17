@@ -18,6 +18,7 @@ const MatchType = {
   equal: 'equal',
   suffix: 'suffix',
   prefix: 'prefix',
+  radixtree: 'radixtree',
 }
 
 const AuthType = {

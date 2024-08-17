@@ -136,6 +136,54 @@ function getAdminLoginResponseSchema() {
   return schema
 }
 
+async function getRbacAccessCheckByRadixTree(headers) {
+  const res = await mocha.get({url: '/wolf/resource/options', headers})
+  const rbacAccessCheckByRadixTree = res.body.data.rbacAccessCheckByRadixTree
+  return rbacAccessCheckByRadixTree
+}
+
+function adjustNameForRadixTree(matchType, name) {
+  switch (matchType) {
+    case 'equal':
+      // 直接返回，不改变name
+      return name;
+    case 'suffix':
+      return '**' + name;
+    case 'prefix':
+      return name + '**';
+    default:
+      return name;
+  }
+}
+
+function getResourceOpFuncs(rbacAccessCheckByRadixTree) {
+  let addResource = async function (url, headers, body, schema, status=200) {
+    const res = await mocha.post({url, headers, body, schema, status})
+    return res
+  }
+  let updateResource = async function (url, headers, body, schema, status=200) {
+    const res = await mocha.put({url, headers, body, schema, status})
+    return res
+  }
+  if (rbacAccessCheckByRadixTree) {
+    // 如果rbacAccessCheckByRadixTree为true, 则需要将相应的测试用例变成radixtree模式.
+    addResource = async function (url, headers, body, schema, status=200) {
+      body.name = adjustNameForRadixTree(body.matchType, body.name);
+      body.matchType = 'radixtree';
+      const res = await mocha.post({url, headers, body, schema, status});
+      return res;
+    }
+
+    updateResource = async function (url, headers, body, schema, status=200) {
+      body.name = adjustNameForRadixTree(body.matchType, body.name);
+      body.matchType = 'radixtree';
+      const res = await mocha.put({url, headers, body, schema, status});
+      return res;
+    }
+  }
+  return {addResource, updateResource}
+}
+
 async function adminLoginInternal(headers, username, password) {
   const schema = getAdminLoginResponseSchema();
   const body = {'username': username, 'password': password}
@@ -248,3 +296,5 @@ exports.addApplication = addApplication;
 exports.deleteApplication = deleteApplication;
 exports.addPermission = addPermission;
 exports.deletePermission = deletePermission;
+exports.getRbacAccessCheckByRadixTree = getRbacAccessCheckByRadixTree;
+exports.getResourceOpFuncs = getResourceOpFuncs

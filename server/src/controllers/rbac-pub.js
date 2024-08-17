@@ -2,7 +2,7 @@ const config = require('../../conf/config')
 const BasicService = require('./basic-service')
 const UserModel = require('../model/user')
 const AccessLogModel = require('../model/access-log')
-const resourceCache = require('../util/resource-cache')
+const resourceCache = require('../service/resource-cache')
 const constant = require('../util/constant')
 const util = require('../util/util')
 
@@ -59,14 +59,40 @@ class RbacPub extends BasicService {
     AccessLogModel.create(values);
   }
 
-  async _accessCheckInternal(userInfo, appID, action, resName) {
-    const {resource, cached} = await resourceCache.getResource(appID, action, resName)
+  /**
+   * query contains:
+   *  args: the query string map
+   *  headers: the request headers
+   *  remoteAddr: the request remote address
+   */
+  async _accessCheckInternal(userInfo, appID, action, resName, query) {
+    let resource, cached;
+    if(config.rbacAccessCheckByRadixTree ) {
+      if (query === undefined) {
+        query = {}
+      }
+      query.method = action
+      query.path = resName
+      const resourceResult = await resourceCache.getResourceByRadixTree(appID, query)
+      resource = resourceResult.resource
+      cached = resourceResult.cached
+    } else {
+      const resourceResult = await resourceCache.getResource(appID, action, resName)
+      resource = resourceResult.resource
+      cached = resourceResult.cached
+    }
     if(resource) {
       resource.toString = function toString() {
         return JSON.stringify(this)
       }
     }
-    this.log4js.info('getResource({appID: %s, action: %s, resName: %s}) res: %s, cached: %s', appID, action, resName, resource, cached)
+
+    if (config.rbacAccessCheckByRadixTree) {
+      this.log4js.info('getResourceByRadixTree({appID: %s, query: %s}) res: %s, cached: %s', appID, query, resource, cached)
+    } else {
+      this.log4js.info('getResource({appID: %s, action: %s, resName: %s}) res: %s, cached: %s', appID, action, resName, resource, cached)
+    }
+
     const data = {userInfo: util.filterFieldWhite(userInfo, userFields)}
     if (resource) {
       this.ctx.resource = resource;
