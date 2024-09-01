@@ -151,7 +151,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style type="text/scss" scoped>
  .diagram {
   width: 100%;
   height: 100%;

@@ -475,7 +475,7 @@ export default {
     max-width: 600px;
   }
 </style>
-<style rel="stylesheet/scss" lang="scss" scoped>
+<style rel="stylesheet/scss" type="text/scss" scoped>
 #diagram .diagram-dialog {
   width: 80%;
   min-width: 900px;

@@ -1,5 +1,5 @@
 @mixin clearfix {
-  &:after {
+  &::after {
     content: "";
     display: table;
     clear: both;
@@ -28,7 +28,7 @@
 }
 
 @mixin pct($pct) {
-  width: #{$pct};
+  width: $pct * 1%;
   position: relative;
   margin: 0 auto;
 }
@@ -37,6 +37,7 @@
   $width: $width/2;
   $color-border-style: $height solid $color;
   $transparent-border-style: $width solid transparent;
+
   height: 0;
   width: 0;
 

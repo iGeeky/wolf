@@ -74,6 +74,7 @@ try {
   // app.use(router.allowedMethods())
   const port = parseInt(process.env.PORT, 10) || 12180
   instance = app.listen(port)
+  console.log('listen at 0.0.0.0:%s success!', port)
   log4js.info('listen at 0.0.0.0:%s success!', port)
 } catch (ex) {
   /* istanbul ignore next */

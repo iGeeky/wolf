@@ -26,7 +26,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style type="text/scss" scoped>
   .social-signup-container {
     margin: 20px 0;
     .sign-btn {

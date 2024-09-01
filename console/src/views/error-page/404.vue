@@ -32,7 +32,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style type="text/scss" scoped>
 .wscn-http404-container{
   transform: translate(-50%,-50%);
   position: absolute;

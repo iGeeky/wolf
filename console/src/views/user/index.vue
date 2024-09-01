@@ -363,7 +363,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style type="text/scss">
   .el-table .disabled-row {
     background: #ededef;
     color: #9e1433;

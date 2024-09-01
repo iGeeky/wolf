@@ -191,7 +191,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style type="text/scss" scoped>
 .tags-view-container {
   height: 34px;
   width: 100%;
@@ -259,8 +259,7 @@ export default {
 }
 </style>
 
-<style lang="scss">
-//reset element css of el-icon-close
+<style type="text/scss">
 .tags-view-wrapper {
   .tags-view-item {
     .el-icon-close {
