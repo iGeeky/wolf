@@ -86,7 +86,7 @@
             v-model="resource.name"
             :placeholder="$t('wolf.newResourcePromptName')"
           />
-          <div class="resname-description">
+          <div v-if="rbacAccessCheckByRadixTree" class="resname-description">
             <div v-if="!showFullDescription">
               <span v-html="$t('wolf.resPromptNameShortDescription')" />
               <el-button type="text" @click="showFullDescription = true">{{ $t('wolf.btnShowMore') }}</el-button>
