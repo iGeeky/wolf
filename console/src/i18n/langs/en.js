@@ -41,6 +41,8 @@ const en = {
     'btnLogin': 'Login',
     'btnDetail': 'Detail',
     'btnView': 'View',
+    'btnShowMore': 'Show More',
+    'btnShowLess': 'Show Less',
 
     'pubRulesMessageLength_2_32': 'length must be between 2 and 32 characters',
     'pubRulesMessageIDFormat': 'only contain letters(a-zA-Z), numbers(0-9), underline(_), hyphen(-)',
@@ -222,6 +224,8 @@ const en = {
     'resPromptRemoveSuccess': 'Delete succed!',
     'resPromptUpdateSuccess': '<div>Alter Resource success.</div>',
     'resPromptAddSuccess': '<div>Resource added.</div>',
+    'resPromptNameShortDescription': '`/foo/bar`: Exact match. `/foo*`: Prefix match. `/foo**`: Any match. `**.jpg`: Suffix match.',
+    'resPromptNameFullDescription': 'Default is exact match.<br/>Use `*` for prefix match: `/foo*` matches `/foobar`, but not `/foo/bar`.<br/>Use `**` for any match: `/foo**` matches `/foo/bar` and `/foo/car/far`.<br/>Use `**` for suffix match: `**.jpg` matches `/images/photo.jpg` and `/uploads/profile.jpg`.<br/>',
 
     'alogPromptHttpMethod': 'Http Method',
     'alogPromptRequestStatus': 'Request status',

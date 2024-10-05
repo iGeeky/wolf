@@ -62,7 +62,16 @@
         <el-form-item :label="$t('wolf.labelApp')" prop="appID">
           <el-select v-model="resource.appID" :placeholder="$t('wolf.promptChangeApp')" size="small" style="display: block" />
         </el-form-item>
-        <el-form-item :label="$t('wolf.resTitleMatchType')" prop="matchType">
+        <el-form-item :label="$t('wolf.resTitleAction')" prop="action">
+          <el-select v-model="resource.action" size="small" style="display: block">
+            <el-option v-for="action in actions" :key="action" :label="action" :value="action" />
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="rbacAccessCheckByRadixTree" :label="$t('wolf.resTitleMatchType')" prop="matchType">
+          <el-input v-show="false" v-model="resource.matchType" size="small" />
+          <el-tag size="small" type="info">{{ radixTypeMatchType }}</el-tag>
+        </el-form-item>
+        <el-form-item v-else :label="$t('wolf.resTitleMatchType')" prop="matchType">
           <el-select v-model="resource.matchType" size="small" style="display: block">
             <el-option
               v-for="matchType in matchTypes"
@@ -72,16 +81,21 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item :label="$t('wolf.resTitleAction')" prop="action">
-          <el-select v-model="resource.action" size="small" style="display: block">
-            <el-option v-for="action in actions" :key="action" :label="action" :value="action" />
-          </el-select>
-        </el-form-item>
         <el-form-item :label="$t('wolf.titleName')" prop="name">
           <el-input
             v-model="resource.name"
             :placeholder="$t('wolf.newResourcePromptName')"
           />
+          <div class="resname-description">
+            <div v-if="!showFullDescription">
+              <span v-html="$t('wolf.resPromptNameShortDescription')" />
+              <el-button type="text" @click="showFullDescription = true">{{ $t('wolf.btnShowMore') }}</el-button>
+            </div>
+            <div v-else>
+              <span v-html="$t('wolf.resPromptNameFullDescription')" />
+              <el-button type="text" @click="showFullDescription = false">{{ $t('wolf.btnShowLess') }}</el-button>
+            </div>
+          </div>
         </el-form-item>
         <el-form-item :label="$t('wolf.resTitlePermission')" prop="permID">
           <permission-select :value.sync="resource.permID" />
@@ -101,7 +115,7 @@ import CurrentApp from '@/components/CurrentApp'
 import PermissionSelect from '@/components/PermissionSelect'
 var _ = require('lodash')
 import { deepClone, format } from '@/utils'
-import { listResources, addResource, deleteResource, updateResource, checkResourceExist } from '@/api/resource'
+import { listResources, addResource, deleteResource, updateResource, checkResourceExist, getResourceOptions } from '@/api/resource'
 import { listPermissions, getSysPermissions } from '@/api/permission'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import i18n from '@/i18n/i18n'
@@ -124,6 +138,8 @@ export default {
       routes: [],
       resources: [],
       total: 0,
+      rbacAccessCheckByRadixTree: false,
+      showFullDescription: false,
       listQuery: {
         page: 1,
         limit: 10,
@@ -175,7 +191,16 @@ export default {
           return i18n.t('wolf.resNewResource')
       }
     },
-
+    radixTypeMatchType: function() {
+      if (this.rbacAccessCheckByRadixTree) {
+        const matchTypeFromName = this.getMatchTypeFromName(this.resource.name)
+        const matchTypeInfo = _.find(this.matchTypes, { type: matchTypeFromName })
+        if (matchTypeInfo) {
+          return matchTypeInfo.name
+        }
+      }
+      return 'equal'
+    },
   },
   watch: {
     currentApp: function(val) {
@@ -183,14 +208,33 @@ export default {
     },
   },
   created() {
-    this.listResources()
+    this.onCreated()
   },
   mounted() {},
   methods: {
-    getMatchName(matchType) {
+    getMatchTypeFromName(name) {
+      if (!name) {
+        return 'equal'
+      }
+      if (name.startsWith('*')) {
+        return 'suffix'
+      }
+      if (name.indexOf('*') > 0) {
+        return 'prefix'
+      }
+      return 'equal'
+    },
+    getMatchName(matchType, name) {
       const matchTypeInfo = _.find(this.matchTypes, { type: matchType })
       if (matchTypeInfo) {
         return matchTypeInfo.name
+      }
+      if (matchType === 'radixtree') {
+        const matchTypeFromName = this.getMatchTypeFromName(name)
+        const matchTypeInfo = _.find(this.matchTypes, { type: matchTypeFromName })
+        if (matchTypeInfo) {
+          return 'tree:' + matchTypeInfo.name
+        }
       }
       return matchType
     },
@@ -200,6 +244,16 @@ export default {
         return permission.name || permID
       }
       return permID
+    },
+    async onCreated() {
+      await this.listResources()
+      const options = await getResourceOptions()
+      if (options) {
+        this.rbacAccessCheckByRadixTree = options.rbacAccessCheckByRadixTree
+        if (this.rbacAccessCheckByRadixTree) {
+          defaultResource.matchType = 'radixtree'
+        }
+      }
     },
     async listResources() {
       this.listQuery.appID = this.currentApp
@@ -215,7 +269,7 @@ export default {
             this.permissions = sysPermissions.concat(res.data.permissions)
           }
           resources.forEach((resource) => {
-            const matchTypeName = this.getMatchName(resource.matchType)
+            const matchTypeName = this.getMatchName(resource.matchType, resource.name)
             resource.matchTypeName = matchTypeName
             const permissionName = this.getPermissionName(resource.permID)
             resource.permission_name = permissionName
@@ -329,7 +383,11 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-
+<style type="text/scss" scoped>
+.resname-description {
+  font-size: 12px;
+  color: #909399;
+  line-height: 1.2;
+}
 </style>
 

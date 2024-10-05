@@ -139,7 +139,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style type="text/scss" scoped>
 .header-search {
   font-size: 0 !important;
 

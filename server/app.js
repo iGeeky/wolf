@@ -78,6 +78,7 @@ async function startServer() {
     await initRadixTreeCache()  // 在启动服务器之前初始化RadixTree缓存
     const port = parseInt(process.env.PORT, 10) || 12180
     server = app.listen(port)
+    console.log('listen at 0.0.0.0:%s success!', port)
     log4js.info('listen at 0.0.0.0:%s success!', port)
     return server
   } catch (ex) {

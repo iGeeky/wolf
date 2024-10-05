@@ -1,11 +1,13 @@
 .rbac-edit-dialog {
-  max-width: 500px;
+  max-width: 600px;
 }
+
 .pagination-center {
   align-items: center;
   display: flex;
   flex-direction: column;
+
   .pagination-container{
-    margin: 0px;
+    margin: 0;
   }
 }

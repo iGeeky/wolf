@@ -32,7 +32,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style type="text/scss" scoped>
 .sidebarLogoFade-enter-active {
   transition: opacity 1.5s;
 }

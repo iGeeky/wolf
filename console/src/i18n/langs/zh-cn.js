@@ -41,6 +41,8 @@ const zhcn = {
     'btnLogin': '登录',
     'btnDetail': '详情',
     'btnView': '查看',
+    'btnShowMore': '显示更多',
+    'btnShowLess': '收起',
 
     'pubRulesMessageLength_2_32': '长度只能是2-32个字符',
     'pubRulesMessageIDFormat': '只能包含: 字母(a-zA-Z), 数字(0-9),下划线(_),连字符(-)',
@@ -222,6 +224,8 @@ const zhcn = {
     'resPromptRemoveSuccess': '资源已经删除!',
     'resPromptUpdateSuccess': '<div>资源已经修改.</div>',
     'resPromptAddSuccess': '<div>资源已经添加.</div>',
+    'resPromptNameShortDescription': '`/foo/bar`: 精确匹配。`/foo*`: 前缀匹配。`/foo**`: 任意匹配。`**.jpg`: 后缀匹配。',
+    'resPromptNameFullDescription': '默认采用精确匹配。<br/>使用 `*` 进行前缀匹配：`/foo*` 匹配 `/foobar`，但不匹配 `/foo/bar`。<br/>使用 `**` 进行任意匹配：`/foo**` 匹配 `/foo/bar` 和 `/foo/car/far`。<br/>使用 `**` 进行后缀匹配：`**.jpg` 匹配 `/images/photo.jpg` 和 `/uploads/profile.jpg`。<br/>',
 
     'alogPromptHttpMethod': 'Http方法',
     'alogPromptRequestStatus': '请求状态',

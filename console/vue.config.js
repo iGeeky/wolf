@@ -1,6 +1,8 @@
 'use strict'
 const path = require('path')
 const defaultSettings = require('./src/settings.js')
+const webpack = require('webpack');
+const sass = require('sass')
 
 function resolve(dir) {
   return path.join(__dirname, dir)
@@ -29,23 +31,70 @@ module.exports = {
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',
   productionSourceMap: false,
+  transpileDependencies: true,
   css: {
     loaderOptions: {
       sass: {
-        implementation: require('sass'),
+        implementation: sass,
+        additionalData: `
+          @use "sass:math";
+        `,
+        sassOptions: {
+          indentedSyntax: false,
+          logger: sass.Logger.silent
+        }
       }
-    }
+    },
+    extract: true,
+    sourceMap: true
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
     // it can be accessed in index.html to inject the correct title.
     name: name,
+    plugins: [
+      new webpack.ProvidePlugin({
+        process: 'process/browser',
+      }),
+    ],
     resolve: {
       alias: {
         '@': resolve('src'),
       },
+      fallback: {
+        path: require.resolve("path-browserify"),
+        fs: false,
+        crypto: require.resolve("crypto-browserify"),
+        stream: require.resolve("stream-browserify"),
+      },
     },
-    // plugins: [new NodePolyfillPlugin()],
+    module: {
+      rules: [
+        {
+          test: /\.js$/,
+          exclude: /node_modules/,
+          use: {
+            loader: 'babel-loader',
+            options: {
+              presets: [
+                ['@vue/cli-plugin-babel/preset', {
+                  useBuiltIns: 'usage',
+                  corejs: 3,
+                  exclude: [] // 确保这里是空数组
+                }]
+              ],
+              plugins: [
+                '@babel/plugin-proposal-optional-chaining',
+                '@babel/plugin-proposal-nullish-coalescing-operator'
+              ]
+            }
+          }
+        }
+      ]
+    },
+    // output: {
+    //   clean: false
+    // }
   },
 
   devServer: {
@@ -57,11 +106,12 @@ module.exports = {
     config.plugins.delete('preload') // TODO: need test
     config.plugins.delete('prefetch') // TODO: need test
 
-    // set svg-sprite-loader
+    // 修正 SVG 规则
     config.module
       .rule('svg')
       .exclude.add(resolve('src/icons'))
       .end()
+
     config.module
       .rule('icons')
       .test(/\.svg$/)
@@ -70,23 +120,22 @@ module.exports = {
       .use('svg-sprite-loader')
       .loader('svg-sprite-loader')
       .options({
-        symbolId: 'icon-[name]',
+        symbolId: 'icon-[name]'
+      })
+      .end()
+      .use('svgo-loader')
+      .loader('svgo-loader')
+      .options({
+        plugins: [
+          {
+            name: 'removeAttrs',
+            params: { attrs: 'fill' }
+          }
+        ]
       })
       .end()
 
-    // set preserveWhitespace
-    // config.module
-    //   .rule('vue')
-    //   .use('vue-loader')
-    //   .loader('vue-loader')
-    //   .tap(options => {
-    //     options.compilerOptions.preserveWhitespace = true
-    //     return options
-    //   })
-    //   .end()
-
     config
-      // https://webpack.js.org/configuration/devtool/#development
       .when(process.env.NODE_ENV === 'development',
         config => config.devtool('cheap-source-map')
       )
@@ -126,8 +175,19 @@ module.exports = {
                 },
               },
             })
-          config.optimization.runtimeChunk('single')
+          // config.optimization.runtimeChunk('single')
         }
       )
+
+    // 修改文件名hash长度
+    config.output
+      .filename('static/js/[name].[chunkhash:8].js')
+      .chunkFilename('static/js/[name].[chunkhash:8].js');
+
+    config.plugin('extract-css').tap(args => [{
+      filename: 'static/css/[name].[contenthash:8].css',
+      chunkFilename: 'static/css/[name].[contenthash:8].css'
+    }]);
+
   },
 }

@@ -300,7 +300,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style type="text/scss">
 /* 修复input 背景不协调 和光标变色 */
 $bg:#283443;
 $light_gray:#fff;
@@ -345,7 +345,7 @@ $cursor: #fff;
 }
 </style>
 
-<style lang="scss" scoped>
+<style type="text/scss" scoped>
 $bg:#2d3a4b;
 $dark_gray:#889aa4;
 $light_gray:#eee;
@@ -361,8 +361,6 @@ $light_gray:#eee;
 }
 
 .login-container {
-  // min-height: 100%;
-  // width: 100%;
   display: flex;
   background-color: $bg;
   border-radius: 10px;
@@ -426,7 +424,6 @@ $light_gray:#eee;
   }
 
   .title-container {
-    // position: relative;
     display: flex;
     justify-content: center;
     align-items: center;

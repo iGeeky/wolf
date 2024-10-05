@@ -46,3 +46,13 @@ export async function checkResourceExist(resource) {
   return status
 }
 
+export async function getResourceOptions() {
+  const res = await request({
+    url: '/resource/options',
+    method: 'get',
+  })
+  if (res.ok) {
+    return res.data
+  }
+  return null
+}

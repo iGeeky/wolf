@@ -4,7 +4,7 @@
 @import './element-ui.scss';
 @import './sidebar.scss';
 @import './btn.scss';
-@import './custom.scss'; // global custom css
+@import './custom.scss';
 
 body {
   height: 100%;
@@ -120,7 +120,6 @@ aside {
   }
 }
 
-//main-container全局样式
 .app-container {
   padding: 20px;
 }
@@ -182,7 +181,6 @@ aside {
   }
 }
 
-//refine vue-multiselect plugin
 .multiselect {
   line-height: 16px;
 }
