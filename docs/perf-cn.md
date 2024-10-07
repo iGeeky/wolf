@@ -18,7 +18,7 @@
 
 ```
 cd wolf/server
-./node_modules/mocha/bin/mocha --timeout 10000 \
+./node_modules/mocha/bin/mocha --exit --timeout 10000 \
 test/init/0-rbac-init.js --server 'http://127.0.0.1:12180' \
 --policyFile ./test/init/0-rbac-data-or.md --userPassword 123456
 ```

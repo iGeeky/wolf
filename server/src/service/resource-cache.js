@@ -21,7 +21,7 @@ function getRadixTreeCache() {
 }
 
 async function initRadixTreeCache() {
-  if (!config.rbacAccessCheckByRadixTree) {
+  if (!config.rbacUseRadixTreeRouting) {
     return
   }
   // 创建一个对象来存储每个appId的RadixTree

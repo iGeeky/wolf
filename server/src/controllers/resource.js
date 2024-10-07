@@ -34,7 +34,7 @@ class Resource extends BasicService {
   }
 
   _getMatchTypeEnums() {
-    if (config.rbacAccessCheckByRadixTree) {
+    if (config.rbacUseRadixTreeRouting) {
       return ['radixtree']
     } else {
       return [constant.MatchType.equal, constant.MatchType.suffix, constant.MatchType.prefix]
@@ -135,9 +135,9 @@ class Resource extends BasicService {
   }
 
   async upgradeMatchTypeToRadixTree() {
-    if (!config.rbacAccessCheckByRadixTree) {
-      this.log4js.info('rbacAccessCheckByRadixTree(RBAC_ACCESS_CHECK_BY_RADIX_TREE) is not set, skipping upgrade');
-      this.fail(400, 'rbacAccessCheckByRadixTree is false, skipping upgrade');
+    if (!config.rbacUseRadixTreeRouting) {
+      this.log4js.info('rbacUseRadixTreeRouting(RBAC_USE_RADIX_TREE_ROUTING) is not set, skipping upgrade');
+      this.fail(400, 'rbacUseRadixTreeRouting is false, skipping upgrade');
       return;
     }
     const resources = await ResourceModel.findAll();
@@ -188,7 +188,7 @@ class Resource extends BasicService {
 
   async options() {
     const data = {
-      rbacAccessCheckByRadixTree: config.rbacAccessCheckByRadixTree,
+      rbacUseRadixTreeRouting: config.rbacUseRadixTreeRouting,
     }
     this.success(data)
   }

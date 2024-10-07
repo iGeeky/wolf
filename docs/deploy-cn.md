@@ -162,8 +162,7 @@ show tables;
   * RBAC_SQL_URL 连接数据库的数据库链接. 默认为: `postgres://wolfroot:123456@127.0.0.1:5432/wolf`
   * RBAC_REDIS_URL redis缓存的链接. 默认为: `redis://127.0.0.1:6379/0`
   * MEM_CACHE_BY_REDIS 使用redis作为对象缓存. 默认为`no`. 当要部署多节点的`wolf`服务时,可使用redis作为对象缓存,解决缓存不一致问题.
-
-  以上三个配置, 可以在系统环境变量中配置, 也可以在启动时指定.
+  * RBAC_USE_RADIX_TREE_ROUTING 设置为`yes`时使用radixtree进行RBAC访问路由匹配. 默认为`no`. `radixtree`是一种更复杂的路由匹配方式, 支持各种复杂的通配符匹配.
 
 #### 3.启动服务器
 

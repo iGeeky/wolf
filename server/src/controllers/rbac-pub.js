@@ -67,7 +67,7 @@ class RbacPub extends BasicService {
    */
   async _accessCheckInternal(userInfo, appID, action, resName, query) {
     let resource, cached;
-    if(config.rbacAccessCheckByRadixTree ) {
+    if(config.rbacUseRadixTreeRouting ) {
       if (query === undefined) {
         query = {}
       }
@@ -87,7 +87,7 @@ class RbacPub extends BasicService {
       }
     }
 
-    if (config.rbacAccessCheckByRadixTree) {
+    if (config.rbacUseRadixTreeRouting) {
       this.log4js.info('getResourceByRadixTree({appID: %s, query: %s}) res: %s, cached: %s', appID, query, resource, cached)
     } else {
       this.log4js.info('getResource({appID: %s, action: %s, resName: %s}) res: %s, cached: %s', appID, action, resName, resource, cached)

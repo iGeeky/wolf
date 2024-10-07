@@ -67,7 +67,7 @@
             <el-option v-for="action in actions" :key="action" :label="action" :value="action" />
           </el-select>
         </el-form-item>
-        <el-form-item v-if="rbacAccessCheckByRadixTree" :label="$t('wolf.resTitleMatchType')" prop="matchType">
+        <el-form-item v-if="rbacUseRadixTreeRouting" :label="$t('wolf.resTitleMatchType')" prop="matchType">
           <el-input v-show="false" v-model="resource.matchType" size="small" />
           <el-tag size="small" type="info">{{ radixTypeMatchType }}</el-tag>
         </el-form-item>
@@ -86,7 +86,7 @@
             v-model="resource.name"
             :placeholder="$t('wolf.newResourcePromptName')"
           />
-          <div v-if="rbacAccessCheckByRadixTree" class="resname-description">
+          <div v-if="rbacUseRadixTreeRouting" class="resname-description">
             <div v-if="!showFullDescription">
               <span v-html="$t('wolf.resPromptNameShortDescription')" />
               <el-button type="text" @click="showFullDescription = true">{{ $t('wolf.btnShowMore') }}</el-button>
@@ -138,7 +138,7 @@ export default {
       routes: [],
       resources: [],
       total: 0,
-      rbacAccessCheckByRadixTree: false,
+      rbacUseRadixTreeRouting: false,
       showFullDescription: false,
       listQuery: {
         page: 1,
@@ -192,7 +192,7 @@ export default {
       }
     },
     radixTypeMatchType: function() {
-      if (this.rbacAccessCheckByRadixTree) {
+      if (this.rbacUseRadixTreeRouting) {
         const matchTypeFromName = this.getMatchTypeFromName(this.resource.name)
         const matchTypeInfo = _.find(this.matchTypes, { type: matchTypeFromName })
         if (matchTypeInfo) {
@@ -249,8 +249,8 @@ export default {
       await this.listResources()
       const options = await getResourceOptions()
       if (options) {
-        this.rbacAccessCheckByRadixTree = options.rbacAccessCheckByRadixTree
-        if (this.rbacAccessCheckByRadixTree) {
+        this.rbacUseRadixTreeRouting = options.rbacUseRadixTreeRouting
+        if (this.rbacUseRadixTreeRouting) {
           defaultResource.matchType = 'radixtree'
         }
       }

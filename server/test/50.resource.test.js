@@ -57,8 +57,8 @@ describe('resource', function() {
   let updateResource = null;
 
   before(async function() {
-    const rbacAccessCheckByRadixTree = await util.getRbacAccessCheckByRadixTree(headers)
-    const resourceOpFuncs = util.getResourceOpFuncs(rbacAccessCheckByRadixTree)
+    const rbacUseRadixTreeRouting = await util.getRbacAccessCheckByRadixTree(headers)
+    const resourceOpFuncs = util.getResourceOpFuncs(rbacUseRadixTreeRouting)
     addResource = resourceOpFuncs.addResource
     updateResource = resourceOpFuncs.updateResource
     for (let appID of appIDs) {

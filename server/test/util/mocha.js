@@ -68,7 +68,12 @@ async function httpRequest(method, url, headers, args, body) {
   } else {
     data = body;
   }
-  const req = request(serverInst)[method](url)
+  let req;
+  if (argv.server) {
+    req = request(server)[method](url)
+  } else {
+    req = request(serverInst)[method](url)
+  }
   setHeaders(req, headers)
   let res = {}
   if (method === 'get' && args) {

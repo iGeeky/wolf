@@ -17,8 +17,8 @@ function rbacInit(data, userPassword, opts={}) {
   let addResource = null;
   const categoryMap = {}
   before(async function() {
-    const rbacAccessCheckByRadixTree = await util.getRbacAccessCheckByRadixTree(headers)
-    const resourceOpFuncs = util.getResourceOpFuncs(rbacAccessCheckByRadixTree)
+    const rbacUseRadixTreeRouting = await util.getRbacAccessCheckByRadixTree(headers)
+    const resourceOpFuncs = util.getResourceOpFuncs(rbacUseRadixTreeRouting)
     addResource = resourceOpFuncs.addResource
   });
 

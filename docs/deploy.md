@@ -162,8 +162,8 @@ The output should be similar to the following, indicating that the database tabl
   * `RBAC_SQL_URL`: The link to the database. The default value is `postgres://wolfroot:123456@127.0.0.1:5432/wolf`.
   * `RBAC_REDIS_URL`: The link to the redis cache. The default value is `redis://127.0.0.1:6379/0`.
   * `MEM_CACHE_BY_REDIS`: Use redis as the object cache. The default is no. When deploying a multi-node wolf service, you can use redis as the object cache to resolve cache inconsistency issues.
+  * `RBAC_USE_RADIX_TREE_ROUTING`: When set to `yes`, it uses radixtree for RBAC access route matching. The default is `no`. `radixtree` is a more complex routing matching method that supports various complex wildcard matches.
 
-  These configurations can be set in the system environment variables or specified at startup.
 
 #### 3.Starting the Server
 

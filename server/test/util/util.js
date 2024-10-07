@@ -138,8 +138,8 @@ function getAdminLoginResponseSchema() {
 
 async function getRbacAccessCheckByRadixTree(headers) {
   const res = await mocha.get({url: '/wolf/resource/options', headers})
-  const rbacAccessCheckByRadixTree = res.body.data.rbacAccessCheckByRadixTree
-  return rbacAccessCheckByRadixTree
+  const rbacUseRadixTreeRouting = res.body.data.rbacUseRadixTreeRouting
+  return rbacUseRadixTreeRouting
 }
 
 function adjustNameForRadixTree(matchType, name) {
@@ -156,7 +156,7 @@ function adjustNameForRadixTree(matchType, name) {
   }
 }
 
-function getResourceOpFuncs(rbacAccessCheckByRadixTree) {
+function getResourceOpFuncs(rbacUseRadixTreeRouting) {
   let addResource = async function (url, headers, body, schema, status=200) {
     const res = await mocha.post({url, headers, body, schema, status})
     return res
@@ -165,8 +165,8 @@ function getResourceOpFuncs(rbacAccessCheckByRadixTree) {
     const res = await mocha.put({url, headers, body, schema, status})
     return res
   }
-  if (rbacAccessCheckByRadixTree) {
-    // 如果rbacAccessCheckByRadixTree为true, 则需要将相应的测试用例变成radixtree模式.
+  if (rbacUseRadixTreeRouting) {
+    // 如果rbacUseRadixTreeRouting为true, 则需要将相应的测试用例变成radixtree模式.
     addResource = async function (url, headers, body, schema, status=200) {
       body.name = adjustNameForRadixTree(body.matchType, body.name);
       body.matchType = 'radixtree';
