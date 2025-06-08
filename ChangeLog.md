@@ -1,3 +1,13 @@
+2024-10-07 0.6.1
+
+* `Server` Support http basic auth.
+* `Server` Support radix tree routing.
+
+
+2023-06-18 0.5.6
+
+* `Console` Dashboard login support captcha.
+
 2022-08-01 0.5.5
 
 * `Server` Save the token via md5 key.
