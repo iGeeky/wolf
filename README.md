@@ -203,7 +203,3 @@ The Wolf system has the following main features:
 ## License
 
 [MIT](./LICENSE)
-
-## Other
-
-[![Powered by DartNode](https://dartnode.com/branding/DN-Open-Source-sm.png)](https://dartnode.com "Powered by DartNode - Free VPS for Open Source")
