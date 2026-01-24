@@ -10,8 +10,8 @@ The default login method is password-based, and if you want to log in with LDAP,
 
 - Docker
 - Docker Compose
-- Node.js 12+
-- npm
+- Node.js 18+
+- pnpm
 
 #### 2. Building the Docker Image
 
@@ -167,7 +167,7 @@ The output should be similar to the following, indicating that the database tabl
 
 #### 3.Starting the Server
 
-Please install node and npm yourself.
+Please install node and pnpm yourself.
 
 * Starting the Service
 
@@ -185,9 +185,9 @@ export RBAC_REDIS_URL=redis://127.0.0.1:6379/0
 
 cd path/to/wolf/server
 # Installation dependencies (executed on first boot)
-npm install
+pnpm install
 # Initiate service procedures.
-npm run start
+pnpm run start
 ```
 
 **If the service starts successfully, you should see output similar to the following:**
@@ -201,9 +201,9 @@ npm run start
 ```shell
 cd path/to/wolf/console
 # Installation dependencies (executed on first boot)
-npm install
+pnpm install
 # Start the console.
-cnpm run dev
+pnpm run dev
 ```
 
 **After compiling the Console, if it starts successfully, you should see an output similar to the following:**

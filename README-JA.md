@@ -1,6 +1,9 @@
 [中文](README-CN.md)
 [English](README.md)
 
+[![GitHub stars](https://img.shields.io/github/stars/iGeeky/wolf?style=social)](https://github.com/iGeeky/wolf/stargazers)
+[![License](https://img.shields.io/github/license/iGeeky/wolf)](./LICENSE)
+
 ## 紹介
 
 Wolfは、すべてのHTTPアプリケーションに適した汎用のロールベースアクセス制御（RBAC）権限システムであり、統一された認可とアクセス制御機能を提供します。
@@ -33,11 +36,14 @@ Wolfシステムには以下の主な特徴があります：
 * 内蔵の管理コンソール（consoleモジュール）：アプリケーション、ユーザー、ロール、権限、リソースを管理
 * アクセスログの記録と照会をサポートし、監査と問題追跡を容易に
 * アプリケーションのRBACオブジェクト関係図の表示をサポート
+* 多言語サポート（i18n）：コンソールは中国語と英語の言語切り替えをサポート
+* RBACリレーションシップダイアグラムの可視化により、権限構造の理解を容易に
 
 ### 4. 高性能とスケーラビリティ
 
 * 高性能で複雑なURL照合のための高度なradixtreeルーティングをサポート
 * PostgreSQLとMySQLデータベースと互換性あり
+* パフォーマンス向上のためのRedisキャッシュ
 * [APISIXゲートウェイ](https://github.com/apache/apisix/blob/master/docs/en/latest/plugins/wolf-rbac.md)との統合をサポート
 
 ### 5. システムアーキテクチャ
@@ -102,14 +108,29 @@ Wolfシステムには以下の主な特徴があります：
 ## 技術
 
 - **サーバー**: NodeJS, KOA, Sequelize, JWT
-- **コンソール**: VueJS, Element, Babel, NodeJS
+- **コンソール**: Vue 3, Element Plus, Vite, TypeScript, Pinia, Tailwind CSS
 - **エージェント**: OpenResty(ngx_lua)
 - **データベース**: PostgreSQL.
 - **キャッシュ**: Redis
 
-## はじめに
+## クイックスタート
 
-[はじめに](./quick-start-with-docker/README.md)
+Docker Composeを使用してWolfシステムを素早く起動：
+
+```bash
+# リポジトリをクローン
+git clone https://github.com/iGeeky/wolf.git
+cd wolf/quick-start-with-docker
+
+# すべてのサービスを起動
+docker-compose up
+```
+
+起動後のアクセス：
+- 管理コンソール: http://localhost:12180 (admin/wolf-123456)
+- デモアプリケーション: http://localhost:12200
+
+詳細な手順については、[クイックスタートガイド](./quick-start-with-docker/README.md)をご覧ください
 
 ## プレビュー
 

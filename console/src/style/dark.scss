@@ -1,0 +1,267 @@
+@use "sass:color";
+@use "element-plus/theme-chalk/src/dark/css-vars.scss" as *;
+
+/* 整体暗色风格适配 */
+html.dark {
+  $border-style: #303030;
+  $color-white: #fff;
+
+  /* 自定义深色背景颜色 */
+  // --el-bg-color: #020409;
+
+  /* 常用border-color 需要时可取用 */
+  --pure-border-color: rgb(253 253 253 / 12%);
+
+  /* switch关闭状态下的color 需要时可取用 */
+  --pure-switch-off-color: #ffffff3f;
+
+  /* vxe-table */
+  --vxe-form-background-color: #151515;
+  --vxe-toolbar-background-color: #151515;
+  --vxe-pager-background-color: #151515;
+  --vxe-button-default-background-color: color.adjust(#151515, $lightness: 15%);
+  --vxe-table-header-background-color: color.adjust(#151515, $lightness: 5%);
+  --vxe-font-color: color.adjust(#c9d1d9, $lightness: -12%);
+  --vxe-table-header-font-color: #c9d1d9;
+  --vxe-table-footer-font-color: #c9d1d9;
+  --vxe-table-body-background-color: #151515;
+  --vxe-table-footer-background-color: #151515;
+  --vxe-table-row-striped-background-color: #1e1e1e;
+  --vxe-table-border-color: #303030;
+  --vxe-table-row-hover-background-color: #1e1e1e;
+  --vxe-table-row-hover-striped-background-color: color.adjust(
+    #1e1e1e,
+    $lightness: -10%
+  );
+  --vxe-table-row-current-background-color: fade(#1e1e1e, 20%);
+  --vxe-table-row-hover-current-background-color: fade(#1e1e1e, 20%);
+  --vxe-table-column-hover-background-color: fade(#1e1e1e, 20%);
+  --vxe-table-column-current-background-color: fade(#1e1e1e, 20%);
+  --vxe-table-row-checkbox-checked-background-color: fade(#1e1e1e, 15%);
+  --vxe-table-row-hover-checkbox-checked-background-color: fade(#1e1e1e, 20%);
+  --vxe-table-menu-background-color: color.adjust(#303133, $lightness: 10%);
+  --vxe-table-filter-panel-background-color: color.adjust(
+    #151515,
+    $lightness: 5%
+  );
+  --vxe-grid-maximize-background-color: #151515;
+  --vxe-pager-perfect-background-color: #151515;
+  --vxe-pager-perfect-button-background-color: color.adjust(
+    #151515,
+    $lightness: 15%
+  );
+  --vxe-input-background-color: #151515;
+  --vxe-input-border-color: #303030;
+  --vxe-select-panel-background-color: #151515;
+  --vxe-table-popup-border-color: #303030;
+  --vxe-select-option-hover-background-color: color.adjust(
+    #1e1e1e,
+    $lightness: 15%
+  );
+  --vxe-pulldown-panel-background-color: #151515;
+  --vxe-table-fixed-left-scrolling-box-shadow: 8px 0px 10px -5px #43464c;
+  --vxe-table-fixed-right-scrolling-box-shadow: -8px 0px 10px -5px #43464c;
+  --vxe-loading-background-color: rgb(0 0 0 / 50%);
+  --vxe-tooltip-dark-background-color: color.adjust(#303133, $lightness: 25%);
+  --vxe-modal-header-background-color: #1e1e1e;
+  --vxe-modal-body-background-color: #303133;
+  --vxe-modal-border-color: #303030;
+  --vxe-toolbar-panel-background-color: #151515;
+  --vxe-input-disabled-color: color.adjust(#1e1e1e, $lightness: 20%);
+  --vxe-input-disabled-background-color: color.adjust(#1e1e1e, $lightness: 25%);
+  --vxe-checkbox-icon-background-color: color.adjust(#1e1e1e, $lightness: 15%);
+  --vxe-checkbox-checked-icon-border-color: #303030;
+  --vxe-checkbox-indeterminate-icon-background-color: color.adjust(
+    #1e1e1e,
+    $lightness: 15%
+  );
+
+  .navbar,
+  .tags-view,
+  .contextmenu,
+  .sidebar-container,
+  .horizontal-header,
+  .sidebar-logo-container,
+  .horizontal-header .el-sub-menu__title,
+  .horizontal-header .submenu-title-noDropdown {
+    background: var(--el-bg-color) !important;
+  }
+
+  .app-main,
+  .app-main-nofixed-header {
+    background: #020409 !important;
+  }
+
+  .logic-flow-view,
+  .wangeditor {
+    filter: invert(0.9) hue-rotate(180deg);
+  }
+
+  /* 标签页 */
+  .tags-view {
+    .arrow-left,
+    .arrow-right {
+      border-right: 1px solid $border-style;
+      box-shadow: none;
+    }
+
+    .arrow-right {
+      border-left: 1px solid $border-style;
+    }
+
+    .scroll-item {
+      .el-icon-close {
+        &:hover {
+          color: rgb(255 255 255 / 85%) !important;
+          background-color: rgb(255 255 255 / 12%);
+        }
+      }
+
+      .chrome-tab {
+        .tag-title {
+          color: #666;
+        }
+
+        &:hover {
+          .chrome-tab__bg {
+            color: #333;
+          }
+
+          .tag-title {
+            color: #adadad;
+          }
+        }
+      }
+    }
+  }
+
+  /* 表单设计器 */
+  .design-form {
+    .el-main.config-content,
+    .el-header,
+    .el-main.widget-empty,
+    .widget-form-list,
+    .el-aside,
+    .widget-view {
+      background: var(--el-bg-color) !important;
+    }
+
+    .form-edit-widget-label a {
+      color: $color-white;
+      background: var(--el-color-primary);
+      border: none;
+      border-radius: 5px;
+    }
+
+    .el-aside {
+      color: $color-white;
+    }
+  }
+
+  /* intro.js */
+  .introjs-tooltip-title,
+  .introjs-tooltiptext {
+    color: var(--el-color-primary);
+  }
+
+  .el-card {
+    --el-card-bg-color: var(--el-bg-color);
+  }
+
+  .el-backtop {
+    --el-backtop-bg-color: rgb(72 72 78);
+    --el-backtop-hover-bg-color: var(--el-color-primary);
+
+    transition: background-color 0.25s cubic-bezier(0.7, 0.3, 0.1, 1);
+  }
+
+  .el-dropdown-menu__item:not(.is-disabled):hover {
+    background: transparent;
+  }
+
+  /* 全局覆盖element-plus的el-dialog、el-drawer、el-message-box、el-notification组件右上角关闭图标的样式，表现更鲜明 */
+  .el-icon {
+    &.el-dialog__close,
+    &.el-drawer__close,
+    &.el-message-box__close,
+    &.el-notification__closeBtn {
+      &:hover {
+        color: rgb(255 255 255 / 85%) !important;
+        background-color: rgb(255 255 255 / 12%);
+
+        .pure-dialog-svg {
+          color: rgb(255 255 255 / 85%) !important;
+        }
+      }
+    }
+  }
+
+  /* 克隆并自定义 ElMessage 样式，不会影响 ElMessage 原本样式，在 src/utils/message.ts 中调用自定义样式 ElMessage 方法即可，整体浅色风格在 src/style/element-plus.scss 文件进行了适配 */
+  .pure-message {
+    background-color: rgb(36 37 37) !important;
+    background-image: initial !important;
+    box-shadow:
+      rgb(13 13 13 / 12%) 0 3px 6px -4px,
+      rgb(13 13 13 / 8%) 0 6px 16px 0,
+      rgb(13 13 13 / 5%) 0 9px 28px 8px !important;
+
+    & .el-message__content {
+      color: $color-white !important;
+      pointer-events: all !important;
+      background-image: initial !important;
+    }
+
+    & .el-message__closeBtn {
+      &:hover {
+        color: rgb(255 255 255 / 85%);
+        background-color: rgb(255 255 255 / 12%);
+      }
+    }
+  }
+
+  /* 自定义菜单搜索样式 */
+  .pure-search-dialog {
+    .el-dialog__footer {
+      box-shadow:
+        0 -1px 0 0 #555a64,
+        0 -3px 6px 0 rgb(69 98 155 / 12%);
+    }
+
+    .search-footer {
+      .search-footer-item {
+        color: rgb(235 235 235 / 60%);
+
+        .icon {
+          box-shadow: none;
+        }
+      }
+    }
+  }
+
+  /* ReSegmented 组件 */
+  .pure-segmented {
+    color: rgb(255 255 255 / 65%);
+    background-color: #000;
+
+    .pure-segmented-item-selected {
+      background-color: #1f1f1f;
+    }
+
+    .pure-segmented-item-disabled {
+      color: rgb(255 255 255 / 25%);
+    }
+  }
+
+  /* 仿 el-scrollbar 滚动条样式 支持大多数浏览器，如Chrome、Edge、Firefox、Safari等 */
+  .pure-scrollbar {
+    scrollbar-color: rgb(63 64 66) transparent;
+
+    ::-webkit-scrollbar-thumb {
+      background-color: rgb(63 64 66);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgb(92 93 96);
+    }
+  }
+}

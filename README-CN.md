@@ -1,6 +1,9 @@
 [English](README.md)
 [日本語（にほんご）](README-JA.md)
 
+[![GitHub stars](https://img.shields.io/github/stars/iGeeky/wolf?style=social)](https://github.com/iGeeky/wolf/stargazers)
+[![License](https://img.shields.io/github/license/iGeeky/wolf)](./LICENSE)
+
 ## Introductions
 
 Wolf是一个通用的RBAC权限系统，适用于所有的HTTP应用。它提供统一的授权和访问控制功能。
@@ -35,11 +38,14 @@ Wolf系统具有以下主要特点:
 * 自带管理后台(console模块): 可管理应用、用户、角色、权限和资源
 * 支持访问日志记录与查询,便于审计和问题追溯
 * 支持查看应用下的RBAC对象关系图表
+* 多语言支持(i18n): Console支持中英文语言切换
+* 可视化RBAC关系图表，便于理解权限结构
 
 ### 4. 高性能与可扩展性
 
 * 支持radixtree高级路由,实现高性能、复杂的URL匹配
 * 支持PostgreSQL和MySQL数据库
+* 使用Redis缓存提升性能
 * 支持APISIX网关集成
 
 ### 5. 系统架构
@@ -111,15 +117,30 @@ Wolf系统具有以下主要特点:
 ## Technologies
 
 * Server: NodeJS, KOA, Sequelize, JWT
-* Console: VueJS, Element, Babel, NodeJS
+* Console: Vue 3, Element Plus, Vite, TypeScript, Pinia, Tailwind CSS
 * Agent: OpenResty(ngx_lua)
 * Database: PostgreSQL.
 * Cache: Redis
 
 
-## Getting Started
+## 快速起步
 
-[快速起步](./quick-start-with-docker/README-CN.md)
+使用 Docker Compose 快速启动 Wolf 系统：
+
+```bash
+# 克隆仓库
+git clone https://github.com/iGeeky/wolf.git
+cd wolf/quick-start-with-docker
+
+# 启动所有服务
+docker-compose up
+```
+
+启动后访问：
+- 管理后台: http://localhost:12180 (admin/wolf-123456)
+- 演示应用: http://localhost:12200
+
+详细说明请查看[快速起步指南](./quick-start-with-docker/README-CN.md)
 
 
 

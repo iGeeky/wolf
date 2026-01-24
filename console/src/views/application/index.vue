@@ -1,484 +1,649 @@
-<template>
-  <div class="app-container">
+<script setup lang="ts">
+import { ref, reactive, computed, onMounted } from "vue";
+import { message } from "@/utils/message";
+import { ElMessageBox } from "element-plus";
+import { useUserStoreHook } from "@/store/modules/user";
+import {
+  type Application,
+  type ApplicationListParams,
+  listApplications,
+  addApplication,
+  updateApplication,
+  deleteApplication,
+  getSecret,
+  checkAppIdExist,
+  checkAppNameExist
+} from "@/api/application";
+import { useRenderIcon } from "@/components/ReIcon/src/hooks";
+import Search from "~icons/ep/search";
+import Plus from "~icons/ep/plus";
+import Edit from "~icons/ep/edit";
+import Delete from "~icons/ep/delete";
+import View from "~icons/ep/view";
+import Refresh from "~icons/ep/refresh";
 
-    <div class="filter-container">
+defineOptions({
+  name: "ApplicationList"
+});
+
+// 列表数据
+const applications = ref<Application[]>([]);
+const total = ref(0);
+const loading = ref(false);
+
+// 查询参数
+const listQuery = reactive<ApplicationListParams>({
+  page: 1,
+  limit: 10,
+  key: "",
+  sort: "-createTime"
+});
+
+// 对话框
+const dialogVisible = ref(false);
+const dialogType = ref<"new" | "edit">("new");
+const secretMask = "**********";
+const showBtnShow = ref(false);
+const showBtnReset = ref(false);
+const redirectUriInputVisible = ref(false);
+const redirectUriInputValue = ref("");
+const saveRedirectUriInput = ref<HTMLInputElement>();
+
+// 默认应用数据
+const defaultApplication: Application = {
+  id: "",
+  name: "",
+  description: "",
+  secret: "",
+  redirectUris: [],
+  accessTokenLifetime: 0,
+  refreshTokenLifetime: 0
+};
+
+// 当前编辑的应用
+const application = reactive<Application>({ ...defaultApplication });
+
+// 表单规则
+const formRef = ref();
+const rules = {
+  id: [
+    { required: true, message: "请输入应用ID", trigger: ["blur", "change"] },
+    {
+      min: 2,
+      max: 32,
+      message: "长度只能是2-32个字符",
+      trigger: ["blur", "change"]
+    },
+    {
+      pattern: /^[a-zA-Z0-9_-]*$/,
+      message: "只能包含: 字母(a-zA-Z), 数字(0-9),下划线(_),连字符(-)",
+      trigger: ["blur", "change"]
+    },
+    { validator: validateAppId, trigger: ["blur", "change"] }
+  ],
+  name: [
+    { required: true, message: "请输入应用名称", trigger: ["blur", "change"] },
+    { validator: validateAppName, trigger: ["blur", "change"] }
+  ]
+};
+
+// 验证应用ID
+async function validateAppId(
+  _rule: any,
+  value: string,
+  callback: (error?: Error) => void
+) {
+  if (dialogType.value === "edit") {
+    callback();
+    return;
+  }
+  try {
+    const res = await checkAppIdExist(value);
+    if (res.ok && res.data?.exist) {
+      callback(new Error("应用ID已经存在了"));
+    } else {
+      callback();
+    }
+  } catch {
+    callback();
+  }
+}
+
+// 验证应用名称
+async function validateAppName(
+  _rule: any,
+  value: string,
+  callback: (error?: Error) => void
+) {
+  try {
+    const res = await checkAppNameExist(value, application.id);
+    if (res.ok && res.data?.exist) {
+      callback(new Error("应用名称已经存在了"));
+    } else {
+      callback();
+    }
+  } catch {
+    callback();
+  }
+}
+
+// Token 存活时间格式化
+const lifetimeFormatter = (seconds: number): string => {
+  if (!seconds || seconds <= 0) return "默认";
+  const days = Math.floor(seconds / 86400);
+  const hours = Math.floor((seconds % 86400) / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+  const parts = [];
+  if (days > 0) parts.push(`${days}天`);
+  if (hours > 0) parts.push(`${hours}小时`);
+  if (minutes > 0) parts.push(`${minutes}分钟`);
+  if (secs > 0) parts.push(`${secs}秒`);
+  return parts.join("") || "0秒";
+};
+
+// 计算属性
+const accessTokenLifetimePrompt = computed(() =>
+  lifetimeFormatter(application.accessTokenLifetime || 0)
+);
+const refreshTokenLifetimePrompt = computed(() =>
+  lifetimeFormatter(application.refreshTokenLifetime || 0)
+);
+
+// 时间格式化
+const unixtimeFormat = (row: Application) => {
+  if (!row.createTime) return "";
+  return new Date(row.createTime * 1000).toLocaleString();
+};
+
+// 重定向URI格式化
+const redirectUrisFormat = (row: Application) => {
+  return row.redirectUris?.join(", ") || "";
+};
+
+// 生存时间格式化
+const lifetimeFormat = (row: Application, column: any) => {
+  const value = row[column.property as keyof Application] as number;
+  return lifetimeFormatter(value);
+};
+
+// 随机密钥
+const randomSecret = (): string => {
+  const chars =
+    "23456789abcdefghijkmnpqrstuvwxyzABCDEFJHIJKLMNOPQRSTUVWXYZ";
+  const secret = [];
+  for (let i = 0; i < 40; i++) {
+    const rand = Math.floor(Math.random() * chars.length);
+    secret.push(chars[rand]);
+  }
+  return secret.join("");
+};
+
+// 加载列表
+const fetchApplications = async () => {
+  loading.value = true;
+  try {
+    const res = await listApplications(listQuery);
+    if (res.ok && res.data) {
+      total.value = res.data.total;
+      applications.value = res.data.applications;
+    }
+  } finally {
+    loading.value = false;
+  }
+};
+
+// 搜索
+const handleFilter = () => {
+  listQuery.page = 1;
+  fetchApplications();
+};
+
+// 新增
+const handleAdd = () => {
+  dialogVisible.value = true;
+  dialogType.value = "new";
+  Object.assign(application, { ...defaultApplication });
+  application.secret = randomSecret();
+  showBtnShow.value = false;
+  showBtnReset.value = false;
+};
+
+// 编辑
+const handleEdit = (row: Application) => {
+  dialogType.value = "edit";
+  dialogVisible.value = true;
+  Object.assign(application, {
+    ...row,
+    secret: secretMask,
+    redirectUris: row.redirectUris ? [...row.redirectUris] : []
+  });
+  showBtnShow.value = true;
+  showBtnReset.value = false;
+};
+
+// 显示密钥
+const showSecret = async (id: string) => {
+  try {
+    const res = await getSecret(id);
+    if (res.ok && res.data) {
+      application.secret = res.data.secret;
+      showBtnShow.value = false;
+      showBtnReset.value = true;
+    }
+  } catch (e) {
+    console.error("Failed to get secret:", e);
+  }
+};
+
+// 重置密钥
+const resetSecret = async () => {
+  try {
+    await ElMessageBox.confirm("确定要重置密钥吗?", "警告", {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning"
+    });
+    application.secret = randomSecret();
+    showBtnReset.value = false;
+  } catch {
+    // 取消
+  }
+};
+
+// 删除重定向URI
+const handleRedirectUriDelete = (uri: string) => {
+  const index = application.redirectUris?.indexOf(uri);
+  if (index !== undefined && index > -1) {
+    application.redirectUris?.splice(index, 1);
+  }
+};
+
+// 显示重定向URI输入框
+const showRedirectUriInput = () => {
+  redirectUriInputVisible.value = true;
+  setTimeout(() => {
+    saveRedirectUriInput.value?.focus();
+  }, 0);
+};
+
+// 确认添加重定向URI
+const handleRedirectUriInputConfirm = () => {
+  if (redirectUriInputValue.value) {
+    if (!application.redirectUris) {
+      application.redirectUris = [];
+    }
+    application.redirectUris.push(redirectUriInputValue.value);
+  }
+  redirectUriInputVisible.value = false;
+  redirectUriInputValue.value = "";
+};
+
+// 删除应用
+const handleDelete = async (row: Application) => {
+  try {
+    await ElMessageBox.confirm("确定要删除应用吗?", "警告", {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning"
+    });
+    const res = await deleteApplication(row.id);
+    if (res.ok) {
+      message("应用已经删除!", { type: "success" });
+      fetchApplications();
+      // 刷新用户信息
+      await useUserStoreHook().getUserInfo();
+    }
+  } catch {
+    // 取消
+  }
+};
+
+// 提交表单
+const validateAndSubmit = async () => {
+  if (!formRef.value) return;
+  await formRef.value.validate(async (valid: boolean) => {
+    if (valid) {
+      await submitApplication();
+    }
+  });
+};
+
+// 提交应用
+const submitApplication = async () => {
+  const isEdit = dialogType.value === "edit";
+  const data = { ...application };
+
+  // 如果密钥未更改，不提交
+  if (data.secret === secretMask) {
+    delete data.secret;
+  }
+
+  try {
+    if (isEdit) {
+      const res = await updateApplication(application.id, data);
+      if (res.ok) {
+        message("应用已经修改", { type: "success" });
+        dialogVisible.value = false;
+        fetchApplications();
+        await useUserStoreHook().getUserInfo();
+      }
+    } else {
+      const res = await addApplication(data);
+      if (res.ok) {
+        message("应用已经添加", { type: "success" });
+        dialogVisible.value = false;
+        fetchApplications();
+        await useUserStoreHook().getUserInfo();
+      }
+    }
+  } catch (e) {
+    console.error("Submit failed:", e);
+  }
+};
+
+// 分页变化
+const handleSizeChange = (val: number) => {
+  listQuery.limit = val;
+  fetchApplications();
+};
+
+const handleCurrentChange = (val: number) => {
+  listQuery.page = val;
+  fetchApplications();
+};
+
+onMounted(() => {
+  fetchApplications();
+});
+</script>
+
+<template>
+  <div class="main-content">
+    <!-- 搜索栏 -->
+    <div class="search-bar">
       <el-input
         v-model="listQuery.key"
-        :placeholder="$t('wolf.appSearchPrompt')"
-        style="width: 200px;"
-        class="filter-item"
-        maxlength="32"
+        placeholder="应用ID或名称"
+        style="width: 200px"
         clearable
-        @keyup.enter.native="handleFilter"
+        @keyup.enter="handleFilter"
       />
-      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        {{ $t('wolf.search') }}
+      <el-button
+        type="primary"
+        :icon="useRenderIcon(Search)"
+        @click="handleFilter"
+      >
+        搜索
       </el-button>
-      <el-button class="filter-item" type="primary" @click="handleAdd">{{ $t('wolf.appNewApplication') }}</el-button>
+      <el-button
+        type="primary"
+        :icon="useRenderIcon(Plus)"
+        @click="handleAdd"
+      >
+        新应用
+      </el-button>
     </div>
 
-    <el-table :data="applications" style="margin-top:30px; " border>
-      <el-table-column align="center" :label="$t('wolf.titleId')" min-width="15" show-overflow-tooltip>
-        <template slot-scope="scope">
-          {{ scope.row.id }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('wolf.titleName')" min-width="20" show-overflow-tooltip>
-        <template slot-scope="scope">
-          {{ scope.row.name }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('wolf.titleDescription')" min-width="40" show-overflow-tooltip>
-        <template slot-scope="scope">
-          {{ scope.row.description }}
-        </template>
-      </el-table-column>
-
-      <el-table-column align="center" :label="$t('wolf.appTitleRedirectUris')" min-width="40" show-overflow-tooltip prop="redirectUris" :formatter="redirectUrisFormat" />
-      <el-table-column align="center" :label="$t('wolf.appTitleAccessTokenLifetime')" min-width="20" show-overflow-tooltip prop="accessTokenLifetime" :formatter="lifetimeFormat" />
-      <el-table-column align="center" :label="$t('wolf.appTitleRefreshTokenLifetime')" min-width="20" show-overflow-tooltip prop="refreshTokenLifetime" :formatter="lifetimeFormat" />
-      <el-table-column align="center" :label="$t('wolf.appTitleDiagram')" min-width="10">
-        <template slot-scope="scope">
-          <el-button type="primary" size="small" @click="handleDiagram(scope)">{{ $t('wolf.btnShow') }}</el-button>
-        </template>
-      </el-table-column>
-
-      <el-table-column align="center" :label="$t('wolf.titleCreateTime')" min-width="20" show-overflow-tooltip prop="createTime" :formatter="unixtimeFormat" />
-      <el-table-column align="center" :label="$t('wolf.titleOperations')" min-width="20">
-        <template slot-scope="scope">
-          <el-button type="primary" size="small" @click="handleEdit(scope)">{{ $t('wolf.btnEdit') }}</el-button>
-          <el-button type="danger" size="small" @click="handleDelete(scope)">{{ $t('wolf.btnDelete') }}</el-button>
+    <!-- 表格 -->
+    <el-table
+      v-loading="loading"
+      :data="applications"
+      border
+      style="margin-top: 20px"
+    >
+      <el-table-column
+        align="center"
+        label="ID"
+        prop="id"
+        min-width="100"
+        show-overflow-tooltip
+      />
+      <el-table-column
+        align="center"
+        label="名称"
+        prop="name"
+        min-width="120"
+        show-overflow-tooltip
+      />
+      <el-table-column
+        align="center"
+        label="描述"
+        prop="description"
+        min-width="200"
+        show-overflow-tooltip
+      />
+      <el-table-column
+        align="center"
+        label="重定向URI"
+        min-width="200"
+        show-overflow-tooltip
+        :formatter="redirectUrisFormat"
+      />
+      <el-table-column
+        align="center"
+        label="AccessToken存活时间"
+        prop="accessTokenLifetime"
+        min-width="150"
+        :formatter="lifetimeFormat"
+      />
+      <el-table-column
+        align="center"
+        label="RefreshToken存活时间"
+        prop="refreshTokenLifetime"
+        min-width="150"
+        :formatter="lifetimeFormat"
+      />
+      <el-table-column
+        align="center"
+        label="创建时间"
+        min-width="160"
+        :formatter="unixtimeFormat"
+      />
+      <el-table-column align="center" label="操作" min-width="150" fixed="right">
+        <template #default="{ row }">
+          <el-button
+            type="primary"
+            size="small"
+            :icon="useRenderIcon(Edit)"
+            @click="handleEdit(row)"
+          >
+            编辑
+          </el-button>
+          <el-button
+            type="danger"
+            size="small"
+            :icon="useRenderIcon(Delete)"
+            @click="handleDelete(row)"
+          >
+            删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
-    <div class="pagination pagination-center">
-      <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="listApplications" />
+
+    <!-- 分页 -->
+    <div class="pagination-container">
+      <el-pagination
+        v-model:current-page="listQuery.page"
+        v-model:page-size="listQuery.limit"
+        :page-sizes="[10, 20, 50, 100]"
+        :total="total"
+        background
+        layout="total, sizes, prev, pager, next, jumper"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      />
     </div>
 
-    <el-dialog :visible.sync="dialogVisible" :title="dialogType==='edit'?$t('wolf.appEditApplication'):$t('wolf.appNewApplication')" custom-class="application-edit-dialog">
-      <el-form ref="application" :model="application" :rules="rules" label-width="150px" label-position="left">
-        <el-form-item :label="$t('wolf.labelAppID')" prop="id">
+    <!-- 编辑对话框 -->
+    <el-dialog
+      v-model="dialogVisible"
+      :title="dialogType === 'edit' ? '编辑应用' : '新应用'"
+      width="600px"
+      destroy-on-close
+    >
+      <el-form
+        ref="formRef"
+        :model="application"
+        :rules="rules"
+        label-width="150px"
+        label-position="left"
+      >
+        <el-form-item label="应用ID" prop="id">
           <el-input
             v-model="application.id"
-            :placeholder="$t('wolf.newAppPromptAppID')"
-            :readonly="dialogType==='edit'"
+            placeholder="应用ID"
+            :readonly="dialogType === 'edit'"
             minlength="3"
             maxlength="32"
             show-word-limit
           />
         </el-form-item>
-        <el-form-item :label="$t('wolf.newAppLabelAppName')" prop="name">
+
+        <el-form-item label="应用名称" prop="name">
           <el-input
             v-model="application.name"
-            :placeholder="$t('wolf.newAppPromptAppName')"
+            placeholder="应用名称"
             minlength="5"
             maxlength="64"
             show-word-limit
           />
         </el-form-item>
-        <el-form-item :label="$t('wolf.newAppLabelDescription')" prop="description">
+
+        <el-form-item label="描述" prop="description">
           <el-input
             v-model="application.description"
-            :placeholder="$t('wolf.newAppPromptDescription')"
+            placeholder="应用描述"
             maxlength="256"
             show-word-limit
           />
         </el-form-item>
-        <el-form-item :label="$t('wolf.newAppLabelAppSecret')" prop="secret">
-          <el-input
-            v-model="application.secret"
-            :placeholder="$t('wolf.newAppPromptAppSecret')"
-            maxlength="64"
-            :readonly="true"
-            show-word-limit
-          >
-            <el-button v-if="showBtnShow" slot="append" @click="showSecret(application.id);">{{ $t('wolf.btnShow') }}</el-button>
-            <el-button
-              v-if="showBtnReset"
-              slot="append"
-              @click="resetSecret();"
-            >{{ $t('wolf.btnReset') }}</el-button>
+
+        <el-form-item label="应用密钥" prop="secret">
+          <el-input v-model="application.secret" placeholder="应用密钥(oauth2)" readonly>
+            <template #append>
+              <el-button
+                v-if="showBtnShow"
+                :icon="useRenderIcon(View)"
+                @click="showSecret(application.id)"
+              >
+                显示
+              </el-button>
+              <el-button
+                v-if="showBtnReset"
+                :icon="useRenderIcon(Refresh)"
+                @click="resetSecret"
+              >
+                重置
+              </el-button>
+            </template>
           </el-input>
         </el-form-item>
-        <el-form-item :label="$t('wolf.newAppLabelRedirectUris')" prop="redirectUris" class="redirect-uris-item">
-          <el-tag
-            v-for="redirectUri in application.redirectUris"
-            :key="redirectUri"
-            closable
-            :disable-transitions="false"
-            size="medium"
-            @close="handleRedirectUriDelete(redirectUri)"
-          >
-            {{ redirectUri }}
-          </el-tag>
-          <el-input
-            v-if="redirectUriInputVisible"
-            ref="saveRedirectUriInput"
-            v-model="redirectUriInputValue"
-            :placeholder="$t('wolf.newAppPromptRedirectUris')"
-            maxlength="256"
-            show-word-limit
-            class="input-new-redirect-uri"
-            size="small"
-            @keyup.enter.native="handleRedirectUriInputConfirm"
-            @blur="handleRedirectUriInputConfirm"
-          />
-          <el-button v-else class="button-new-redirect-uri" size="small" @click="showRedirectUriInput">{{ $t('wolf.newAppPromptRedirectUrisBtn') }}</el-button>
+
+        <el-form-item label="重定向URI" prop="redirectUris" class="redirect-uris-item">
+          <div class="redirect-uris-container">
+            <el-tag
+              v-for="uri in application.redirectUris"
+              :key="uri"
+              closable
+              size="large"
+              @close="handleRedirectUriDelete(uri)"
+            >
+              {{ uri }}
+            </el-tag>
+            <el-input
+              v-if="redirectUriInputVisible"
+              ref="saveRedirectUriInput"
+              v-model="redirectUriInputValue"
+              placeholder="重定向URI(oauth2)"
+              maxlength="256"
+              show-word-limit
+              class="input-new-redirect-uri"
+              size="small"
+              @keyup.enter="handleRedirectUriInputConfirm"
+              @blur="handleRedirectUriInputConfirm"
+            />
+            <el-button
+              v-else
+              size="small"
+              @click="showRedirectUriInput"
+            >
+              添加重定向URI
+            </el-button>
+          </div>
         </el-form-item>
-        <el-form-item :label="$t('wolf.newAppLabelAccessTokenLifetime')" prop="accessTokenLifetime" label-width="200px" class="lifetime-item">
+
+        <el-form-item label="AccessToken存活时间" prop="accessTokenLifetime" class="lifetime-item">
           <el-input
-            v-model="application.accessTokenLifetime"
-            :placeholder="$t('wolf.newAppPromptAccessTokenLifetime')"
-            maxlength="10"
+            v-model.number="application.accessTokenLifetime"
+            placeholder="Access token存活时间(秒)"
             type="number"
+            style="width: 180px"
           />
-          <el-tag size="medium">{{ accessTokenLifetimePrompt }}</el-tag>
+          <el-tag size="large" class="ml-2">{{ accessTokenLifetimePrompt }}</el-tag>
         </el-form-item>
-        <el-form-item :label="$t('wolf.newAppLabelRefreshTokenLifetime')" prop="refreshTokenLifetime" label-width="200px" class="lifetime-item">
+
+        <el-form-item label="RefreshToken存活时间" prop="refreshTokenLifetime" class="lifetime-item">
           <el-input
-            v-model="application.refreshTokenLifetime"
-            :placeholder="$t('wolf.newAppPromptRefreshTokenLifetime')"
-            maxlength="10"
+            v-model.number="application.refreshTokenLifetime"
+            placeholder="Refresh token存活时间(秒)"
             type="number"
+            style="width: 180px"
           />
-          <el-tag size="medium">{{ refreshTokenLifetimePrompt }}</el-tag>
+          <el-tag size="large" class="ml-2">{{ refreshTokenLifetimePrompt }}</el-tag>
         </el-form-item>
       </el-form>
-      <div style="text-align:right;">
-        <el-button type="danger" @click="dialogVisible=false">{{ $t('wolf.btnCancel') }}</el-button>
-        <el-button type="primary" @click="validateAndSubmit('application');">{{ $t('wolf.btnConfirm') }}</el-button>
-      </div>
-    </el-dialog>
 
-    <el-dialog
-      id="diagram"
-      :title="$t('wolf.appDiagramTitle')"
-      :visible.sync="diagramDialogVisible"
-      custom-class="diagram-dialog"
-      center
-    >
-      <rbac-diagram ref="diagram" :model-data="diagramData" />
+      <template #footer>
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="validateAndSubmit">确定</el-button>
+      </template>
     </el-dialog>
   </div>
 </template>
 
-<script>
-// import path from 'path'
-import { deepClone } from '@/utils'
-import { lifetimeFormatter } from '@/utils/formatter'
-import { listApplications, addApplication, deleteApplication, updateApplication, checkAppIdExist, checkAppNameExist, applicationDiagram, getSecret } from '@/api/application'
-import Pagination from '@/components/Pagination' // secondary package based on el-pagination
-import RbacDiagram from '@/components/RbacDiagram'
-import i18n from '@/i18n/i18n'
-
-const defaultApplication = {
-  id: '',
-  name: '',
-  description: '',
-  secret: '',
-  redirectUris: [],
-  accessTokenLifetime: 0,
-  refreshTokenLifetime: 0,
+<style lang="scss" scoped>
+.main-content {
+  padding: 20px;
+  background: var(--el-bg-color);
+  border-radius: 4px;
 }
 
-export default {
-  name: 'Application',
-  components: { Pagination, RbacDiagram },
-  props: {},
-  data() {
-    return {
-      application: Object.assign({}, defaultApplication),
-      secretMask: '**********',
-      diagramData: {},
-      routes: [],
-      applications: [],
-      total: 0,
-      listQuery: {
-        page: 1,
-        limit: 10,
-        key: undefined,
-        sort: '-createTime',
-      },
-      showBtnShow: false,
-      showBtnReset: false,
-      diagramDialogVisible: false,
-      dialogVisible: false,
-      dialogType: 'new',
-      checkStrictly: false,
-      defaultProps: {
-        children: 'children',
-        label: 'title',
-      },
-      redirectUriInputVisible: false,
-      redirectUriInputValue: '',
-      rules: {
-        id: [
-          { required: true, message: i18n.t('wolf.appRulesMessageIDRequired'), trigger: ['blur', 'change'] },
-          { min: 2, max: 32, message: i18n.t('wolf.pubRulesMessageLength_2_32'), trigger: ['blur', 'change'] },
-          { pattern: /^[a-zA-Z0-9_-]*$/, message: i18n.t('wolf.pubRulesMessageIDFormat'), trigger: ['blur', 'change'] },
-          { validator: this.validateAppId, trigger: ['blur', 'change'] },
-        ],
-        name: [
-          { required: true, message: i18n.t('wolf.appRulesMessageNameRequired'), trigger: ['blur', 'change'] },
-          { validator: this.validateAppName, trigger: ['blur', 'change'] },
-        ],
-        redirectUris: [
-          { type: 'array', defaultField: { 'type': 'url' }, trigger: ['change'] },
-        ],
-      },
-    }
-  },
-  computed: {
-    accessTokenLifetimePrompt: function() {
-      return lifetimeFormatter(this.application.accessTokenLifetime)
-    },
-    refreshTokenLifetimePrompt: function() {
-      return lifetimeFormatter(this.application.refreshTokenLifetime)
-    },
-  },
-  created() {
-    this.listApplications()
-  },
-  mounted() {},
-  methods: {
-    handleRedirectUriDelete(redirectUri) {
-      this.application.redirectUris.splice(this.application.redirectUris.indexOf(redirectUri), 1)
-    },
-
-    randomSecret() {
-      const chars = '23456789abcdefghijkmnpqrstuvwxyzABCDEFJHIJKLMNOPQRSTUVWXYZ'
-      const secret = []
-      for (let i = 0; i < 40; i++) {
-        const rand = Math.floor((Math.random() * chars.length))
-        secret.push(chars[rand])
-      }
-      return secret.join('')
-    },
-
-    resetSecret() {
-      const prompt = i18n.t('wolf.appPromptConfirmResetSecret')
-      const textConfirm = i18n.t('wolf.btnConfirm')
-      const textCancel = i18n.t('wolf.btnCancel')
-      this.$confirm(prompt, 'Warning', {
-        confirmButtonText: textConfirm,
-        cancelButtonText: textCancel,
-        type: 'warning',
-      })
-        .then(async() => {
-          this.application.secret = this.randomSecret()
-          this.showBtnReset = false
-          return true
-        })
-        .catch(err => { console.error(err) })
-    },
-
-    async showSecret(id) {
-      const res = await getSecret({ id })
-      if (res.ok) {
-        this.application.secret = res.data.secret
-        this.showBtnShow = false
-        this.showBtnReset = true
-      }
-    },
-
-    showRedirectUriInput() {
-      this.redirectUriInputVisible = true
-      this.$nextTick(_ => {
-        this.$refs.saveRedirectUriInput.$refs.input.focus()
-      })
-    },
-
-    handleRedirectUriInputConfirm() {
-      const redirectUriInputValue = this.redirectUriInputValue
-      if (redirectUriInputValue) {
-        this.application.redirectUris.push(redirectUriInputValue)
-      }
-      this.redirectUriInputVisible = false
-      this.redirectUriInputValue = ''
-    },
-    async listApplications() {
-      const res = await listApplications(this.listQuery)
-      if (res.ok) {
-        this.total = res.data.total
-        this.applications = res.data.applications
-      }
-    },
-
-    async validateAppId(rule, value, callback) {
-      if (this.dialogType === 'edit') {
-        callback()
-        return
-      }
-
-      const res = await checkAppIdExist(value)
-      if (res.ok && res.exist) {
-        callback(new Error(i18n.t('wolf.appPromptAppIDExist')))
-      } else {
-        callback()
-      }
-    },
-
-    async validateAppName(rule, value, callback) {
-      const res = await checkAppNameExist(value, this.application.id)
-      if (res.ok && res.exist) {
-        callback(new Error(i18n.t('wolf.appPromptAppNameExist')))
-      } else {
-        callback()
-      }
-    },
-
-    handleFilter() {
-      this.listQuery.page = 1
-      this.listApplications()
-    },
-
-    handleAdd() {
-      this.dialogVisible = true
-      this.application = Object.assign({}, defaultApplication)
-      this.application.secret = this.randomSecret()
-      this.dialogType = 'new'
-      this.showBtnShow = false
-      this.showBtnReset = false
-    },
-    handleEdit(scope) {
-      this.dialogType = 'edit'
-      this.dialogVisible = true
-      this.checkStrictly = true
-      scope.row.secret = this.secretMask
-      this.application = deepClone(scope.row)
-      this.showBtnShow = true
-      this.showBtnReset = false
-      if (!this.application.redirectUris) {
-        this.application.redirectUris = []
-      }
-    },
-    async handleDiagram({ $index, row }) {
-      const res = await applicationDiagram(row.id)
-      if (res.ok && res.data) {
-        Object.assign(this.diagramData, res.data)
-      }
-      if (this.$refs.diagram) {
-        this.$refs.diagram.refreshDiagram()
-      }
-      this.diagramDialogVisible = true
-    },
-    handleDelete({ $index, row }) {
-      const prompt = i18n.t('wolf.appPromptConfirmRemove')
-      const textConfirm = i18n.t('wolf.btnConfirm')
-      const textCancel = i18n.t('wolf.btnCancel')
-      this.$confirm(prompt, 'Warning', {
-        confirmButtonText: textConfirm,
-        cancelButtonText: textCancel,
-        type: 'warning',
-      })
-        .then(async() => {
-          const res = await deleteApplication(row.id)
-          if (res.ok) {
-            this.listApplications()
-            this.$message({
-              type: 'success',
-              message: i18n.t('wolf.appPromptRemoveSuccess'),
-            })
-            await this.$store.dispatch('user/getInfo')
-          }
-        })
-        .catch(err => { console.error(err) })
-    },
-
-    async validateAndSubmit(formName) {
-      this.$refs[formName].validate(async(valid) => {
-        if (valid) {
-          await this.submitApplication()
-        } else {
-          return false
-        }
-      })
-    },
-
-    async submitApplication() {
-      const isEdit = this.dialogType === 'edit'
-      if (this.application.secret === this.secretMask) {
-        delete (this.application.secret)
-      }
-      if (isEdit) {
-        const res = await updateApplication(this.application.id, this.application)
-        if (!res.ok) {
-          return
-        }
-        this.listApplications()
-        // const { name } = this.application
-        this.dialogVisible = false
-        await this.$store.dispatch('user/getInfo')
-        this.$notify({
-          title: 'Success',
-          dangerouslyUseHTMLString: true,
-          message: i18n.t('wolf.appPromptUpdateSuccess'),
-          type: 'success',
-        })
-      } else {
-        const res = await addApplication(this.application)
-        if (!res.ok) {
-          return
-        }
-        this.listApplications()
-
-        // const { name } = this.application
-        this.dialogVisible = false
-        await this.$store.dispatch('user/getInfo')
-        this.$notify({
-          title: 'Success',
-          dangerouslyUseHTMLString: true,
-          message: i18n.t('wolf.appPromptAddSuccess'),
-          type: 'success',
-        })
-      }
-    },
-  },
+.search-bar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
-</script>
 
-<style>
-  .redirect-uris-item .el-tag + .el-tag {
-    margin-top: 10px;
-  }
-  .button-new-redirect-uri {
-    margin-top: 10px;
-    height: 32px;
-    line-height: 30px;
-    padding-top: 0;
-    padding-bottom: 0;
-  }
-  .input-new-redirect-uri {
-    margin-top: 10px;
-    vertical-align: bottom;
-  }
-  .redirect-uris-item .el-form-item__content{
-    display: flex;
-    flex-direction: column;
-  }
-  .lifetime-item .el-form-item__content{
-    display: flex;
-    flex-direction: row;
-  }
-  .lifetime-item .el-form-item__content .el-input {
-    width: 150px;
-    min-width: 120px;
-    margin-right: 10px;
-  }
-  .lifetime-item .el-form-item__content .el-tag {
-    width: 100%;
-    height: 36px;
-    line-height: 36px;
-  }
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
 
-  .application-edit-dialog {
-    max-width: 600px;
+.redirect-uris-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+
+  .el-tag {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-</style>
-<style rel="stylesheet/scss" type="text/scss" scoped>
-#diagram .diagram-dialog {
-  width: 80%;
-  min-width: 900px;
-  min-height: 500px;
+}
+
+.input-new-redirect-uri {
+  width: 100%;
+}
+
+.lifetime-item {
+  :deep(.el-form-item__content) {
+    display: flex;
+    align-items: center;
+  }
 }
 </style>
+

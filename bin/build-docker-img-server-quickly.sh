@@ -8,7 +8,7 @@ TAG="$1"
 echo "BUILD TAG: $TAG"
 
 # don't rebuild console project in quickly mode
-#cd ./console && npm run build:prod && cd ../
+#cd ./console && pnpm run build && cd ../
 
 docker build -t igeeky/wolf-server:$TAG -f ./server/DockerfileQuickly ./server
 docker build -t igeeky/wolf-server:latest -f ./server/DockerfileQuickly ./server

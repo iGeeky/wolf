@@ -1,23 +1,22 @@
+node_modules
 .DS_Store
-node_modules/
-dist/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-**/*.log
+dist
+dist-ssr
+*.local
+.eslintcache
+report.html
+vite.config.*.timestamp*
 
+yarn.lock
+npm-debug.log*
+.pnpm-error.log*
+.pnpm-debug.log
 tests/**/coverage/
-tests/e2e/reports
-selenium-debug.log
 
 # Editor directories and files
 .idea
-.vscode
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
-*.local
-
-package-lock.json
-yarn.lock
+tsconfig.tsbuildinfo

@@ -1,6 +1,9 @@
 [中文](README-CN.md)
 [日本語（にほんご）](README-JA.md)
 
+[![GitHub stars](https://img.shields.io/github/stars/iGeeky/wolf?style=social)](https://github.com/iGeeky/wolf/stargazers)
+[![License](https://img.shields.io/github/license/iGeeky/wolf)](./LICENSE)
+
 ## Introduction
 
 Wolf is a versatile Role-Based Access Control (RBAC) authority system, suitable for all HTTP applications, offering unified authorization and access control functionalities.
@@ -33,11 +36,14 @@ The Wolf system has the following main features:
 * Built-in management console (console module): Manages applications, users, roles, permissions, and resources
 * Supports access log recording and querying, facilitating auditing and issue tracing
 * Supports viewing RBAC object relationship charts for applications
+* Multi-language support (i18n): Console supports Chinese and English language switching
+* Visual RBAC relationship diagrams for better understanding of permission structures
 
 ### 4. High Performance and Scalability
 
 * Supports advanced radixtree routing for high-performance, complex URL matching
 * Compatible with PostgreSQL and MySQL databases
+* Redis caching for improved performance
 * Supports integration with [APISIX gateway](https://github.com/apache/apisix/blob/master/docs/en/latest/plugins/wolf-rbac.md)
 
 ### 5. System Architecture
@@ -107,16 +113,31 @@ The Wolf system has the following main features:
 ## Technologies
 
 - **Server**: Utilizes NodeJS, KOA, Sequelize, JWT
-- **Console**: Employs VueJS, Element, Babel, NodeJS
+- **Console**: Built with Vue 3, Element Plus, Vite, TypeScript, Pinia, Tailwind CSS
 - **Agent**: Powered by OpenResty(ngx_lua)
 - **Database**: Supports PostgreSQL.
 - **Cache**: Incorporates Redis.
 
 
 
-## Getting Started
+## Quick Start
 
-[Getting Started](./quick-start-with-docker/README.md)
+Get started with Wolf in minutes using Docker Compose:
+
+```bash
+# Clone the repository
+git clone https://github.com/iGeeky/wolf.git
+cd wolf/quick-start-with-docker
+
+# Start all services
+docker-compose up
+```
+
+After starting, visit:
+- Console: http://localhost:12180 (admin/wolf-123456)
+- Demo Application: http://localhost:12200
+
+For detailed instructions, see [Getting Started Guide](./quick-start-with-docker/README.md)
 
 
 

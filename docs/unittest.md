@@ -5,7 +5,7 @@ The unit test is currently only for the server API interface part. Execute the f
 
 ```
 cd wolf/server
-npm run test
+pnpm run test
 ```
 
 After execution, if all tests are successful, the output will look like this:

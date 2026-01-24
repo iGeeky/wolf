@@ -5,13 +5,13 @@
 
 ```
 cd wolf/server
-npm run test
+pnpm run test
 ```
 
 执行完成后, 如果测试都成功, 输出大概如下:
 
 ```
-➜  server git:(master) ✗ npm run test
+➜  server git:(master) ✗ pnpm run test
 
 > wolf-server@0.1.0 test
 > ./node_modules/.bin/nyc --reporter=html mocha test/*.test.js --exit --timeout 10000

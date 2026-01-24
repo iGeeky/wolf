@@ -1,3 +1,3 @@
 #!/bin/bash
 
-npm run start
+pnpm run start

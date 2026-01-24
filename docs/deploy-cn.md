@@ -10,8 +10,8 @@
 
 * docker
 * docker-compose
-* node 12+
-* npm
+* node 18+
+* pnpm
 
 #### 2.构建docker镜像
 
@@ -184,9 +184,9 @@ export RBAC_REDIS_URL=redis://127.0.0.1:6379/0
 
 cd path/to/wolf/server
 # 安装依赖项(首次启动时执行)
-npm install
+pnpm install
 # 启动服务程序.
-npm run start
+pnpm run start
 ```
 
 **如果启动成功, 应该能看到类似输出:**
@@ -200,9 +200,9 @@ npm run start
 ```shell
 cd path/to/wolf/console
 # 安装依赖项(首次启动时执行)
-npm install
+pnpm install
 # 启动控制台程序.
-cnpm run dev
+pnpm run dev
 ```
 
 **编译, 启动成功后, 应该能看到类似输出:**

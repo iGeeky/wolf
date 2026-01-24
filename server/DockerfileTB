@@ -4,7 +4,7 @@ FROM node:14-alpine
 
 COPY ./ /opt/wolf/server
 WORKDIR /opt/wolf/server
-RUN npm --registry https://registry.npm.taobao.org install
+RUN pnpm --registry https://registry.npm.taobao.org install
 
 EXPOSE 12180
 ENTRYPOINT ["sh", "./entrypoint.sh"]

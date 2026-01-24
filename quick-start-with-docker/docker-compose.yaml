@@ -2,7 +2,7 @@ version: '3'
 services:
   database:
     container_name: wolf-database
-    image: postgres:13
+    image: postgres:15
     restart: always
     environment:
       POSTGRES_USER: wolfroot
@@ -30,7 +30,7 @@ services:
       RBAC_REDIS_URL:  redis://cache:6379/0
       MEM_CACHE_BY_REDIS: "yes"
       CLIENT_CHANGE_PWD: "no"
-    command: npm run start
+    command: pnpm run start
   agent-or:
     container_name: wolf-agent-or
     image: igeeky/wolf-agent

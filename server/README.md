@@ -2,11 +2,11 @@
 # run
 
 ```
-npm run start
+pnpm run start
 ```
 
 # run unit tests
 
 ```
-npm run test
+pnpm run test
 ```

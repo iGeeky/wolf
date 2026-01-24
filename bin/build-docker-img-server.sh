@@ -7,7 +7,7 @@ fi
 TAG="$1"
 echo "BUILD TAG: $TAG"
 echo "BUILD CONSOLE..."
-cd ./console && npm install && npm run build:prod
+cd ./console && pnpm install && pnpm run build
 if [ "$?" != "0" ]; then
   echo "build console failed!"
   exit 2

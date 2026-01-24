@@ -1,6 +1,57 @@
+<script setup lang="ts">
+import { computed, onMounted } from "vue";
+import { useUserStoreHook } from "@/store/modules/user";
+import { setCurrentApp, getCurrentApp } from "@/utils/auth";
+
+// Props
+interface Props {
+  addRbacConsoleItem?: boolean;
+}
+const props = withDefaults(defineProps<Props>(), {
+  addRbacConsoleItem: false
+});
+
+// Store
+const userStore = useUserStoreHook();
+
+// Wolf Console 固定项
+const rbacConsoleItem = {
+  id: "rbac-console",
+  name: "Wolf Console"
+};
+
+// 当前选中的应用
+const currentApp = computed({
+  get: () => userStore.currentApp,
+  set: (value: string) => {
+    setCurrentApp(value);
+  }
+});
+
+// 应用列表
+const applications = computed(() => userStore.applications);
+
+// 初始化：如果没有选中应用，设置为第一个
+onMounted(() => {
+  if (!currentApp.value && applications.value.length > 0) {
+    setCurrentApp(applications.value[0].id);
+  }
+});
+</script>
+
 <template>
-  <el-select v-model="currentApp" placeholder="Change App" size="small">
-    <el-option v-if="addRbacConsoleItem" :key="rbacConsoleItem.id" :label="rbacConsoleItem.name" :value="rbacConsoleItem.id" />
+  <el-select
+    v-model="currentApp"
+    placeholder="Change App"
+    size="small"
+    style="width: 150px"
+  >
+    <el-option
+      v-if="props.addRbacConsoleItem"
+      :key="rbacConsoleItem.id"
+      :label="rbacConsoleItem.name"
+      :value="rbacConsoleItem.id"
+    />
     <el-option
       v-for="application in applications"
       :key="application.id"
@@ -9,48 +60,3 @@
     />
   </el-select>
 </template>
-
-<script>
-import { mapGetters } from 'vuex'
-
-export default {
-  name: 'CurrentApp',
-  props: {
-    addRbacConsoleItem: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  data() {
-    return {
-      rbacConsoleItem: {
-        id: 'rbac-console',
-        name: 'Wolf Console',
-      },
-    }
-  },
-  computed: {
-    currentApp: {
-      get() {
-        return this.$store.getters.currentApp
-      },
-      set(value) {
-        this.$store.dispatch('currentApp/setCurrentApp', value)
-      },
-    },
-    ...mapGetters([
-      'applications',
-    ]),
-  },
-  created: function() {
-    if (!this.$store.getters.currentApp) { // if it's null, set to the first of applications
-      if (this.$store.getters.applications && this.$store.getters.applications.length > 0) {
-        this.$store.dispatch('currentApp/setCurrentApp', this.$store.getters.applications[0].id)
-      }
-    }
-  },
-  methods: {
-
-  },
-}
-</script>

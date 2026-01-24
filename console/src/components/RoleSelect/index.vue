@@ -1,7 +1,62 @@
+<script setup lang="ts">
+import { ref, computed, watch, onMounted } from "vue";
+import { useUserStoreHook } from "@/store/modules/user";
+import { listRoles } from "@/api/role";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
+
+interface Props {
+  modelValue: string[];
+  application?: string;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  application: ""
+});
+
+const emit = defineEmits<{
+  "update:modelValue": [value: string[]];
+}>();
+
+interface Role {
+  id: string;
+  name: string;
+}
+
+const roles = ref<Role[]>([]);
+const userStore = useUserStoreHook();
+
+const currentApp = computed(() => {
+  return props.application || userStore.currentApp;
+});
+
+const roleIDs = computed({
+  get: () => props.modelValue,
+  set: (value: string[]) => emit("update:modelValue", value)
+});
+
+const fetchRoles = async () => {
+  if (!currentApp.value) return;
+  const res = await listRoles({ appID: currentApp.value, limit: 512 });
+  if (res?.ok) {
+    roles.value = res.data?.roles || [];
+  }
+};
+
+watch(currentApp, () => {
+  fetchRoles();
+});
+
+onMounted(() => {
+  fetchRoles();
+});
+</script>
+
 <template>
   <el-select
     v-model="roleIDs"
-    :placeholder="$t('wolf.promptChangeRole')"
+    :placeholder="t('wolf.promptChangeRole')"
     size="small"
     style="display: block"
     multiple
@@ -17,58 +72,3 @@
   </el-select>
 </template>
 
-<script>
-import { listRoles } from '@/api/role'
-
-export default {
-  name: 'RoleSelect',
-  props: {
-    value: {
-      type: Array,
-      default: () => [],
-    },
-    application: {
-      type: String,
-      default: '',
-    },
-  },
-  data: function() {
-    return {
-      roles: [],
-    }
-  },
-  computed: {
-    currentApp: function() {
-      if (this.application) {
-        return this.application
-      } else {
-        return this.$store.getters.currentApp
-      }
-    },
-    roleIDs: {
-      get() {
-        return this.value
-      },
-      set(value) {
-        this.$emit('update:value', value)
-      },
-    },
-  },
-  watch: {
-    currentApp: function(val) {
-      this.listRoles()
-    },
-  },
-  created: function() {
-    this.listRoles()
-  },
-  methods: {
-    async listRoles() {
-      const res = await listRoles({ appID: this.currentApp, limit: 512 })
-      if (res && res.ok) {
-        this.roles = res.data.roles
-      }
-    },
-  },
-}
-</script>
