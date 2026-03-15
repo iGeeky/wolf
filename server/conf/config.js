@@ -25,6 +25,24 @@ const config = {
     accessTokenLifetime: parseInt(process.env.OAUTH_ACCESS_TOKEN_LIFETIME) || 3600 * 24 * 7, // 7 days
     refreshTokenLifetime: parseInt(process.env.OAUTH_REFRESH_TOKEN_LIFETIME) || 3600 * 24 * 30, // 30 days.
   },
+  ai: {
+    // AI 模型与服务配置（本段为准；亦可仅通过环境变量注入，见各字段）
+    // 未配置有效 API Key 时 AI 功能不可用（ai.apiKey 或 OPENAI_API_KEY 等）
+    provider: process.env.AI_PROVIDER || 'openai',
+    model: process.env.AI_MODEL || 'deepseek-v4-flash',
+    // API 协议类型。若模型已在 pi-ai 内置注册表中则自动识别，否则使用此值作为 fallback
+    // 可选值: openai-completions(兼容所有 OpenAI 兼容 API), openai-responses(仅官方 OpenAI), anthropic-messages, google-generative-ai 等
+    api: process.env.AI_API || 'openai-completions',
+    // API Key：可选。不设则回退到各 provider 环境变量（如 OPENAI_API_KEY）
+    apiKey: process.env.AI_API_KEY || '',
+    // 可选：自定义 API 地址（如代理、自建 OpenAI 兼容服务）。不设则使用 pi-ai 默认
+    // 填写时需包含 API 版本路径，例如 https://api.deepseek.com/v1（末尾的 /v1 不可省略）
+    baseUrl: process.env.AI_BASE_URL || '',
+    // wolf AI 行为配置
+    maxTurns: parseInt(process.env.AI_MAX_TURNS) || 20,
+    maxHistoryMessages: parseInt(process.env.AI_MAX_HISTORY) || 100,
+    thinkingLevel: process.env.AI_THINKING_LEVEL || 'low',
+  },
   ldapConfig__: {
     label: 'OpenLDAP',
     url: 'ldap://127.0.0.1:389',

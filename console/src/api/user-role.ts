@@ -29,4 +29,3 @@ export const getUserRole = (userID: string, appID: string) => {
     params: { userID, appID }
   });
 };
-

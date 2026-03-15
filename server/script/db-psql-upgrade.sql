@@ -68,3 +68,48 @@ ALTER TABLE "resource" ADD COLUMN exprs text[];
 COMMENT ON COLUMN resource.hosts IS 'Array of host names for which this resource is valid';
 COMMENT ON COLUMN resource.remote_addrs IS 'Array of remote addresses (IP or CIDR) allowed to access this resource';
 COMMENT ON COLUMN resource.exprs IS 'Array of expressions for additional matching conditions';
+
+
+-- upgrade to 0.8.x (AI agent version)
+
+CREATE TABLE "ai_chat_session" (
+  id                   bigserial NOT NULL,
+  user_id              bigint NOT NULL,
+  title                text DEFAULT '',
+  app_id               text,
+  status               smallint DEFAULT 1,
+  memory_extracted_at  bigint DEFAULT 0,
+  create_time          bigint NOT NULL,
+  update_time          bigint NOT NULL,
+  primary key(id)
+);
+CREATE INDEX idx_ai_chat_session_user ON "ai_chat_session"(user_id);
+
+CREATE TABLE "ai_chat_message" (
+  id          bigserial NOT NULL,
+  session_id  bigint NOT NULL REFERENCES ai_chat_session(id) ON DELETE CASCADE,
+  role        text NOT NULL,
+  content     jsonb NOT NULL,
+  token_usage jsonb,
+  create_time bigint NOT NULL,
+  primary key(id)
+);
+CREATE INDEX idx_ai_chat_message_session ON "ai_chat_message"(session_id);
+
+CREATE TABLE "ai_user_memory" (
+  id          bigserial NOT NULL,
+  user_id     bigint NOT NULL,
+  session_id  bigint,
+  category    varchar(32) NOT NULL,
+  content     text NOT NULL,
+  source      varchar(16) DEFAULT 'auto',
+  status      smallint DEFAULT 1,
+  create_time bigint NOT NULL,
+  update_time bigint NOT NULL,
+  primary key(id)
+);
+CREATE INDEX idx_ai_user_memory_user ON "ai_user_memory"(user_id);
+
+-- upgrade to 0.8.1 (AI memory version)
+-- Run this if already on 0.8.x:
+-- ALTER TABLE "ai_chat_session" ADD COLUMN IF NOT EXISTS memory_extracted_at bigint DEFAULT 0;

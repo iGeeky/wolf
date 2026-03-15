@@ -170,4 +170,3 @@ const showTransferDialog = () => {
   width: 100%;
 }
 </style>
-

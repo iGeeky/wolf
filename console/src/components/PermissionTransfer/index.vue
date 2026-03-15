@@ -124,4 +124,3 @@ const submit = () => {
   width: 100%;
 }
 </style>
-

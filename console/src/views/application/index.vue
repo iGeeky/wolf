@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
 import { message } from "@/utils/message";
 import { ElMessageBox } from "element-plus";
+import type { FormInstance, FormRules } from "element-plus";
 import { useUserStoreHook } from "@/store/modules/user";
 import {
   type Application,
@@ -26,6 +28,8 @@ defineOptions({
   name: "ApplicationList"
 });
 
+const { t } = useI18n();
+
 // 列表数据
 const applications = ref<Application[]>([]);
 const total = ref(0);
@@ -48,6 +52,7 @@ const showBtnReset = ref(false);
 const redirectUriInputVisible = ref(false);
 const redirectUriInputValue = ref("");
 const saveRedirectUriInput = ref<HTMLInputElement>();
+const oauthCollapseActive = ref<string[]>([]);
 
 // 默认应用数据
 const defaultApplication: Application = {
@@ -63,29 +68,15 @@ const defaultApplication: Application = {
 // 当前编辑的应用
 const application = reactive<Application>({ ...defaultApplication });
 
-// 表单规则
-const formRef = ref();
-const rules = {
-  id: [
-    { required: true, message: "请输入应用ID", trigger: ["blur", "change"] },
-    {
-      min: 2,
-      max: 32,
-      message: "长度只能是2-32个字符",
-      trigger: ["blur", "change"]
-    },
-    {
-      pattern: /^[a-zA-Z0-9_-]*$/,
-      message: "只能包含: 字母(a-zA-Z), 数字(0-9),下划线(_),连字符(-)",
-      trigger: ["blur", "change"]
-    },
-    { validator: validateAppId, trigger: ["blur", "change"] }
-  ],
-  name: [
-    { required: true, message: "请输入应用名称", trigger: ["blur", "change"] },
-    { validator: validateAppName, trigger: ["blur", "change"] }
-  ]
-};
+const formRef = ref<FormInstance>();
+
+function formatLifetimePart(
+  n: number,
+  oneKey: string,
+  manyKey: string
+): string {
+  return n === 1 ? t(oneKey, { n }) : t(manyKey, { n });
+}
 
 // 验证应用ID
 async function validateAppId(
@@ -100,7 +91,7 @@ async function validateAppId(
   try {
     const res = await checkAppIdExist(value);
     if (res.ok && res.data?.exist) {
-      callback(new Error("应用ID已经存在了"));
+      callback(new Error(t("wolf.appPromptAppIDExist")));
     } else {
       callback();
     }
@@ -118,7 +109,7 @@ async function validateAppName(
   try {
     const res = await checkAppNameExist(value, application.id);
     if (res.ok && res.data?.exist) {
-      callback(new Error("应用名称已经存在了"));
+      callback(new Error(t("wolf.appPromptAppNameExist")));
     } else {
       callback();
     }
@@ -127,19 +118,80 @@ async function validateAppName(
   }
 }
 
+const rules = computed<FormRules>(() => {
+  const r: FormRules = {
+    id: [
+      {
+        required: true,
+        message: t("wolf.appRulesMessageIDRequired"),
+        trigger: ["blur", "change"]
+      },
+      {
+        min: 2,
+        max: 32,
+        message: t("wolf.pubRulesMessageLength_2_32"),
+        trigger: ["blur", "change"]
+      },
+      {
+        pattern: /^[a-zA-Z0-9_-]*$/,
+        message: t("wolf.pubRulesMessageIDFormat"),
+        trigger: ["blur", "change"]
+      },
+      { validator: validateAppId as any, trigger: ["blur", "change"] }
+    ],
+    name: [
+      {
+        required: true,
+        message: t("wolf.appRulesMessageNameRequired"),
+        trigger: ["blur", "change"]
+      },
+      { validator: validateAppName as any, trigger: ["blur", "change"] }
+    ]
+  };
+  return r;
+});
+
 // Token 存活时间格式化
 const lifetimeFormatter = (seconds: number): string => {
-  if (!seconds || seconds <= 0) return "默认";
+  if (!seconds || seconds <= 0) return t("wolf.appLifetimeDefault");
   const days = Math.floor(seconds / 86400);
   const hours = Math.floor((seconds % 86400) / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
   const secs = seconds % 60;
-  const parts = [];
-  if (days > 0) parts.push(`${days}天`);
-  if (hours > 0) parts.push(`${hours}小时`);
-  if (minutes > 0) parts.push(`${minutes}分钟`);
-  if (secs > 0) parts.push(`${secs}秒`);
-  return parts.join("") || "0秒";
+  const parts: string[] = [];
+  if (days > 0) {
+    parts.push(
+      formatLifetimePart(days, "wolf.appLifetimeOneDay", "wolf.appLifetimeDays")
+    );
+  }
+  if (hours > 0) {
+    parts.push(
+      formatLifetimePart(
+        hours,
+        "wolf.appLifetimeOneHour",
+        "wolf.appLifetimeHours"
+      )
+    );
+  }
+  if (minutes > 0) {
+    parts.push(
+      formatLifetimePart(
+        minutes,
+        "wolf.appLifetimeOneMinute",
+        "wolf.appLifetimeMinutes"
+      )
+    );
+  }
+  if (secs > 0) {
+    parts.push(
+      formatLifetimePart(
+        secs,
+        "wolf.appLifetimeOneSecond",
+        "wolf.appLifetimeSeconds"
+      )
+    );
+  }
+  return parts.join(" ") || t("wolf.appLifetimeZeroSeconds");
 };
 
 // 计算属性
@@ -162,16 +214,15 @@ const redirectUrisFormat = (row: Application) => {
 };
 
 // 生存时间格式化
-const lifetimeFormat = (row: Application, column: any) => {
+const lifetimeFormat = (row: Application, column: { property: string }) => {
   const value = row[column.property as keyof Application] as number;
   return lifetimeFormatter(value);
 };
 
 // 随机密钥
 const randomSecret = (): string => {
-  const chars =
-    "23456789abcdefghijkmnpqrstuvwxyzABCDEFJHIJKLMNOPQRSTUVWXYZ";
-  const secret = [];
+  const chars = "23456789abcdefghijkmnpqrstuvwxyzABCDEFJHIJKLMNOPQRSTUVWXYZ";
+  const secret: string[] = [];
   for (let i = 0; i < 40; i++) {
     const rand = Math.floor(Math.random() * chars.length);
     secret.push(chars[rand]);
@@ -207,6 +258,7 @@ const handleAdd = () => {
   application.secret = randomSecret();
   showBtnShow.value = false;
   showBtnReset.value = false;
+  oauthCollapseActive.value = [];
 };
 
 // 编辑
@@ -220,6 +272,11 @@ const handleEdit = (row: Application) => {
   });
   showBtnShow.value = true;
   showBtnReset.value = false;
+  const hasOAuthConfig =
+    (row.redirectUris && row.redirectUris.length > 0) ||
+    (row.accessTokenLifetime && row.accessTokenLifetime > 0) ||
+    (row.refreshTokenLifetime && row.refreshTokenLifetime > 0);
+  oauthCollapseActive.value = hasOAuthConfig ? ["oauth2"] : [];
 };
 
 // 显示密钥
@@ -239,11 +296,15 @@ const showSecret = async (id: string) => {
 // 重置密钥
 const resetSecret = async () => {
   try {
-    await ElMessageBox.confirm("确定要重置密钥吗?", "警告", {
-      confirmButtonText: "确定",
-      cancelButtonText: "取消",
-      type: "warning"
-    });
+    await ElMessageBox.confirm(
+      t("wolf.appPromptConfirmResetSecret"),
+      t("wolf.dialogTitleWarning"),
+      {
+        confirmButtonText: t("wolf.btnConfirm"),
+        cancelButtonText: t("wolf.btnCancel"),
+        type: "warning"
+      }
+    );
     application.secret = randomSecret();
     showBtnReset.value = false;
   } catch {
@@ -282,16 +343,19 @@ const handleRedirectUriInputConfirm = () => {
 // 删除应用
 const handleDelete = async (row: Application) => {
   try {
-    await ElMessageBox.confirm("确定要删除应用吗?", "警告", {
-      confirmButtonText: "确定",
-      cancelButtonText: "取消",
-      type: "warning"
-    });
+    await ElMessageBox.confirm(
+      t("wolf.appPromptConfirmRemove"),
+      t("wolf.dialogTitleWarning"),
+      {
+        confirmButtonText: t("wolf.btnConfirm"),
+        cancelButtonText: t("wolf.btnCancel"),
+        type: "warning"
+      }
+    );
     const res = await deleteApplication(row.id);
     if (res.ok) {
-      message("应用已经删除!", { type: "success" });
+      message(t("wolf.appPromptRemoveSuccess"), { type: "success" });
       fetchApplications();
-      // 刷新用户信息
       await useUserStoreHook().getUserInfo();
     }
   } catch {
@@ -314,7 +378,6 @@ const submitApplication = async () => {
   const isEdit = dialogType.value === "edit";
   const data = { ...application };
 
-  // 如果密钥未更改，不提交
   if (data.secret === secretMask) {
     delete data.secret;
   }
@@ -323,7 +386,7 @@ const submitApplication = async () => {
     if (isEdit) {
       const res = await updateApplication(application.id, data);
       if (res.ok) {
-        message("应用已经修改", { type: "success" });
+        message(t("wolf.appPromptUpdateSuccess"), { type: "success" });
         dialogVisible.value = false;
         fetchApplications();
         await useUserStoreHook().getUserInfo();
@@ -331,7 +394,7 @@ const submitApplication = async () => {
     } else {
       const res = await addApplication(data);
       if (res.ok) {
-        message("应用已经添加", { type: "success" });
+        message(t("wolf.appPromptAddSuccess"), { type: "success" });
         dialogVisible.value = false;
         fetchApplications();
         await useUserStoreHook().getUserInfo();
@@ -360,11 +423,10 @@ onMounted(() => {
 
 <template>
   <div class="main-content">
-    <!-- 搜索栏 -->
     <div class="search-bar">
       <el-input
         v-model="listQuery.key"
-        placeholder="应用ID或名称"
+        :placeholder="t('wolf.appSearchPrompt')"
         style="width: 200px"
         clearable
         @keyup.enter="handleFilter"
@@ -374,18 +436,13 @@ onMounted(() => {
         :icon="useRenderIcon(Search)"
         @click="handleFilter"
       >
-        搜索
+        {{ t("wolf.search") }}
       </el-button>
-      <el-button
-        type="primary"
-        :icon="useRenderIcon(Plus)"
-        @click="handleAdd"
-      >
-        新应用
+      <el-button type="primary" :icon="useRenderIcon(Plus)" @click="handleAdd">
+        {{ t("wolf.appNewApplication") }}
       </el-button>
     </div>
 
-    <!-- 表格 -->
     <el-table
       v-loading="loading"
       :data="applications"
@@ -394,53 +451,58 @@ onMounted(() => {
     >
       <el-table-column
         align="center"
-        label="ID"
+        :label="t('wolf.appTitleId')"
         prop="id"
         min-width="100"
         show-overflow-tooltip
       />
       <el-table-column
         align="center"
-        label="名称"
+        :label="t('wolf.appTitleName')"
         prop="name"
         min-width="120"
         show-overflow-tooltip
       />
       <el-table-column
         align="center"
-        label="描述"
+        :label="t('wolf.appTitleDescription')"
         prop="description"
         min-width="200"
         show-overflow-tooltip
       />
       <el-table-column
         align="center"
-        label="重定向URI"
+        :label="t('wolf.appTitleRedirectUris')"
         min-width="200"
         show-overflow-tooltip
         :formatter="redirectUrisFormat"
       />
       <el-table-column
         align="center"
-        label="AccessToken存活时间"
+        :label="t('wolf.appTitleAccessTokenLifetime')"
         prop="accessTokenLifetime"
         min-width="150"
         :formatter="lifetimeFormat"
       />
       <el-table-column
         align="center"
-        label="RefreshToken存活时间"
+        :label="t('wolf.appTitleRefreshTokenLifetime')"
         prop="refreshTokenLifetime"
         min-width="150"
         :formatter="lifetimeFormat"
       />
       <el-table-column
         align="center"
-        label="创建时间"
+        :label="t('wolf.appTitleCreateTime')"
         min-width="160"
         :formatter="unixtimeFormat"
       />
-      <el-table-column align="center" label="操作" min-width="150" fixed="right">
+      <el-table-column
+        align="center"
+        :label="t('wolf.appTitleOperations')"
+        min-width="150"
+        fixed="right"
+      >
         <template #default="{ row }">
           <el-button
             type="primary"
@@ -448,7 +510,7 @@ onMounted(() => {
             :icon="useRenderIcon(Edit)"
             @click="handleEdit(row)"
           >
-            编辑
+            {{ t("wolf.btnEdit") }}
           </el-button>
           <el-button
             type="danger"
@@ -456,13 +518,12 @@ onMounted(() => {
             :icon="useRenderIcon(Delete)"
             @click="handleDelete(row)"
           >
-            删除
+            {{ t("wolf.btnDelete") }}
           </el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <!-- 分页 -->
     <div class="pagination-container">
       <el-pagination
         v-model:current-page="listQuery.page"
@@ -476,10 +537,13 @@ onMounted(() => {
       />
     </div>
 
-    <!-- 编辑对话框 -->
     <el-dialog
       v-model="dialogVisible"
-      :title="dialogType === 'edit' ? '编辑应用' : '新应用'"
+      :title="
+        dialogType === 'edit'
+          ? t('wolf.appEditApplication')
+          : t('wolf.appNewApplication')
+      "
       width="600px"
       destroy-on-close
     >
@@ -490,10 +554,10 @@ onMounted(() => {
         label-width="150px"
         label-position="left"
       >
-        <el-form-item label="应用ID" prop="id">
+        <el-form-item :label="t('wolf.appFormLabelId')" prop="id">
           <el-input
             v-model="application.id"
-            placeholder="应用ID"
+            :placeholder="t('wolf.appPlaceholderId')"
             :readonly="dialogType === 'edit'"
             minlength="3"
             maxlength="32"
@@ -501,103 +565,133 @@ onMounted(() => {
           />
         </el-form-item>
 
-        <el-form-item label="应用名称" prop="name">
+        <el-form-item :label="t('wolf.appFormLabelName')" prop="name">
           <el-input
             v-model="application.name"
-            placeholder="应用名称"
+            :placeholder="t('wolf.appPlaceholderName')"
             minlength="5"
             maxlength="64"
             show-word-limit
           />
         </el-form-item>
 
-        <el-form-item label="描述" prop="description">
+        <el-form-item
+          :label="t('wolf.appFormLabelDescription')"
+          prop="description"
+        >
           <el-input
             v-model="application.description"
-            placeholder="应用描述"
+            :placeholder="t('wolf.appPlaceholderDescription')"
             maxlength="256"
             show-word-limit
           />
         </el-form-item>
 
-        <el-form-item label="应用密钥" prop="secret">
-          <el-input v-model="application.secret" placeholder="应用密钥(oauth2)" readonly>
-            <template #append>
-              <el-button
-                v-if="showBtnShow"
-                :icon="useRenderIcon(View)"
-                @click="showSecret(application.id)"
+        <el-collapse v-model="oauthCollapseActive" class="oauth-collapse">
+          <el-collapse-item
+            :title="t('wolf.appOAuth2SectionTitle')"
+            name="oauth2"
+          >
+            <el-form-item :label="t('wolf.appFormLabelSecret')" prop="secret">
+              <el-input
+                v-model="application.secret"
+                :placeholder="t('wolf.appPlaceholderSecret')"
+                readonly
               >
-                显示
-              </el-button>
-              <el-button
-                v-if="showBtnReset"
-                :icon="useRenderIcon(Refresh)"
-                @click="resetSecret"
-              >
-                重置
-              </el-button>
-            </template>
-          </el-input>
-        </el-form-item>
+                <template #append>
+                  <el-button
+                    v-if="showBtnShow"
+                    :icon="useRenderIcon(View)"
+                    @click="showSecret(application.id)"
+                  >
+                    {{ t("wolf.btnShow") }}
+                  </el-button>
+                  <el-button
+                    v-if="showBtnReset"
+                    :icon="useRenderIcon(Refresh)"
+                    @click="resetSecret"
+                  >
+                    {{ t("wolf.btnReset") }}
+                  </el-button>
+                </template>
+              </el-input>
+            </el-form-item>
 
-        <el-form-item label="重定向URI" prop="redirectUris" class="redirect-uris-item">
-          <div class="redirect-uris-container">
-            <el-tag
-              v-for="uri in application.redirectUris"
-              :key="uri"
-              closable
-              size="large"
-              @close="handleRedirectUriDelete(uri)"
+            <el-form-item
+              :label="t('wolf.appFormLabelRedirectUris')"
+              prop="redirectUris"
+              class="redirect-uris-item"
             >
-              {{ uri }}
-            </el-tag>
-            <el-input
-              v-if="redirectUriInputVisible"
-              ref="saveRedirectUriInput"
-              v-model="redirectUriInputValue"
-              placeholder="重定向URI(oauth2)"
-              maxlength="256"
-              show-word-limit
-              class="input-new-redirect-uri"
-              size="small"
-              @keyup.enter="handleRedirectUriInputConfirm"
-              @blur="handleRedirectUriInputConfirm"
-            />
-            <el-button
-              v-else
-              size="small"
-              @click="showRedirectUriInput"
+              <div class="redirect-uris-container">
+                <el-tag
+                  v-for="uri in application.redirectUris"
+                  :key="uri"
+                  closable
+                  size="large"
+                  @close="handleRedirectUriDelete(uri)"
+                >
+                  {{ uri }}
+                </el-tag>
+                <el-input
+                  v-if="redirectUriInputVisible"
+                  ref="saveRedirectUriInput"
+                  v-model="redirectUriInputValue"
+                  :placeholder="t('wolf.appPlaceholderRedirectUri')"
+                  maxlength="256"
+                  show-word-limit
+                  class="input-new-redirect-uri"
+                  size="small"
+                  @keyup.enter="handleRedirectUriInputConfirm"
+                  @blur="handleRedirectUriInputConfirm"
+                />
+                <el-button v-else size="small" @click="showRedirectUriInput">
+                  {{ t("wolf.appBtnAddRedirectUri") }}
+                </el-button>
+              </div>
+            </el-form-item>
+
+            <el-form-item
+              :label="t('wolf.appFormLabelAccessTokenLifetime')"
+              prop="accessTokenLifetime"
+              class="lifetime-item"
             >
-              添加重定向URI
-            </el-button>
-          </div>
-        </el-form-item>
+              <el-input
+                v-model.number="application.accessTokenLifetime"
+                :placeholder="t('wolf.appPlaceholderAccessTokenLifetime')"
+                type="number"
+                style="width: 180px"
+              />
+              <el-tag size="large" class="ml-2">{{
+                accessTokenLifetimePrompt
+              }}</el-tag>
+            </el-form-item>
 
-        <el-form-item label="AccessToken存活时间" prop="accessTokenLifetime" class="lifetime-item">
-          <el-input
-            v-model.number="application.accessTokenLifetime"
-            placeholder="Access token存活时间(秒)"
-            type="number"
-            style="width: 180px"
-          />
-          <el-tag size="large" class="ml-2">{{ accessTokenLifetimePrompt }}</el-tag>
-        </el-form-item>
-
-        <el-form-item label="RefreshToken存活时间" prop="refreshTokenLifetime" class="lifetime-item">
-          <el-input
-            v-model.number="application.refreshTokenLifetime"
-            placeholder="Refresh token存活时间(秒)"
-            type="number"
-            style="width: 180px"
-          />
-          <el-tag size="large" class="ml-2">{{ refreshTokenLifetimePrompt }}</el-tag>
-        </el-form-item>
+            <el-form-item
+              :label="t('wolf.appFormLabelRefreshTokenLifetime')"
+              prop="refreshTokenLifetime"
+              class="lifetime-item"
+            >
+              <el-input
+                v-model.number="application.refreshTokenLifetime"
+                :placeholder="t('wolf.appPlaceholderRefreshTokenLifetime')"
+                type="number"
+                style="width: 180px"
+              />
+              <el-tag size="large" class="ml-2">{{
+                refreshTokenLifetimePrompt
+              }}</el-tag>
+            </el-form-item>
+          </el-collapse-item>
+        </el-collapse>
       </el-form>
 
       <template #footer>
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="validateAndSubmit">确定</el-button>
+        <el-button @click="dialogVisible = false">{{
+          t("wolf.btnCancel")
+        }}</el-button>
+        <el-button type="primary" @click="validateAndSubmit">{{
+          t("wolf.btnConfirm")
+        }}</el-button>
       </template>
     </el-dialog>
   </div>
@@ -645,5 +739,26 @@ onMounted(() => {
     align-items: center;
   }
 }
-</style>
 
+.oauth-collapse {
+  border: 1px solid var(--el-border-color-lighter);
+  border-radius: 4px;
+  margin-top: 8px;
+
+  :deep(.el-collapse-item__header) {
+    padding: 0 16px;
+    font-weight: 600;
+    color: var(--el-text-color-secondary);
+    background-color: var(--el-fill-color-lighter);
+    border-radius: 4px;
+  }
+
+  :deep(.el-collapse-item__wrap) {
+    border-bottom: none;
+  }
+
+  :deep(.el-collapse-item__content) {
+    padding: 16px 0 0;
+  }
+}
+</style>

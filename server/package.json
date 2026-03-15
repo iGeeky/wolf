@@ -8,6 +8,10 @@
     "test4redis": "MEM_CACHE_BY_REDIS=yes ./node_modules/.bin/nyc --reporter=html mocha test/*.test.js --exit --timeout 10000"
   },
   "dependencies": {
+    "@mariozechner/pi-agent-core": "^0.58.1",
+    "@mariozechner/pi-ai": "^0.58.1",
+    "@mistralai/mistralai": "^1.15.1",
+    "ajv": "^8.18.0",
     "bcrypt-node": "^0.1.0",
     "cidr-matcher": "^2.1.1",
     "crc": "^4.1.1",
@@ -29,12 +33,13 @@
     "koa2-cors": "^2.0.6",
     "ldap-authentication": "^2.2.9",
     "ldapjs": "^3.0.7",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "log4js": "^6.4.7",
     "md5": "^2.3.0",
     "minimist": "^1.2.6",
     "mocha": "^10.7.3",
     "moment": "^2.29.3",
+    "moment-timezone": "^0.6.0",
     "mysql2": "^2.3.3",
     "node-cache": "^5.1.2",
     "oauth2-server": "^3.1.1",
@@ -44,7 +49,9 @@
     "sequelize": "^6.19.2",
     "svg-captcha": "^1.4.0",
     "urlsafe-base64": "^1.0.0",
-    "validator": ">=13.7.0"
+    "validator": ">=13.7.0",
+    "wkx": "^0.5.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@babel/cli": "^7.17.10",
