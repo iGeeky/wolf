@@ -295,7 +295,6 @@ wolf:
   appSearchPrompt: App ID or Name
   appNewApplication: New Application
   appEditApplication: Edit Application
-  appTitleRedirectUris: Redirect URIs
   appTitleAccessTokenLifetime: Access Token Lifetime
   appTitleRefreshTokenLifetime: Refresh Token Lifetime
   appTitleDiagram: Diagram
@@ -323,6 +322,49 @@ wolf:
   appPromptRemoveSuccess: Application deleted!
   appPromptUpdateSuccess: Application updated
   appPromptAddSuccess: Application added
+  appTitleId: ID
+  appTitleName: Name
+  appTitleDescription: Description
+  appTitleRedirectUris: Redirect URIs
+  appTitleCreateTime: Create Time
+  appTitleOperations: Operations
+  appBtnEdit: Edit
+  appBtnDelete: Delete
+  appBtnCancel: Cancel
+  appBtnConfirm: Confirm
+  appBtnAddRedirectUri: Add Redirect URI
+  appBtnShow: Show
+  appBtnReset: Reset
+  appFormLabelId: Application ID
+  appFormLabelName: Application Name
+  appFormLabelDescription: Description
+  appFormLabelSecret: Application Secret
+  appFormLabelRedirectUris: Redirect URIs
+  appFormLabelAccessTokenLifetime: Access Token Lifetime
+  appFormLabelRefreshTokenLifetime: Refresh Token Lifetime
+  appPlaceholderId: Application ID
+  appPlaceholderName: Application Name
+  appPlaceholderDescription: Application Description
+  appPlaceholderSecret: Application Secret (oauth2)
+  appPlaceholderRedirectUri: Redirect URI (oauth2)
+  appPlaceholderAccessTokenLifetime: Access token lifetime (seconds)
+  appPlaceholderRefreshTokenLifetime: Refresh token lifetime (seconds)
+  appMessageAddSuccess: Application added
+  appMessageUpdateSuccess: Application updated
+  appMessageDeleteSuccess: Application deleted!
+  appMessageConfirmResetSecret: Are you sure to reset the secret?
+  appMessageConfirmDelete: Are you sure to delete the application?
+  dialogTitleWarning: Warning
+  appLifetimeDefault: Default
+  appLifetimeZeroSeconds: 0 seconds
+  appLifetimeOneDay: "{n} day"
+  appLifetimeDays: "{n} days"
+  appLifetimeOneHour: "{n} hour"
+  appLifetimeHours: "{n} hours"
+  appLifetimeOneMinute: "{n} minute"
+  appLifetimeMinutes: "{n} minutes"
+  appLifetimeOneSecond: "{n} second"
+  appLifetimeSeconds: "{n} seconds"
   loginPromptUsername: Username
   loginPromptPassword: Password
   loginPromptCaptcha: Captcha

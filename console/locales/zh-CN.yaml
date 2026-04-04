@@ -295,7 +295,6 @@ wolf:
   appSearchPrompt: 应用ID或名称
   appNewApplication: 新应用
   appEditApplication: 编辑应用
-  appTitleRedirectUris: 重定向URI
   appTitleAccessTokenLifetime: AccessToken存活时间
   appTitleRefreshTokenLifetime: RefreshToken存活时间
   appTitleDiagram: 图表
@@ -323,6 +322,49 @@ wolf:
   appPromptRemoveSuccess: 应用已经删除!
   appPromptUpdateSuccess: 应用已经修改
   appPromptAddSuccess: 应用已经添加
+  appTitleId: ID
+  appTitleName: 名称
+  appTitleDescription: 描述
+  appTitleRedirectUris: 重定向URI
+  appTitleCreateTime: 创建时间
+  appTitleOperations: 操作
+  appBtnEdit: 编辑
+  appBtnDelete: 删除
+  appBtnCancel: 取消
+  appBtnConfirm: 确定
+  appBtnAddRedirectUri: 添加重定向URI
+  appBtnShow: 显示
+  appBtnReset: 重置
+  appFormLabelId: 应用ID
+  appFormLabelName: 应用名称
+  appFormLabelDescription: 描述
+  appFormLabelSecret: 应用密钥
+  appFormLabelRedirectUris: 重定向URI
+  appFormLabelAccessTokenLifetime: AccessToken存活时间
+  appFormLabelRefreshTokenLifetime: RefreshToken存活时间
+  appPlaceholderId: 应用ID
+  appPlaceholderName: 应用名称
+  appPlaceholderDescription: 应用描述
+  appPlaceholderSecret: 应用密钥(oauth2)
+  appPlaceholderRedirectUri: 重定向URI(oauth2)
+  appPlaceholderAccessTokenLifetime: Access token存活时间(秒)
+  appPlaceholderRefreshTokenLifetime: Refresh token存活时间(秒)
+  appMessageAddSuccess: 应用已经添加
+  appMessageUpdateSuccess: 应用已经修改
+  appMessageDeleteSuccess: 应用已经删除!
+  appMessageConfirmResetSecret: 确定要重置密钥吗?
+  appMessageConfirmDelete: 确定要删除应用吗?
+  dialogTitleWarning: 警告
+  appLifetimeDefault: 默认
+  appLifetimeZeroSeconds: 0秒
+  appLifetimeOneDay: "{n}天"
+  appLifetimeDays: "{n}天"
+  appLifetimeOneHour: "{n}小时"
+  appLifetimeHours: "{n}小时"
+  appLifetimeOneMinute: "{n}分钟"
+  appLifetimeMinutes: "{n}分钟"
+  appLifetimeOneSecond: "{n}秒"
+  appLifetimeSeconds: "{n}秒"
   loginPromptUsername: 用户名
   loginPromptPassword: 密码
   loginPromptCaptcha: 验证码
