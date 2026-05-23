@@ -9,6 +9,7 @@ const CategoryModel = require('../model/category')
 const PermissionModel = require('../model/permission')
 const ApplicationModel = require('../model/application')
 const MethodInvalidError = require('../errors/method-invalid-error')
+const AccessDenyError = require('../errors/access-deny-error')
 const tokenUtil = require('../util/token-util')
 const {ldapLogin} = require('../ldap/LDAPClient');
 const constant = require('../util/constant')
@@ -19,6 +20,28 @@ class BasicService extends Service {
   constructor(ctx, ObjectModel) {
     super(ctx)
     this.ObjectModel = ObjectModel;
+  }
+
+  /**
+   * 校验当前登录用户（admin）是否有权操作指定 appID。
+   * super 用户无限制；admin 用户必须在自己的 appIDs 列表内；其他角色直接拒绝。
+   */
+  assertAppAccess(appID) {
+    const userInfo = this.ctx.userInfo
+    if (!userInfo) return
+    if (userInfo.manager === constant.Manager.super) return
+    if (userInfo.manager === constant.Manager.admin) {
+      const appIDs = userInfo.appIDs || []
+      if (!appIDs.includes(appID)) {
+        this.log4js.error(
+          'assertAppAccess failed! admin user [%s] has no access to app [%s]',
+          userInfo.username, appID
+        )
+        throw new AccessDenyError('ERR_NO_ACCESS_TO_APP')
+      }
+      return
+    }
+    throw new AccessDenyError('ERR_NEED_SUPER_OR_ADMIN_USER')
   }
 
   // for console

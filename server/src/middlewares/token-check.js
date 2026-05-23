@@ -44,10 +44,22 @@ function getClientToken(ctx) {
 
 
 function getClientIp(ctx) {
-  const headers = ctx.request.headers;
-  let ip = headers['x-orig-ip'] ||headers['x-forwarded-for'] ||headers['x-real-ip'] || ctx.request.ip;
-  ip = ip.replace('::ffff:', '')
-  return ip;
+  const trustProxy = process.env.TRUST_PROXY !== 'false'
+  let ip
+  if (trustProxy) {
+    const headers = ctx.request.headers
+    ip = headers['x-orig-ip'] || headers['x-forwarded-for'] || headers['x-real-ip'] || ctx.request.ip
+    // x-forwarded-for 可能包含多个 IP（client, proxy1, proxy2），取最左侧（原始客户端）
+    if (ip && ip.includes(',')) {
+      ip = ip.split(',')[0].trim()
+    }
+  } else {
+    ip = ctx.request.ip
+  }
+  if (ip) {
+    ip = ip.replace('::ffff:', '')
+  }
+  return ip || 'unknown'
 }
 
 function setResponseInfo(ctx, userInfo) {

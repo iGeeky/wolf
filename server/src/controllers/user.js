@@ -96,7 +96,7 @@ class User extends BasicService {
     }
 
     const {token} = await this.tokenCreate(userInfo)
-    this.log4js.info('username: %s, token: %s', username, token)
+    this.log4js.info('username: %s login successful, token prefix: %s...', username, token.substring(0, 16))
 
     let applications = await this.userApplications(userInfo);
     userInfo.appIDs = userInfo.appIDs || []

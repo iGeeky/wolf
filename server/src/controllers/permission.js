@@ -17,6 +17,13 @@ class Permission extends BasicService {
     super(ctx, PermissionModel)
   }
 
+  async access(bizMethod) {
+    const appID = this.getArg('appID')
+    if (appID) {
+      this.assertAppAccess(appID)
+    }
+  }
+
   async list() {
     this.checkMethod('GET')
     const limit = this.getIntArg('limit', 10)

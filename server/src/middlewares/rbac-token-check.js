@@ -102,6 +102,15 @@ async function basicAuthCheck(ctx) {
     throw new RbacTokenError('USER_IS_DISABLED')
   }
 
+  // 校验用户是否与请求的 appID 存在绑定关系
+  if (appid) {
+    const userAppIDs = originUserInfo.appIDs || []
+    if (!userAppIDs.includes(appid)) {
+      log4js.error('request [%s %s] failed! user [%s] is not associated with app [%s]', ctx.method, ctx.path, originUserInfo.username, appid)
+      throw new RbacTokenError('ERR_USER_APPIDS')
+    }
+  }
+
   const {userInfo, cached} = await userCache.getUserInfoById(originUserInfo.id, appid, originUserInfo)
   log4js.info('getUserInfoById(userId:%d, appID:%s) cached: %s', originUserInfo.id, appid, cached)
   if (!userInfo) {
@@ -110,7 +119,7 @@ async function basicAuthCheck(ctx) {
   }
   ctx.userInfo = userInfo
   ctx.appid = appid
-  log4js.info('http basic auth request [%s %s] success! userInfo: %s', ctx.method, ctx.url, JSON.stringify(userInfo))
+  log4js.info('http basic auth request [%s %s] success! userId: %s username: %s', ctx.method, ctx.url, userInfo.id, userInfo.username)
 
   try {
     setResponseInfo(ctx, userInfo);
@@ -126,7 +135,7 @@ module.exports = function() {
       if (token) {
         const tokenUserInfo = await tokenUtil.tokenCheck(token)
         if (tokenUserInfo.error) { // failed
-          log4js.error('rbac request [%s %s] invalid! token [%s] decrypt failed!', ctx.method, ctx.path, token)
+          log4js.error('rbac request [%s %s] invalid! token prefix [%s...] decrypt failed!', ctx.method, ctx.path, token.substring(0, 16))
           throw new RbacTokenError('TOKEN INVALID')
         }
         const userId = tokenUserInfo.id

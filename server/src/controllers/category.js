@@ -14,6 +14,15 @@ class Category extends BasicService {
     super(ctx, CategoryModel)
   }
 
+  async access(bizMethod) {
+    // put 的 appID 需从 DB 中取，在方法内校验
+    if (bizMethod === 'put') return
+    const appID = this.getArg('appID')
+    if (appID) {
+      this.assertAppAccess(appID)
+    }
+  }
+
   async list() {
     this.checkMethod('GET')
     const limit = this.getIntArg('limit', 10)
@@ -66,6 +75,10 @@ class Category extends BasicService {
     const values = this.getCheckedValues(fieldsMap)
 
     await this.checkCategoryIDExist(id)
+    const existCategory = await CategoryModel.findByPk(id)
+    if (existCategory) {
+      this.assertAppAccess(existCategory.appID)
+    }
     await CategoryModel.checkNotExist({'id': {[Op.ne]: id}, name: values.name}, errors.ERR_CATEGORY_NAME_EXIST)
 
     values.updateTime = util.unixtime();

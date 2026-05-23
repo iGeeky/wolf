@@ -1,7 +1,5 @@
 const BasicService = require('./basic-service')
 const UserRoleModel = require('../model/user-role')
-const AccessDenyError = require('../errors/access-deny-error')
-const constant = require('../util/constant')
 const util = require('../util/util')
 const userCache = require('../service/user-cache')
 const userRoleFields = ['userID', 'appID', 'permIDs', 'roleIDs', 'createTime'];
@@ -14,6 +12,13 @@ function getDefaultUserRole(userId, appId) {
 class UserRole extends BasicService {
   constructor(ctx) {
     super(ctx, UserRoleModel)
+  }
+
+  async access(bizMethod) {
+    const appID = this.getArg('appID')
+    if (appID) {
+      this.assertAppAccess(appID)
+    }
   }
 
   async log(bizMethod) {
@@ -55,15 +60,7 @@ class UserRole extends BasicService {
     values.createTime = util.unixtime();
     values.updateTime = util.unixtime();
 
-    const userInfo = this.ctx.userInfo
-    if (userInfo.manager === constant.Manager.admin) {
-      const appIds = userInfo.appIDs || []
-      if (appIds.indexOf(values.appID) === -1) { // user do not have permission to this app.
-        this.log4js.error('access [user-role/set] failed! user:%s have no permission to do this operation', this.ctx.userInfo.username)
-        throw new AccessDenyError('ERR_USER_ROLE_NO_PERM')
-      }
-    }
-
+    // appID 访问权限已在 access() 中统一校验
     const options = {where: {userID: values.userID, appID: values.appID}}
     const {newValues: userRole} = await this.ObjectModel.upsert(values, options)
     const data = {'userRole': util.filterFieldWhite(userRole.toJSON(), userRoleFields)}

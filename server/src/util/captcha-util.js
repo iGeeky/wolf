@@ -45,6 +45,8 @@ async function captchaValidate(cid, text) {
   if (captchaText != text) {
     return {valid: false, errmsg: ERR_CAPTCHA_INVALID}
   }
+  // 验证成功后立即销毁，确保验证码一次性使用
+  await redisClient.del(key);
   return {valid: true, errmsg: ''}
 }
 
