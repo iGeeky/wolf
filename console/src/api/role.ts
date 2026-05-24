@@ -61,4 +61,3 @@ export const checkRoleNameExist = async (
   }
   return checkExist("role", value, exclude);
 };
-

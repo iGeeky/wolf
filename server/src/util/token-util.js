@@ -29,10 +29,10 @@ function tokenDecrypt(token) {
   try {
     const userInfo = jwt.verify(token, tokenKey)
     if (!userInfo) {
-      log4js.error('jwt.verify(token: %s) failed!', token)
+      log4js.error('jwt.verify failed! token prefix: %s...', token.substring(0, 16))
       return { error: ERR_TOKEN_INVALID }
     }
-    log4js.info('token [%s], decode userInfo: %s', token, JSON.stringify(userInfo))
+    log4js.info('token [%s...], decode userId: %s username: %s', token.substring(0, 16), userInfo.id, userInfo.username)
     // token version is not matched
     if (!userInfo.version || userInfo.version < tokenVersion) {
       log4js.error('token version: ', userInfo.version, ' is not match current version:', tokenVersion)

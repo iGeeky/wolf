@@ -196,6 +196,7 @@ menus:
   wolfCategory: 分类管理
   wolfResource: 资源管理
   wolfAuditLog: 审计日志
+  wolfAiChat: AI 助手
 status:
   pureLoad: 加载中...
   pureMessage: 消息
@@ -335,6 +336,7 @@ wolf:
   appBtnAddRedirectUri: 添加重定向URI
   appBtnShow: 显示
   appBtnReset: 重置
+  appOAuth2SectionTitle: OAuth2 认证源配置（仅作为 OAuth2 授权服务器时需要）
   appFormLabelId: 应用ID
   appFormLabelName: 应用名称
   appFormLabelDescription: 描述
@@ -500,6 +502,72 @@ wolf:
   alogDateRangeSeparator: 至
   alogDateStartPlaceholder: 开始时间
   alogDateEndPlaceholder: 结束时间
+  aiChat:
+    sessions: 会话
+    newSession: 新建
+    noSessions: 暂无会话，点击「新建」开始对话
+    untitledSession: 未命名会话
+    newChat: 新对话
+    selectOrCreate: 选择或新建一个会话开始对话
+    confirmDelete: 确定要删除该会话吗？历史消息将一并删除。
+    prompt: 提示
+    confirmDeleteBtn: 确定删除
+    title: Wolf AI 助手
+    welcomeDesc: 你好！我可以帮你管理 RBAC 资源，例如：
+    hint1: 列出所有应用
+    hint2: 查询用户列表
+    hint3: 帮我创建一个角色
+    hint4: 查看最近的访问日志
+    hint5: 显示应用的用户、角色-权限-资源关系图
+    inputHint: Enter 发送 · Shift+Enter 换行
+    send: 发送
+    inputPlaceholder: 输入消息，描述你想要执行的操作...
+    toolRunning: 执行中...
+    toolDone: 成功
+    toolError: 失败
+    toolParams: 参数
+    loadHistoryFailed: 加载历史消息失败
+    loadSessionsFailed: 加载会话列表失败
+    createSessionFailed: 创建会话失败
+    deleteSessionFailed: 删除会话失败
+    renameFailed: 重命名失败
+    sessionDeleted: 会话已删除
+    aiServiceError: AI 服务出错
+    connectFailed: 连接失败
+    streamInterrupted: "[连接中断]"
+    unknownError: 未知错误
+    emptyResponse: AI 未返回任何内容，请联系管理员检查模型配置（模型名称、API Key、baseUrl）是否正确。
+    aiNotConfigured: 请联系管理员配置 AI 服务。
+    noResponseBody: 无响应体
+    newSessionPrefix: 新会话
+    autoRenameTooltip: 自动生成会话名称
+    autoRenameSuccess: 标题已更新
+    autoRenameFailed: 自动重命名失败
+    autoRenameNoMessages: 暂无可用对话内容，无法生成标题
+    memory: 记忆
+    memoryManage: 记忆管理
+    memoryEmpty: 暂无记忆，开始对话后将自动学习
+    memoryAddBtn: 添加记忆
+    memoryConfirmDelete: 确定要删除这条记忆吗？
+    memorySaved: 记忆已保存
+    memoryDeleted: 记忆已删除
+    memoryLoadFailed: 加载记忆失败
+    memorySaveFailed: 保存失败
+    memoryDeleteFailed: 删除失败
+    memoryContent: 内容
+    memoryCategory: 分类
+    memorySource: 来源
+    memorySourceAuto: 自动提取
+    memorySourceManual: 手动添加
+    memorySourceSession: 来源会话
+    memoryCategoryPreference: 用户偏好
+    memoryCategoryKnowledge: 已知信息
+    memoryCategoryDecision: 历史决策
+    memoryCategoryPattern: 操作模式
+    memoryContentPlaceholder: 输入记忆内容...
+    mermaidPending: 图表生成中...
+    mermaidZoomHint: 🔍 点击放大
+    mermaidClose: 关闭
   error:
     ERR_ARGS_ERROR: 请求参数错误
     ERR_TOKEN_INVALID: 非法的Token
@@ -518,3 +586,4 @@ wolf:
     ERR_USER_DISABLED: 账号已被禁用
     ERR_PERMISSION_DENY: 没有权限执行此操作
     ERR_LOGIN_NEED_SUPER_OR_ADMIN: 需要管理员用户来登录wolf管理台
+

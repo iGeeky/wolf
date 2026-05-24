@@ -15,6 +15,13 @@ class Role extends BasicService {
     super(ctx, RoleModel)
   }
 
+  async access(bizMethod) {
+    const appID = this.getArg('appID')
+    if (appID) {
+      this.assertAppAccess(appID)
+    }
+  }
+
   async log(bizMethod) {
     if (bizMethod === 'post' || bizMethod === 'put' || bizMethod === 'delete') {
       this.log4js.info('---- url: %s, method: %s, flush user cache ----', this.url, bizMethod)

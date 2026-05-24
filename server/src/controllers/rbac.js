@@ -1,5 +1,18 @@
 const config = require('../../conf/config')
 const RbacPub = require('./rbac-pub')
+
+/**
+ * 校验 return_to 是否为合法的相对路径，防止开放重定向攻击。
+ * 仅允许以 / 开头、不以 // 开头的相对路径；拒绝 javascript:、http(s):// 等。
+ */
+function isSafeReturnTo(url) {
+  if (!url || typeof url !== 'string') return false
+  // 必须以单个 / 开头（排除 // 即 protocol-relative URL）
+  if (!url.startsWith('/') || url.startsWith('//')) return false
+  // 拒绝包含换行符（HTTP 响应拆分）
+  if (/[\r\n]/.test(url)) return false
+  return true
+}
 const RbacTokenError = require('../errors/rbac-token-error')
 const UserModel = require('../model/user')
 const ApplicationModel = require('../model/application')
@@ -159,14 +172,17 @@ class Rbac extends RbacPub {
       return
     }
 
-    const returnTo = this.getArg('return_to', '/')
+    const rawReturnTo = this.getArg('return_to', '/')
+    const returnTo = isSafeReturnTo(rawReturnTo) ? rawReturnTo : '/'
 
     const maxAge = config.rbacTokenExpireTime * 1000;
     this.ctx.cookies.set('x-rbac-token', res.token,
       {
         maxAge: maxAge,
-        httpOnly: false,
-        overwrite: false,
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        overwrite: true,
       }
     )
     this.ctx.status = 302;
@@ -217,13 +233,16 @@ class Rbac extends RbacPub {
       'x-rbac-token', 'logouted',
       {
         maxAge: maxAge,
-        httpOnly: false,
-        overwrite: false,
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        overwrite: true,
       }
     )
     this.ctx.status = 302;
     const defaultReturnTo = '/wolf/rbac/login.html?appid=' + this.ctx.appid
-    const returnTo = this.getArg('return_to', defaultReturnTo)
+    const rawReturnTo = this.getArg('return_to', defaultReturnTo)
+    const returnTo = isSafeReturnTo(rawReturnTo) ? rawReturnTo : defaultReturnTo
     this.ctx.redirect(returnTo);
   }
 

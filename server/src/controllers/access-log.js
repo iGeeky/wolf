@@ -7,6 +7,13 @@ class AccessLog extends BasicService {
     super(ctx, AccessLogModel)
   }
 
+  async access(bizMethod) {
+    const appID = this.getArg('appID')
+    if (appID) {
+      this.assertAppAccess(appID)
+    }
+  }
+
   async list() {
     this.checkMethod('GET')
     const limit = this.getIntArg('limit', 10)

@@ -94,9 +94,13 @@ export const deleteUser = (id: string) => {
 
 /** 重置密码 */
 export const resetPwd = (id: string) => {
-  return http.request<WolfResponse<{ password: string }>>("put", "/user/reset_pwd", {
-    data: { id }
-  });
+  return http.request<WolfResponse<{ password: string }>>(
+    "put",
+    "/user/reset_pwd",
+    {
+      data: { id }
+    }
+  );
 };
 
 /** 检查用户名是否存在 */
@@ -109,7 +113,11 @@ export const checkUsernameExist = async (
   if (excludeUserId) {
     exclude.id = excludeUserId;
   }
-  return http.request<WolfResponse<{ exist: boolean }>>("post", "/user/checkExist", {
-    data: { value, exclude }
-  });
+  return http.request<WolfResponse<{ exist: boolean }>>(
+    "post",
+    "/user/checkExist",
+    {
+      data: { value, exclude }
+    }
+  );
 };

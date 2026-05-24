@@ -8,6 +8,7 @@ const Op = require('sequelize').Op;
 const errors = require('../errors/errors')
 const _ = require('lodash')
 const config = require('../../conf/config')
+const AccessDenyError = require('../errors/access-deny-error')
 const resourceFields = ['id', 'appID', 'matchType', 'name', 'priority', 'action', 'permID', 'hosts', 'remoteAddrs', 'exprs', 'createTime'];
 
 
@@ -38,6 +39,22 @@ class Resource extends BasicService {
       return ['radixtree']
     } else {
       return [constant.MatchType.equal, constant.MatchType.suffix, constant.MatchType.prefix]
+    }
+  }
+
+  async access(bizMethod) {
+    // upgradeMatchTypeToRadixTree / flushCache 是全局运维操作，仅限 super
+    if (bizMethod === 'upgradeMatchTypeToRadixTree' || bizMethod === 'flushCache') {
+      if (this.ctx.userInfo && this.ctx.userInfo.manager !== constant.Manager.super) {
+        throw new AccessDenyError('ERR_NEED_SUPER_USER')
+      }
+      return
+    }
+    // put 的 appID 从 DB 取，在方法内校验
+    if (bizMethod === 'put') return
+    const appID = this.getArg('appID')
+    if (appID) {
+      this.assertAppAccess(appID)
     }
   }
 
@@ -114,6 +131,7 @@ class Resource extends BasicService {
     const id = this.getRequiredArg('id')
     const values = this.getCheckedValues(fieldsMap)
     const existResource = await ResourceModel.checkExist({ id }, errors.ERR_RESOURCE_ID_NOT_FOUND)
+    this.assertAppAccess(existResource.appID)
     await ResourceModel.checkNotExist({'id': {[Op.ne]: id}, appID: existResource.appID, matchType: values.matchType, action: values.action, name: values.name}, errors.ERR_RESOURCE_EXIST)
     await this.checkPermIDExist(existResource.appID, values.permID)
 

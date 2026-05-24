@@ -52,6 +52,7 @@ const showBtnReset = ref(false);
 const redirectUriInputVisible = ref(false);
 const redirectUriInputValue = ref("");
 const saveRedirectUriInput = ref<HTMLInputElement>();
+const oauthCollapseActive = ref<string[]>([]);
 
 // 默认应用数据
 const defaultApplication: Application = {
@@ -257,6 +258,7 @@ const handleAdd = () => {
   application.secret = randomSecret();
   showBtnShow.value = false;
   showBtnReset.value = false;
+  oauthCollapseActive.value = [];
 };
 
 // 编辑
@@ -270,6 +272,11 @@ const handleEdit = (row: Application) => {
   });
   showBtnShow.value = true;
   showBtnReset.value = false;
+  const hasOAuthConfig =
+    (row.redirectUris && row.redirectUris.length > 0) ||
+    (row.accessTokenLifetime && row.accessTokenLifetime > 0) ||
+    (row.refreshTokenLifetime && row.refreshTokenLifetime > 0);
+  oauthCollapseActive.value = hasOAuthConfig ? ["oauth2"] : [];
 };
 
 // 显示密钥
@@ -580,95 +587,102 @@ onMounted(() => {
           />
         </el-form-item>
 
-        <el-form-item :label="t('wolf.appFormLabelSecret')" prop="secret">
-          <el-input
-            v-model="application.secret"
-            :placeholder="t('wolf.appPlaceholderSecret')"
-            readonly
+        <el-collapse v-model="oauthCollapseActive" class="oauth-collapse">
+          <el-collapse-item
+            :title="t('wolf.appOAuth2SectionTitle')"
+            name="oauth2"
           >
-            <template #append>
-              <el-button
-                v-if="showBtnShow"
-                :icon="useRenderIcon(View)"
-                @click="showSecret(application.id)"
+            <el-form-item :label="t('wolf.appFormLabelSecret')" prop="secret">
+              <el-input
+                v-model="application.secret"
+                :placeholder="t('wolf.appPlaceholderSecret')"
+                readonly
               >
-                {{ t("wolf.btnShow") }}
-              </el-button>
-              <el-button
-                v-if="showBtnReset"
-                :icon="useRenderIcon(Refresh)"
-                @click="resetSecret"
-              >
-                {{ t("wolf.btnReset") }}
-              </el-button>
-            </template>
-          </el-input>
-        </el-form-item>
+                <template #append>
+                  <el-button
+                    v-if="showBtnShow"
+                    :icon="useRenderIcon(View)"
+                    @click="showSecret(application.id)"
+                  >
+                    {{ t("wolf.btnShow") }}
+                  </el-button>
+                  <el-button
+                    v-if="showBtnReset"
+                    :icon="useRenderIcon(Refresh)"
+                    @click="resetSecret"
+                  >
+                    {{ t("wolf.btnReset") }}
+                  </el-button>
+                </template>
+              </el-input>
+            </el-form-item>
 
-        <el-form-item
-          :label="t('wolf.appFormLabelRedirectUris')"
-          prop="redirectUris"
-          class="redirect-uris-item"
-        >
-          <div class="redirect-uris-container">
-            <el-tag
-              v-for="uri in application.redirectUris"
-              :key="uri"
-              closable
-              size="large"
-              @close="handleRedirectUriDelete(uri)"
+            <el-form-item
+              :label="t('wolf.appFormLabelRedirectUris')"
+              prop="redirectUris"
+              class="redirect-uris-item"
             >
-              {{ uri }}
-            </el-tag>
-            <el-input
-              v-if="redirectUriInputVisible"
-              ref="saveRedirectUriInput"
-              v-model="redirectUriInputValue"
-              :placeholder="t('wolf.appPlaceholderRedirectUri')"
-              maxlength="256"
-              show-word-limit
-              class="input-new-redirect-uri"
-              size="small"
-              @keyup.enter="handleRedirectUriInputConfirm"
-              @blur="handleRedirectUriInputConfirm"
-            />
-            <el-button v-else size="small" @click="showRedirectUriInput">
-              {{ t("wolf.appBtnAddRedirectUri") }}
-            </el-button>
-          </div>
-        </el-form-item>
+              <div class="redirect-uris-container">
+                <el-tag
+                  v-for="uri in application.redirectUris"
+                  :key="uri"
+                  closable
+                  size="large"
+                  @close="handleRedirectUriDelete(uri)"
+                >
+                  {{ uri }}
+                </el-tag>
+                <el-input
+                  v-if="redirectUriInputVisible"
+                  ref="saveRedirectUriInput"
+                  v-model="redirectUriInputValue"
+                  :placeholder="t('wolf.appPlaceholderRedirectUri')"
+                  maxlength="256"
+                  show-word-limit
+                  class="input-new-redirect-uri"
+                  size="small"
+                  @keyup.enter="handleRedirectUriInputConfirm"
+                  @blur="handleRedirectUriInputConfirm"
+                />
+                <el-button v-else size="small" @click="showRedirectUriInput">
+                  {{ t("wolf.appBtnAddRedirectUri") }}
+                </el-button>
+              </div>
+            </el-form-item>
 
-        <el-form-item
-          :label="t('wolf.appFormLabelAccessTokenLifetime')"
-          prop="accessTokenLifetime"
-          class="lifetime-item"
-        >
-          <el-input
-            v-model.number="application.accessTokenLifetime"
-            :placeholder="t('wolf.appPlaceholderAccessTokenLifetime')"
-            type="number"
-            style="width: 180px"
-          />
-          <el-tag size="large" class="ml-2">{{
-            accessTokenLifetimePrompt
-          }}</el-tag>
-        </el-form-item>
+            <el-form-item
+              :label="t('wolf.appFormLabelAccessTokenLifetime')"
+              prop="accessTokenLifetime"
+              class="lifetime-item"
+            >
+              <el-input
+                v-model.number="application.accessTokenLifetime"
+                :placeholder="t('wolf.appPlaceholderAccessTokenLifetime')"
+                type="number"
+                style="width: 180px"
+              />
+              <el-tag size="large" class="ml-2">{{
+                accessTokenLifetimePrompt
+              }}</el-tag>
+            </el-form-item>
 
-        <el-form-item
-          :label="t('wolf.appFormLabelRefreshTokenLifetime')"
-          prop="refreshTokenLifetime"
-          class="lifetime-item"
-        >
-          <el-input
-            v-model.number="application.refreshTokenLifetime"
-            :placeholder="t('wolf.appPlaceholderRefreshTokenLifetime')"
-            type="number"
-            style="width: 180px"
-          />
-          <el-tag size="large" class="ml-2">{{
-            refreshTokenLifetimePrompt
-          }}</el-tag>
-        </el-form-item>
+            <el-form-item
+              :label="t('wolf.appFormLabelRefreshTokenLifetime')"
+              prop="refreshTokenLifetime"
+              class="lifetime-item"
+            >
+              <el-input
+                v-model.number="application.refreshTokenLifetime"
+                :placeholder="t('wolf.appPlaceholderRefreshTokenLifetime')"
+                type="number"
+                style="width: 180px"
+              />
+              <el-tag size="large" class="ml-2">{{
+                refreshTokenLifetimePrompt
+              }}</el-tag>
+            </el-form-item>
+          </el-collapse-item>
+        </el-collapse>
       </el-form>
 
       <template #footer>
@@ -725,4 +739,27 @@ onMounted(() => {
     align-items: center;
   }
 }
+
+.oauth-collapse {
+  border: 1px solid var(--el-border-color-lighter);
+  border-radius: 4px;
+  margin-top: 8px;
+
+  :deep(.el-collapse-item__header) {
+    padding: 0 16px;
+    font-weight: 600;
+    color: var(--el-text-color-secondary);
+    background-color: var(--el-fill-color-lighter);
+    border-radius: 4px;
+  }
+
+  :deep(.el-collapse-item__wrap) {
+    border-bottom: none;
+  }
+
+  :deep(.el-collapse-item__content) {
+    padding: 16px 0 0;
+  }
+}
 </style>
+

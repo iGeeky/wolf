@@ -46,14 +46,23 @@ The Wolf system has the following main features:
 * Redis caching for improved performance
 * Supports integration with [APISIX gateway](https://github.com/apache/apisix/blob/master/docs/en/latest/plugins/wolf-rbac.md)
 
-### 5. System Architecture
+### 5. AI Assistant (new in 0.8.x)
+
+* Built-in conversational RBAC management: manage applications, users, roles, permissions, resources and audit logs by chatting in natural language right inside the Console
+* Tool calling reuses existing Controllers, so every check, validation, cache, and audit entry from manual operations applies to AI actions as well
+* Multi-provider support: OpenAI, Anthropic Claude, Google Gemini, Mistral, Groq, xAI, OpenRouter, and any OpenAI-compatible gateway (dashscope, vLLM, Ollama, etc.)
+* Streaming UI with visualized tool-call cards (running / done / error), per-user session history, and a user-memory system that lets the assistant remember preferences across sessions
+* Every AI write goes into `access_log` with `appID = 'ai-agent'`, fully auditable and clearly separated from manual operations
+* See: [AI Assistant overview](./README-AI-AGENT-EN.md) · [AI Assistant user guide](./docs/ai-agent.md)
+
+### 6. System Architecture
 
 * Three main modules:
   - Wolf-Server: Service implementation and backend management functionality
   - Wolf-Console: Frontend code for the management console
   - Wolf-Agent: RBAC Access Check proxy
 
-### 6. Core Entity Objects
+### 7. Core Entity Objects
 
 * Applications: Supports multiple applications, each with distinct permissions, roles, and resources. Allows viewing of RBAC object relationship charts for each application.
 
@@ -89,7 +98,7 @@ The Wolf system has the following main features:
   - Access response status code;
   - Request parameters or request body (only supported for `Wolf-Console` records).
 
-### 7. Other Features
+### 8. Other Features
 
 * Extensive test cases with over 90% code coverage
 * Resource matching supports different priority rules:
@@ -200,6 +209,15 @@ For detailed instructions, see [Getting Started Guide](./quick-start-with-docker
 [API Documentation](./docs/admin-api.md)
 
 [OAuth2 Interface Documentation](./docs/admin-api-oauth2.0.md)
+
+
+## AI Assistant
+
+Wolf 0.8.x ships with a built-in AI assistant for conversational RBAC management.
+
+[AI Assistant Overview](./README-AI-AGENT-EN.md)
+
+[AI Assistant User Guide](./docs/ai-agent.md)
 
 
 ## Tests

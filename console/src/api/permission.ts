@@ -71,4 +71,3 @@ export const checkPermissionNameExist = async (
   }
   return checkExist("permission", value, exclude);
 };
-

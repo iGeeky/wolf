@@ -51,9 +51,7 @@ const appIds = computed(() => {
     return userAppIds;
   }
   // 否则返回交集
-  const loginUserAppIds = new Set(
-    userStore.applications.map(app => app.id)
-  );
+  const loginUserAppIds = new Set(userStore.applications.map(app => app.id));
   return userAppIds.filter(id => loginUserAppIds.has(id));
 });
 
@@ -125,10 +123,16 @@ const submit = async () => {
       class="rbac-edit-dialog"
     >
       <el-form :model="user" label-width="120px" label-position="left">
-        <el-form-item :label="t('wolf.roleDetailLabelUsername')" prop="username">
+        <el-form-item
+          :label="t('wolf.roleDetailLabelUsername')"
+          prop="username"
+        >
           <el-input :model-value="user.username" readonly />
         </el-form-item>
-        <el-form-item :label="t('wolf.roleDetailLabelNickname')" prop="nickname">
+        <el-form-item
+          :label="t('wolf.roleDetailLabelNickname')"
+          prop="nickname"
+        >
           <el-input :model-value="user.nickname" readonly />
         </el-form-item>
         <el-form-item :label="t('wolf.labelApp')" prop="appIDs">
@@ -159,4 +163,3 @@ const submit = async () => {
     </el-dialog>
   </div>
 </template>
-

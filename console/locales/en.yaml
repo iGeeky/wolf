@@ -196,6 +196,7 @@ menus:
   wolfCategory: Category Management
   wolfResource: Resource Management
   wolfAuditLog: Audit Log
+  wolfAiChat: AI Assistant
 status:
   pureLoad: Loading...
   pureMessage: Message
@@ -335,6 +336,7 @@ wolf:
   appBtnAddRedirectUri: Add Redirect URI
   appBtnShow: Show
   appBtnReset: Reset
+  appOAuth2SectionTitle: OAuth2 Authorization Server Settings (only required when used as OAuth2 provider)
   appFormLabelId: Application ID
   appFormLabelName: Application Name
   appFormLabelDescription: Description
@@ -500,6 +502,72 @@ wolf:
   alogDateRangeSeparator: to
   alogDateStartPlaceholder: Start Time
   alogDateEndPlaceholder: End Time
+  aiChat:
+    sessions: Sessions
+    newSession: New
+    noSessions: No sessions yet. Click New to start.
+    untitledSession: Untitled session
+    newChat: New chat
+    selectOrCreate: Select or create a session to start
+    confirmDelete: Delete this session? All messages will be removed.
+    prompt: Notice
+    confirmDeleteBtn: Delete
+    title: Wolf AI Assistant
+    welcomeDesc: "Hi! I can help you manage RBAC resources, for example:"
+    hint1: List all applications
+    hint2: List users
+    hint3: Create a role for me
+    hint4: Show recent access logs
+    hint5: Show user, role-permission-resource relationship diagram for an app
+    inputHint: Enter to send · Shift+Enter for new line
+    send: Send
+    inputPlaceholder: Type a message describing what you want to do...
+    toolRunning: Running...
+    toolDone: Done
+    toolError: Failed
+    toolParams: Arguments
+    loadHistoryFailed: Failed to load history
+    loadSessionsFailed: Failed to load sessions
+    createSessionFailed: Failed to create session
+    deleteSessionFailed: Failed to delete session
+    renameFailed: Rename failed
+    sessionDeleted: Session deleted
+    aiServiceError: AI service error
+    connectFailed: Connection failed
+    streamInterrupted: "[Disconnected]"
+    unknownError: Unknown error
+    emptyResponse: AI returned no content. Please ask an administrator to check the model configuration (model name, API key, baseUrl).
+    aiNotConfigured: Please ask an administrator to configure AI.
+    noResponseBody: No response body
+    newSessionPrefix: "New chat "
+    autoRenameTooltip: Auto-generate session name
+    autoRenameSuccess: Title updated
+    autoRenameFailed: Could not auto-rename
+    autoRenameNoMessages: No messages yet; cannot generate a title
+    memory: Memory
+    memoryManage: Manage Memory
+    memoryEmpty: No memories yet. Start chatting and the AI will learn automatically.
+    memoryAddBtn: Add Memory
+    memoryConfirmDelete: Delete this memory?
+    memorySaved: Memory saved
+    memoryDeleted: Memory deleted
+    memoryLoadFailed: Failed to load memories
+    memorySaveFailed: Save failed
+    memoryDeleteFailed: Delete failed
+    memoryContent: Content
+    memoryCategory: Category
+    memorySource: Source
+    memorySourceAuto: Auto-extracted
+    memorySourceManual: Manual
+    memorySourceSession: From session
+    memoryCategoryPreference: Preference
+    memoryCategoryKnowledge: Knowledge
+    memoryCategoryDecision: Decision
+    memoryCategoryPattern: Pattern
+    memoryContentPlaceholder: Enter memory content...
+    mermaidPending: Rendering diagram...
+    mermaidZoomHint: 🔍 Click to expand
+    mermaidClose: Close
   error:
     ERR_ARGS_ERROR: Request parameter error
     ERR_TOKEN_INVALID: Invalid Token

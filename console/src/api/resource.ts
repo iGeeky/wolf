@@ -80,4 +80,3 @@ export const getResourceOptions = async () => {
   }
   return null;
 };
-

@@ -133,7 +133,13 @@ class Application extends BasicService {
 
   async listAll() {
     this.checkMethod('GET')
-    const options = {}
+    const userInfo = this.ctx.userInfo
+    const where = {}
+    if (userInfo.manager === constant.Manager.admin) {
+      const appIds = userInfo.appIDs || []
+      where.id = { [Op.in]: appIds }
+    }
+    const options = { where }
     const applications = await ApplicationModel.findAll(options)
     applications.forEach((application, i) => {
       applications[i] = util.filterFieldWhite(application.toJSON(), applicationFields)

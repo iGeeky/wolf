@@ -181,3 +181,47 @@ CREATE TABLE oauth_token (
   unique key(refresh_token),
   index(user_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+
+
+-- AI Chat tables (added in wolf 0.8.x)
+
+CREATE TABLE `ai_chat_session` (
+  id bigint auto_increment,
+  user_id bigint NOT NULL,
+  title text DEFAULT '',
+  app_id varchar(64) DEFAULT NULL,
+  status smallint DEFAULT 1 comment '1: active, 0: archived',
+  memory_extracted_at bigint DEFAULT 0 comment 'unix timestamp of last memory extraction, 0 means never extracted',
+  create_time bigint NOT NULL,
+  update_time bigint NOT NULL,
+  primary key(id),
+  index(user_id)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+
+
+CREATE TABLE `ai_chat_message` (
+  id bigint auto_increment,
+  session_id bigint NOT NULL,
+  role varchar(32) NOT NULL comment 'user / assistant / toolResult',
+  content json NOT NULL,
+  token_usage json DEFAULT NULL comment '{"input": N, "output": N, "cost": 0.001}',
+  create_time bigint NOT NULL,
+  primary key(id),
+  index(session_id),
+  CONSTRAINT fk_ai_chat_message_session FOREIGN KEY (session_id) REFERENCES ai_chat_session(id) ON DELETE CASCADE
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+
+
+CREATE TABLE `ai_user_memory` (
+  id bigint auto_increment,
+  user_id bigint NOT NULL,
+  session_id bigint DEFAULT NULL,
+  category varchar(32) NOT NULL comment 'preference / knowledge / decision / pattern',
+  content text NOT NULL,
+  source varchar(16) DEFAULT 'auto' comment 'auto: extracted by LLM, manual: added by user',
+  status smallint DEFAULT 1 comment '1: active, 0: deprecated/merged',
+  create_time bigint NOT NULL,
+  update_time bigint NOT NULL,
+  primary key(id),
+  index(user_id)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;

@@ -48,14 +48,23 @@ Wolf系统具有以下主要特点:
 * 使用Redis缓存提升性能
 * 支持APISIX网关集成
 
-### 5. 系统架构
+### 5. AI 助手（0.8.x 新增）
+
+* Console 内置对话式 RBAC 管理：通过自然语言即可完成应用、用户、角色、权限、资源、审计日志的查询与变更
+* 工具调用复用现有 Controller，所有手工操作具备的参数校验、权限检查、缓存刷新、审计日志，AI 操作时一个不少
+* 多 Provider 支持：OpenAI、Anthropic Claude、Google Gemini、Mistral、Groq、xAI、OpenRouter，以及所有 OpenAI 兼容网关（dashscope、vLLM、Ollama 等）
+* 流式 UI 与工具调用可视化卡片（running / done / error）、每用户独立的会话历史、跨会话的用户记忆系统
+* AI 的每次写操作都会以 `appID = 'ai-agent'` 写入 `access_log` 表，可审计、可追溯，与人工操作天然区分
+* 详见：[AI 助手介绍](./README-AI-AGENT-CN.md) · [AI 助手使用文档](./docs/ai-agent-cn.md)
+
+### 6. 系统架构
 
 * 三个主要模块:
   - Wolf-Server: 服务实现和管理后台功能
   - Wolf-Console: 管理后台前端代码
   - Wolf-Agent: RBAC的Access Check代理
 
-### 6. 核心实体对象
+### 7. 核心实体对象
 
 * 应用（Application）：支持多个应用，不同的应用可以拥有不同的权限、角色和资源。可以查看应用下的RBAC对象关系图表。
 
@@ -91,7 +100,7 @@ Wolf系统具有以下主要特点:
   - 访问响应的状态码；
   - 请求参数或请求正文（仅支持`Wolf-Console`的记录）。
 
-### 7. 其他特性
+### 8. 其他特性
 
 * 丰富的测试用例,代码覆盖率90%以上
 * 资源匹配支持不同优先级规则:
@@ -204,6 +213,15 @@ docker-compose up
 [API文档](./docs/admin-api-cn.md)
 
 [OAuth2接口文档](./docs/admin-api-oauth2.0-cn.md)
+
+
+## AI 助手
+
+Wolf 0.8.x 内置了 AI 助手，可在 Console 中通过对话完成 RBAC 管理。
+
+[AI 助手功能介绍](./README-AI-AGENT-CN.md)
+
+[AI 助手使用文档](./docs/ai-agent-cn.md)
 
 
 ## Tests

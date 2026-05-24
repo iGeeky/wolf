@@ -81,7 +81,10 @@ export const applicationDiagram = (id: string) => {
 
 /** 获取所有应用 */
 export const allApplications = () => {
-  return http.request<WolfResponse<Application[]>>("get", "/application/listAll");
+  return http.request<WolfResponse<Application[]>>(
+    "get",
+    "/application/listAll"
+  );
 };
 
 /** 检查应用ID是否存在 */
@@ -95,7 +98,10 @@ export const checkAppIdExist = async (id: string) => {
 };
 
 /** 检查应用名称是否存在 */
-export const checkAppNameExist = async (name: string, excludeAppId?: string) => {
+export const checkAppNameExist = async (
+  name: string,
+  excludeAppId?: string
+) => {
   const value = { name };
   const exclude: { id?: string } = {};
   if (excludeAppId) {
@@ -107,4 +113,3 @@ export const checkAppNameExist = async (name: string, excludeAppId?: string) => 
     { data: { value, exclude } }
   );
 };
-

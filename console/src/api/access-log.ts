@@ -30,4 +30,3 @@ export const listAccessLogs = (params: object) => {
     params
   });
 };
-
