@@ -117,4 +117,4 @@ async function generateSessionTitle(conversationText, locale) {
   return title
 }
 
-module.exports = { generateSessionTitle }
+module.exports = { generateSessionTitle, buildTitlePrompts, stripXmlLikeTaggedBlocks, assistantPlainText }

@@ -303,4 +303,4 @@ async function triggerMemoryExtraction(userID, AiChatSessionModel, AiChatMessage
   }
 }
 
-module.exports = { triggerMemoryExtraction, MEMORY_CATEGORIES }
+module.exports = { triggerMemoryExtraction, MEMORY_CATEGORIES, extractText, serializeConversation, formatExistingMemories, buildExtractionPrompt }

@@ -145,4 +145,4 @@ async function createAgent({ userInfo, clientIp, messages = [], locale, memories
   return agent
 }
 
-module.exports = { createAgent, loadPiMono, getWolfPiModel }
+module.exports = { createAgent, loadPiMono, getWolfPiModel, pruneMessages }

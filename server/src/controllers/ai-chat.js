@@ -21,9 +21,9 @@ const AiChatMessageModel = require('../model/ai-chat-message')
 const AiUserMemoryModel = require('../model/ai-user-memory')
 const util = require('../util/util')
 const aiConfig = require('../ai/ai-config')
-const { createAgent } = require('../ai/agent-factory')
-const { generateSessionTitle } = require('../ai/generate-title')
-const { triggerMemoryExtraction, MEMORY_CATEGORIES } = require('../ai/memory-extractor')
+const agentFactory = require('../ai/agent-factory')
+const generateTitleModule = require('../ai/generate-title')
+const memoryExtractor = require('../ai/memory-extractor')
 const {
   stripThinkingFromMessage,
   isThinkingStreamEvent,
@@ -163,7 +163,7 @@ class AiChat extends BasicService {
 
       // 新建会话时，异步触发老会话的记忆提取（不阻塞当前请求）
       if (isNewSession && aiConfig.isAiAvailable()) {
-        triggerMemoryExtraction(
+        memoryExtractor.triggerMemoryExtraction(
           userInfo.id,
           AiChatSessionModel,
           AiChatMessageModel,
@@ -186,7 +186,7 @@ class AiChat extends BasicService {
       })
 
       // 创建 Agent 实例（含历史消息 + 用户记忆）
-      const agent = await createAgent({ userInfo, clientIp, messages: historyMessages, locale, memories })
+      const agent = await agentFactory.createAgent({ userInfo, clientIp, messages: historyMessages, locale, memories })
 
       // 收集本轮新消息（用于持久化）
       const newMessages = []
@@ -381,7 +381,7 @@ class AiChat extends BasicService {
 
     // 异步触发老会话的记忆提取
     if (aiConfig.isAiAvailable()) {
-      triggerMemoryExtraction(
+      memoryExtractor.triggerMemoryExtraction(
         userInfo.id,
         AiChatSessionModel,
         AiChatMessageModel,
@@ -537,7 +537,7 @@ class AiChat extends BasicService {
     const locale = parseClientLocale(this.ctx)
 
     try {
-      const title = await generateSessionTitle(transcript, locale)
+      const title = await generateTitleModule.generateSessionTitle(transcript, locale)
       if (!title) {
         this.fail(500, 'ERR_TITLE_GENERATION_EMPTY')
         return
@@ -607,7 +607,7 @@ class AiChat extends BasicService {
     const body = this.ctx.request.body || {}
     const { category, content } = body
 
-    if (!category || !MEMORY_CATEGORIES.includes(category)) {
+    if (!category || !memoryExtractor.MEMORY_CATEGORIES.includes(category)) {
       this.fail(400, 'ERR_INVALID_CATEGORY')
       return
     }
@@ -655,7 +655,7 @@ class AiChat extends BasicService {
 
     const updates = { updateTime: util.unixtime() }
     if (body.category) {
-      if (!MEMORY_CATEGORIES.includes(body.category)) {
+      if (!memoryExtractor.MEMORY_CATEGORIES.includes(body.category)) {
         this.fail(400, 'ERR_INVALID_CATEGORY')
         return
       }
@@ -700,4 +700,6 @@ class AiChat extends BasicService {
   }
 }
 
+AiChat.parseClientLocale = parseClientLocale
+AiChat.extractTextFromStoredMessage = extractTextFromStoredMessage
 module.exports = AiChat

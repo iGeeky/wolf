@@ -88,4 +88,5 @@ module.exports = {
   getApiKeyForProvider,
   isAiAvailable,
   getWolfAiConfig,
+  ENV_API_KEY_MAP,
 }
