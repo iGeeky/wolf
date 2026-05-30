@@ -30,6 +30,10 @@ services:
       RBAC_REDIS_URL:  redis://cache:6379/0
       MEM_CACHE_BY_REDIS: "yes"
       CLIENT_CHANGE_PWD: "no"
+      AI_BASE_URL: "https://api.deepseek.com/v1"
+      AI_API_KEY: ""
+      AI_MODEL: "deepseek-v4-flash"
+      AI_PROVIDER: "deepseek"
     command: pnpm run start
   agent-or:
     container_name: wolf-agent-or

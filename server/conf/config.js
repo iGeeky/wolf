@@ -42,6 +42,14 @@ const config = {
     maxTurns: parseInt(process.env.AI_MAX_TURNS) || 20,
     maxHistoryMessages: parseInt(process.env.AI_MAX_HISTORY) || 100,
     thinkingLevel: process.env.AI_THINKING_LEVEL || 'low',
+    // 自建/非标准 OpenAI 兼容服务的 thinking 控制格式（仅在模型默认开启 thinking 时需设置）
+    // 可选值：openai(reasoning_effort，默认) | zai(enable_thinking) | qwen(enable_thinking) | qwen-chat-template(chat_template_kwargs.enable_thinking)
+    // 设置此项后同时需将 AI_MODEL_REASONING=true，pi-ai 才会发出对应关闭字段
+    // 注：小米 MiMo 官方端点（xiaomimimo.com）使用 thinking.type 协议，pi-ai 不支持；
+    //     标题/记忆等一次性调用会按 baseUrl 自动注入 thinking:{type:disabled} 关闭思考，无需额外配置。
+    thinkingFormat: process.env.AI_THINKING_FORMAT || '',
+    // 是否为 reasoning/thinking 模型（影响 thinkingFormat 是否生效及 system prompt 角色）
+    modelReasoning: (process.env.AI_MODEL_REASONING || '').toLowerCase() === 'true',
   },
   ldapConfig__: {
     label: 'OpenLDAP',

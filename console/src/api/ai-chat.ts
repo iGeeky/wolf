@@ -102,12 +102,13 @@ export const renameSession = (id: number, title: string) =>
     data: { id, title }
   });
 
-/** AI 根据对话内容生成并更新会话标题 */
+/** AI 根据对话内容生成并更新会话标题（LLM 调用可能较慢，单独 30s 超时） */
 export const autoRenameSession = (sessionId: number) =>
   http.request<WolfResponse<{ title: string }>>(
     "post",
     "/ai-chat/autoRenameSession",
-    { data: { id: sessionId } }
+    { data: { id: sessionId }, timeout: 30000 },
+    { skipGlobalErrorMessage: true }
   );
 
 /** 获取会话消息列表 */

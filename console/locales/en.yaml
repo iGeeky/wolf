@@ -544,6 +544,8 @@ wolf:
     autoRenameSuccess: Title updated
     autoRenameFailed: Could not auto-rename
     autoRenameNoMessages: No messages yet; cannot generate a title
+    autoRenameEmptyTitle: Could not generate a suitable title. Try again later or rename the session manually.
+    autoRenameGenerationFailed: Title generation failed. Check AI settings or try again later.
     memory: Memory
     memoryManage: Manage Memory
     memoryEmpty: No memories yet. Start chatting and the AI will learn automatically.

@@ -60,6 +60,38 @@ function assistantPlainText(msg) {
 }
 
 /**
+ * 标题生成是简单文本任务，必须关闭模型 thinking 以避免慢响应（部分模型默认开启思考）。
+ * pi-ai 的 openai-completions 仅支持 enable_thinking / chat_template_kwargs / reasoning_effort 几种关闭格式，
+ * 且都要求 model.reasoning=true 才发送；对小米 MiMo 这类使用 `thinking.type` 协议、
+ * 或默认开启思考但 model.reasoning=false 的端点无法覆盖。
+ * 这里基于 baseUrl/thinkingFormat 主动注入对应的关闭字段，确保标题生成不触发思考。
+ * @param {object} model - pi-ai model 对象（含 baseUrl/provider）
+ * @param {object} wolfAiConf - wolf AI 配置（含 thinkingFormat）
+ * @returns {((payload: object) => object|undefined)|undefined}
+ */
+function buildDisableThinkingOnPayload(model, wolfAiConf) {
+  const baseUrl = (model && model.baseUrl ? String(model.baseUrl) : '').toLowerCase()
+  const provider = (model && model.provider ? String(model.provider) : '').toLowerCase()
+  const fmt = (wolfAiConf && wolfAiConf.thinkingFormat ? String(wolfAiConf.thinkingFormat) : '').toLowerCase()
+
+  const isMimo =
+    fmt === 'mimo' ||
+    provider === 'mimo' ||
+    baseUrl.includes('mimo') ||
+    baseUrl.includes('xiaomi')
+
+  // 仅在能识别出需要主动关闭的协议时才注入，避免给未知端点发送非法字段导致 400。
+  if (!isMimo) return undefined
+
+  return (payload) => {
+    if (!payload || typeof payload !== 'object') return undefined
+    // 小米 MiMo 官方/兼容端点关闭思考的标准字段
+    payload.thinking = { type: 'disabled' }
+    return payload
+  }
+}
+
+/**
  * @param {string} conversationText
  * @param {string} [locale]
  * @returns {Promise<string>}
@@ -88,27 +120,16 @@ async function generateSessionTitle(conversationText, locale) {
     ],
   }
 
-  // 标题生成是简单文本任务，强制关闭模型 thinking 以提升响应速度。
-  // pi-ai 仅在 model.reasoning=true 时才会发送 thinking 控制参数；
-  // 但部分自定义 OpenAI-兼容服务端默认开启 thinking，必须通过 onPayload
-  // 主动覆写 payload，注入兼容多种格式的关闭字段。
-  const assistantMsg = await completeSimple(model, context, {
-    apiKey,
-    reasoning: 'minimal',
-    onPayload: (payload) => {
-      if (!payload || typeof payload !== 'object') return undefined
-      // 同时覆盖几种常见的关闭 thinking 写法，最大化兼容
-      payload.enable_thinking = false
-      payload.thinking = false
-      if (payload.chat_template_kwargs && typeof payload.chat_template_kwargs === 'object') {
-        payload.chat_template_kwargs.enable_thinking = false
-      } else {
-        payload.chat_template_kwargs = { enable_thinking: false }
-      }
-      delete payload.reasoning_effort
-      return payload
-    },
-  })
+  // 标题生成是简单文本任务，不传 reasoning：
+  // pi-ai 对内置 reasoning 模型会因 reasoningEffort 为 falsy 而关闭 thinking（enable_thinking=false 等）。
+  // 但对 pi-ai 不识别的协议（如小米 MiMo 的 thinking.type），需通过 onPayload 主动注入关闭字段。
+  const onPayload = buildDisableThinkingOnPayload(model, wolfAiConf)
+  const assistantMsg = await completeSimple(model, context, { apiKey, onPayload })
+
+  // completeSimple 在 API 出错时不抛异常，而是返回带 errorMessage 的对象
+  if (assistantMsg && (assistantMsg.stopReason === 'error' || assistantMsg.errorMessage)) {
+    throw new Error(assistantMsg.errorMessage || 'LLM returned error response for title generation')
+  }
 
   let title = assistantPlainText(assistantMsg)
   title = stripXmlLikeTaggedBlocks(title)
@@ -117,4 +138,10 @@ async function generateSessionTitle(conversationText, locale) {
   return title
 }
 
-module.exports = { generateSessionTitle, buildTitlePrompts, stripXmlLikeTaggedBlocks, assistantPlainText }
+module.exports = {
+  generateSessionTitle,
+  buildTitlePrompts,
+  stripXmlLikeTaggedBlocks,
+  assistantPlainText,
+  buildDisableThinkingOnPayload,
+}

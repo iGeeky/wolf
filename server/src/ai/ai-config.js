@@ -78,6 +78,8 @@ function getWolfAiConfig() {
     maxTurns: wolfConfig.ai.maxTurns,
     maxHistoryMessages: wolfConfig.ai.maxHistoryMessages,
     thinkingLevel: wolfConfig.ai.thinkingLevel,
+    thinkingFormat: wolfConfig.ai.thinkingFormat || '',
+    modelReasoning: !!wolfConfig.ai.modelReasoning,
   }
 }
 

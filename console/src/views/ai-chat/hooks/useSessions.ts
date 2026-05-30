@@ -10,6 +10,13 @@ import {
   type ChatSession
 } from "@/api/ai-chat";
 
+function extractWolfReason(payload: unknown): string {
+  if (payload && typeof payload === "object" && "reason" in payload) {
+    return String((payload as { reason?: string }).reason || "");
+  }
+  return "";
+}
+
 export function useSessions() {
   const { t } = useI18n();
   const sessions = ref<ChatSession[]>([]);
@@ -125,6 +132,27 @@ export function useSessions() {
     }
   }
 
+  /** 根据 autoRenameSession 的 reason 展示友好提示（支持 i18n） */
+  function showAutoRenameError(reason: string) {
+    if (reason === "ERR_NO_MESSAGES_FOR_TITLE") {
+      ElMessage.warning(t("wolf.aiChat.autoRenameNoMessages"));
+      return;
+    }
+    if (reason === "ERR_TITLE_GENERATION_EMPTY") {
+      ElMessage.warning(t("wolf.aiChat.autoRenameEmptyTitle"));
+      return;
+    }
+    if (reason === "ERR_TITLE_GENERATION_FAILED") {
+      ElMessage.error(t("wolf.aiChat.autoRenameGenerationFailed"));
+      return;
+    }
+    if (reason === "AI_NOT_CONFIGURED") {
+      ElMessage.error(t("wolf.aiChat.aiNotConfigured"));
+      return;
+    }
+    ElMessage.error(t("wolf.aiChat.autoRenameFailed"));
+  }
+
   /** AI 自动重命名（静默更新列表中的标题，无单独会话） */
   async function autoRenameSessionTitle(id: number) {
     try {
@@ -152,20 +180,9 @@ export function useSessions() {
         ElMessage.success(t("wolf.aiChat.autoRenameSuccess"));
         return;
       }
-      const reason =
-        res && typeof res === "object" && "reason" in res
-          ? String((res as { reason?: string }).reason || "")
-          : "";
-      if (reason === "ERR_NO_MESSAGES_FOR_TITLE") {
-        ElMessage.warning(t("wolf.aiChat.autoRenameNoMessages"));
-      } else {
-        ElMessage.error(t("wolf.aiChat.autoRenameFailed"));
-      }
+      showAutoRenameError(extractWolfReason(res));
     } catch (err: any) {
-      ElMessage.error(
-        t("wolf.aiChat.autoRenameFailed") +
-          (err?.message ? `: ${err.message}` : "")
-      );
+      showAutoRenameError(extractWolfReason(err?.response?.data));
     }
   }
 

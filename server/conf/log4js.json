@@ -16,7 +16,8 @@
     "categories": {
         "default": {
             "appenders": [
-                "server"
+                "server",
+                "console"
             ],
             "level": "info"
         }

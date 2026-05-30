@@ -13,6 +13,7 @@ import { stringify } from "qs";
 import { getWolfToken, removeToken } from "@/utils/auth";
 import { message } from "@/utils/message";
 import router from "@/router";
+import { transformI18n } from "@/plugins/i18n";
 
 /** Wolf 后端响应格式 */
 export interface WolfResponse<T = any> {
@@ -45,6 +46,17 @@ const defaultConfig: AxiosRequestConfig = {
 
 /** 获取 i18n 错误消息 */
 function getI18nMessage(errmsg: string, reason: string): string {
+  const i18nReasonKeys: Record<string, string> = {
+    ERR_NO_MESSAGES_FOR_TITLE: "wolf.aiChat.autoRenameNoMessages",
+    ERR_TITLE_GENERATION_EMPTY: "wolf.aiChat.autoRenameEmptyTitle",
+    ERR_TITLE_GENERATION_FAILED: "wolf.aiChat.autoRenameGenerationFailed",
+    AI_NOT_CONFIGURED: "wolf.aiChat.aiNotConfigured"
+  };
+
+  if (reason && i18nReasonKeys[reason]) {
+    return transformI18n(i18nReasonKeys[reason]);
+  }
+
   // 错误码映射表
   const errorMessages: Record<string, string> = {
     ERR_ARGS_ERROR: "请求参数错误",
@@ -141,7 +153,7 @@ class PureHttp {
         }
 
         // Wolf 响应格式处理
-        if (res && res.ok === false) {
+        if (res && res.ok === false && !$config.skipGlobalErrorMessage) {
           const errmsg = getI18nMessage(res.errmsg || "", res.reason || "");
           message(errmsg, { type: "error" });
         }
@@ -155,6 +167,7 @@ class PureHttp {
         // 处理 HTTP 错误
         if (error.response) {
           const res = error.response.data as WolfResponse;
+          const $config = error.config as PureHttpRequestConfig;
           let errmsg = "";
 
           if (res && res.reason) {
@@ -170,7 +183,9 @@ class PureHttp {
             errmsg = `请求错误: ${error.message}`;
           }
 
-          message(errmsg, { type: "error" });
+          if (!$config?.skipGlobalErrorMessage) {
+            message(errmsg, { type: "error" });
+          }
         }
 
         return Promise.reject($error);

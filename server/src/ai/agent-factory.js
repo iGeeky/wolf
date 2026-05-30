@@ -102,6 +102,20 @@ async function getWolfPiModel() {
     log4js.info('[AgentFactory] using custom baseUrl: %s', baseUrl)
   }
 
+  // 支持通过配置覆盖 model.reasoning 和 model.compat.thinkingFormat。
+  // 主要用于自建/非标准 OpenAI 兼容服务（如 Qwen、GLM 等）默认开启 thinking 的情况：
+  // 设置 AI_MODEL_REASONING=true + AI_THINKING_FORMAT=qwen-chat-template 等后，
+  // pi-ai 在 reasoning 为 falsy 时会主动发出对应的关闭字段（enable_thinking=false 等），
+  // 无需 onPayload hack。
+  if (wolfAiConf.modelReasoning) {
+    model = { ...model, reasoning: true }
+  }
+  if (wolfAiConf.thinkingFormat) {
+    const existingCompat = model.compat || {}
+    model = { ...model, compat: { ...existingCompat, thinkingFormat: wolfAiConf.thinkingFormat } }
+    log4js.info('[AgentFactory] applying thinkingFormat=%s for model %s', wolfAiConf.thinkingFormat, modelId)
+  }
+
   return { model, wolfAiConf, provider, modelId }
 }
 

@@ -544,6 +544,8 @@ wolf:
     autoRenameSuccess: 标题已更新
     autoRenameFailed: 自动重命名失败
     autoRenameNoMessages: 暂无可用对话内容，无法生成标题
+    autoRenameEmptyTitle: 未能生成合适的标题，请稍后重试或手动重命名
+    autoRenameGenerationFailed: 标题生成失败，请检查 AI 配置或稍后重试
     memory: 记忆
     memoryManage: 记忆管理
     memoryEmpty: 暂无记忆，开始对话后将自动学习

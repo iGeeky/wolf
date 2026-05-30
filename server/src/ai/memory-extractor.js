@@ -118,9 +118,10 @@ async function callLlmForExtraction(conversation, existingMemories) {
   const existingMemoriesText = formatExistingMemories(existingMemories)
   const userPromptText = buildExtractionPrompt(conversation, existingMemoriesText)
 
-  const { model, provider } = await getWolfPiModel()
+  const { model, wolfAiConf, provider } = await getWolfPiModel()
   const { completeSimple } = await import('@mariozechner/pi-ai')
   const aiConfig = require('./ai-config')
+  const { buildDisableThinkingOnPayload } = require('./generate-title')
   const apiKey = aiConfig.getApiKeyForProvider(provider)
 
   const context = {
@@ -134,9 +135,12 @@ async function callLlmForExtraction(conversation, existingMemories) {
     ],
   }
 
+  // 记忆抽取同为一次性后台任务，关闭 thinking 以避免慢响应（如小米 MiMo 默认开启思考）。
+  const onPayload = buildDisableThinkingOnPayload(model, wolfAiConf)
   const result = await completeSimple(model, context, {
     maxTokens: 1024,
     apiKey,
+    onPayload,
   })
 
   // 提取文本内容
