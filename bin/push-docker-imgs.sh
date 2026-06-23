@@ -7,8 +7,14 @@ else
   echo "used input tag: ${TAG}"
 fi
 
+push_image_tags() {
+  local image="$1"
+  local tag="$2"
+  for t in "${tag}" "${tag}-amd64" "${tag}-arm64" latest latest-amd64 latest-arm64; do
+    echo "push ${image}:${t}"
+    docker push "${image}:${t}"
+  done
+}
 
-docker push igeeky/wolf-server:${TAG}
-docker push igeeky/wolf-server:latest
-docker push igeeky/wolf-agent:${TAG}
-docker push igeeky/wolf-agent:latest
+push_image_tags igeeky/wolf-server "${TAG}"
+push_image_tags igeeky/wolf-agent "${TAG}"

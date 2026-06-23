@@ -1,10 +1,10 @@
-FROM node:18-alpine
+FROM node:20-alpine
 
 # 安装编译 native 模块所需的依赖
 RUN apk add --no-cache python3 make g++
 
-# 使用 corepack 启用 pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
+# pnpm@latest (v11+) 在 Node 18 下会触发 corepack ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING
+RUN corepack enable && corepack prepare pnpm@9 --activate
 
 COPY ./ /opt/wolf/server
 WORKDIR /opt/wolf/server

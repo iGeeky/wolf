@@ -9,5 +9,5 @@ else
   echo "used input tag: ${TAG}"
 fi
 
-bash ./bin/build-docker-img-agent.sh $TAG
 bash ./bin/build-docker-img-server.sh $TAG
+bash ./bin/build-docker-img-agent.sh $TAG

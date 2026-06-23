@@ -10,5 +10,4 @@ echo "BUILD TAG: $TAG"
 # don't rebuild console project in quickly mode
 #cd ./console && pnpm run build && cd ../
 
-docker build -t igeeky/wolf-server:$TAG -f ./server/DockerfileQuickly ./server
-docker build -t igeeky/wolf-server:latest -f ./server/DockerfileQuickly ./server
+bash ./bin/docker-build-image.sh igeeky/wolf-server "$TAG" ./server/DockerfileQuickly ./server

@@ -1,6 +1,6 @@
 import { http, type WolfResponse } from "@/utils/http";
 import { checkExist } from "@/api/common";
-import { $t } from "@/plugins/i18n";
+import { i18n } from "@/plugins/i18n";
 
 /** 权限类型 */
 export interface WolfPermission {
@@ -47,8 +47,9 @@ export const listPermissions = (params: object) => {
 
 /** 获取系统权限选项 */
 export const getSysPermissions = () => {
-  const denyAll = { id: "DENY_ALL", name: $t("wolf.labelDenyAll") };
-  const allowAll = { id: "ALLOW_ALL", name: $t("wolf.labelAllowAll") };
+  const t = i18n.global.t.bind(i18n.global);
+  const denyAll = { id: "DENY_ALL", name: t("wolf.labelDenyAll") };
+  const allowAll = { id: "ALLOW_ALL", name: t("wolf.labelAllowAll") };
   return [denyAll, allowAll];
 };
 

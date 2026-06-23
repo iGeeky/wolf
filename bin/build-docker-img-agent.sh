@@ -6,5 +6,8 @@ fi
 
 TAG="$1"
 echo "BUILD TAG: $TAG"
-docker build -t igeeky/wolf-agent:$TAG -f ./agent/Dockerfile ./agent
-docker build -t igeeky/wolf-agent:latest -f ./agent/Dockerfile ./agent
+bash ./bin/docker-build-image.sh igeeky/wolf-agent "$TAG" ./agent/Dockerfile ./agent
+if [ "$?" != "0" ]; then
+  echo "build agent docker image failed!"
+  exit 2
+fi

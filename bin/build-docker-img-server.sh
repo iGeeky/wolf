@@ -14,6 +14,9 @@ if [ "$?" != "0" ]; then
 fi
 cd ../
 echo "BUILD SERVER..."
-docker build -t igeeky/wolf-server:$TAG -f ./server/Dockerfile ./server
-docker build -t igeeky/wolf-server:latest -f ./server/Dockerfile ./server
+bash ./bin/docker-build-image.sh igeeky/wolf-server "$TAG" ./server/Dockerfile ./server
+if [ "$?" != "0" ]; then
+  echo "build server docker image failed!"
+  exit 2
+fi
 echo "BUILD SUCCESS."
